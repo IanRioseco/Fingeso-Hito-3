@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "examen")
+@Table(name = "examenes")
 public class examenEntity {
 
     @Id
@@ -18,5 +18,15 @@ public class examenEntity {
     @Column(name = "fecha")
     private Date fecha;
 
-    @OneToMany()
+    @ManyToOne
+    @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
+    private medicoEntity medico;
+
+    @ManyToOne
+    @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
+    private fichamedicaEntity fichamedica;
+
+    @ManyToOne
+    @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
+    private pacienteEntity paciente;
 }

@@ -5,15 +5,15 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Recetas")
-public class recetaEntity {
+@Table(name = "citas_medicas")
+public class citamedicaEntity {
 
     @Id
-    @Column(name = "Id_receta")
-    private Long id_receta;
+    @Column(name = "Id_citamedica")
+    private Long Id_citamedica;
 
-    @Column(name = "fecha", length = 10)
-    private String fecha;
+    @Column(name = "Estado")
+    private Boolean Estado;
 
     @ManyToOne
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
@@ -24,8 +24,7 @@ public class recetaEntity {
     private pacienteEntity paciente;
 
     @ManyToOne
-    @JoinColumn(name = "Id_citamedica",referencedColumnName = "Id_citamedica")
-    private citamedicaEntity citamedica;
-
+    @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
+    private fichamedicaEntity fichamedica;
 
 }

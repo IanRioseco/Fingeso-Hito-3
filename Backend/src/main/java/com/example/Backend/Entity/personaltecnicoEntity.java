@@ -1,4 +1,30 @@
 package com.example.Backend.Entity;
 
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "PersonalTecnico")
 public class personaltecnicoEntity {
+
+    @Id
+    @Column(name = "Id_pertec")
+    private Long id_pertec;
+
+    @Column(name = "nombre", length = 50)
+    private String nombre;
+
+    @Column(name = "apellido", length = 50)
+    private String apellido;
+
+    @Column(name = "correo", length = 10)
+    private String correo;
+
+    @Column(name = "telefono", length = 10)
+    private String telefono;
+
+    @OneToOne
+    @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
+    private rolEntity rol;
 }

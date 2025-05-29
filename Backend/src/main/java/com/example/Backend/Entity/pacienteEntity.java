@@ -10,7 +10,7 @@ import lombok.Data;
 @Table(name = "paciente")
 public class pacienteEntity {
     @Id
-    @Column(name = "rut_paciente", length = 10)
+    @Column(name = "Id_paciente", length = 10)
     private String rutPa;
 
     @Column(name = "nombre_paciente", length = 80)

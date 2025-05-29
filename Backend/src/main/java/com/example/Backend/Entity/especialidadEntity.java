@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "especialidad")
+@Table(name = "especialidades")
 public class especialidadEntity {
 
     @Id
