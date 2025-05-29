@@ -18,4 +18,14 @@ public class pacienteEntity {
 
     @Column(name = "apellido_paciente", length = 80)
     private String apellidoPa;
+
+    @Column(name = "telefono")
+    private Long telefono;
+
+    @Column(name = "correo", length = 80)
+    private String correo;
+
+    @Column(name = "direccion", length = 80)
+    private String direccion;
+
 }
