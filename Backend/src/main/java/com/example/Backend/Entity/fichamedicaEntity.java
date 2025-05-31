@@ -1,9 +1,6 @@
 package com.example.Backend.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -26,5 +23,15 @@ public class fichamedicaEntity {
 
     @Column(name = "enfermedades", length = 1000)
     private String enfermedades;
+
+    @Column(name = "peso")
+    private Double peso;
+
+    @Column(name = "altura")
+    private Double altura;
+
+    @OneToOne
+    @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
+    private pacienteEntity paciente;
 
 }

@@ -13,7 +13,7 @@ public class citamedicaEntity {
     private Long Id_citamedica;
 
     @Column(name = "Estado")
-    private Boolean Estado;
+    private String Estado;
 
     @ManyToOne
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")

@@ -25,7 +25,7 @@ public class horarioEntity {
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
     private medicoEntity medico;
 
-    @OneToOne
+    @OneToOne //podria ser muchos a muchos
     @JoinColumn(name = "Id_citamedica", referencedColumnName = "Id_citamedica")
     private citamedicaEntity citamedica;
 }
