@@ -3,6 +3,7 @@ package com.example.Backend.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -12,11 +13,12 @@ import java.util.Date;
 public class examenEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_examen")
     private Long IdExamen;
 
-    @Column(name = "fecha")
-    private Date fecha;
+    @Column(name = "fecha", nullable = false)
+    private LocalDateTime fecha;
 
     @ManyToOne
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")

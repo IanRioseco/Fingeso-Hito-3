@@ -3,12 +3,16 @@ package com.example.Backend.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "fichasmedicas")
 public class fichamedicaEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_fichamedica")
     private Long Id_fichamedica;
 
@@ -24,6 +28,7 @@ public class fichamedicaEntity {
     @Column(name = "enfermedades", length = 1000)
     private String enfermedades;
 
+<<<<<<< Updated upstream
     @Column(name = "peso")
     private Double peso;
 
@@ -33,5 +38,14 @@ public class fichamedicaEntity {
     @OneToOne
     @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
     private pacienteEntity paciente;
+=======
+    @OneToMany(mappedBy = "fichasmedicas", cascade = CascadeType.ALL)
+    private List<examenEntity> examenes = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "Id_pertec", referencedColumnName = "Id_pertec")
+    private personaltecnicoEntity pertec;
+
+>>>>>>> Stashed changes
 
 }

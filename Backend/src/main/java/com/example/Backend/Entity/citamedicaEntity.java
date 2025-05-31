@@ -9,10 +9,11 @@ import lombok.Data;
 public class citamedicaEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_citamedica")
     private Long Id_citamedica;
 
-    @Column(name = "Estado")
+    @Column(name = "Estado", nullable = false)
     private String Estado;
 
     @ManyToOne
@@ -26,5 +27,13 @@ public class citamedicaEntity {
     @ManyToOne
     @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
     private fichamedicaEntity fichamedica;
+
+    @ManyToOne
+    @JoinColumn(name = "Id_recepcionista", referencedColumnName = "Id_recepcionista")
+    private recepcionistaEntity recepcionista;
+
+    @OneToOne
+    @JoinColumn(name = "Id_citamedica", referencedColumnName = "Id_citamedica")
+    private citamedicaEntity citamedica;
 
 }

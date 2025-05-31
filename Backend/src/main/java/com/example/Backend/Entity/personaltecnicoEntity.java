@@ -12,13 +12,13 @@ public class personaltecnicoEntity {
     @Column(name = "Id_pertec")
     private Long id_pertec;
 
-    @Column(name = "nombre", length = 50)
+    @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;
 
-    @Column(name = "apellido", length = 50)
+    @Column(name = "apellido", length = 50, nullable = false)
     private String apellido;
 
-    @Column(name = "correo", length = 10)
+    @Column(name = "correo", length = 10, nullable = false)
     private String correo;
 
     @Column(name = "telefono", length = 10)

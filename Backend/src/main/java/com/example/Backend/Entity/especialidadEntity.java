@@ -1,9 +1,6 @@
 package com.example.Backend.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -12,9 +9,10 @@ import lombok.Data;
 public class especialidadEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_especialidad")
     private Long id_especialidad;
 
-    @Column(name = "nombre", length = 100)
+    @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 }

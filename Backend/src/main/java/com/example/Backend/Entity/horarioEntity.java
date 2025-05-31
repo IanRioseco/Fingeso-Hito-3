@@ -3,23 +3,26 @@ package com.example.Backend.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalTime;
+
 @Data
 @Entity
 @Table(name = "Horariosmedicos")
 public class horarioEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_horario")
     private Long idHorario;
 
-    @Column(name = "dia", length = 2)
-    private String dia;
+    @Column(name = "dia", nullable = false)
+    private Integer dia;
 
-    @Column(name = "horainicio", length = 10)
-    private String horainicio;
+    @Column(name = "horainicio", nullable = false)
+    private LocalTime horainicio;
 
-    @Column(name = "horafin", length = 10)
-    private String horafin;
+    @Column(name = "horafin", nullable = false)
+    private LocalTime horafin;
 
     @ManyToOne
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")

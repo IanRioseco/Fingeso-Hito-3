@@ -3,6 +3,9 @@ package com.example.Backend.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "administradores")
@@ -12,13 +15,20 @@ public class administradorEntity {
     @Column(name = "Id_admin")
     private Long id_admin;
 
-    @Column(name = "Nombre", length = 100)
+    @Column(name = "Nombre", length = 100, nullable = false)
     private String nombre;
 
-    @Column(name = "Apellido", length = 100)
+    @Column(name = "Apellido", length = 100, nullable = false)
     private String apellido;
 
-    @OneToOne
-    @JoinColumn(name = "Id_especialidad", referencedColumnName = "Id_especialidad")
-    private especialidadEntity especialidad;
+    @Column(name = "Correo", length = 50, nullable = false)
+    private String correo;
+
+    @Column(name = "Telefono", length = 50)
+    private String telefono;
+
+    @OneToMany(mappedBy = "administradores", cascade = CascadeType.ALL)
+    private List<reporteEntity> reporte  = new ArrayList<>();
+
+
 }
