@@ -22,7 +22,7 @@ public class personaltecnicoEntity {
     private String correo;
 
     @Column(name = "telefono", length = 10)
-    private String telefono;
+    private String telefono; //no creo que sea muy necesario el telefono
 
     @OneToOne
     @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")

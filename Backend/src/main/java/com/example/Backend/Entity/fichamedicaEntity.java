@@ -28,7 +28,6 @@ public class fichamedicaEntity {
     @Column(name = "enfermedades", length = 1000)
     private String enfermedades;
 
-<<<<<<< Updated upstream
     @Column(name = "peso")
     private Double peso;
 
@@ -38,7 +37,7 @@ public class fichamedicaEntity {
     @OneToOne
     @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
     private pacienteEntity paciente;
-=======
+
     @OneToMany(mappedBy = "fichasmedicas", cascade = CascadeType.ALL)
     private List<examenEntity> examenes = new ArrayList<>();
 
@@ -46,6 +45,5 @@ public class fichamedicaEntity {
     @JoinColumn(name = "Id_pertec", referencedColumnName = "Id_pertec")
     private personaltecnicoEntity pertec;
 
->>>>>>> Stashed changes
 
 }

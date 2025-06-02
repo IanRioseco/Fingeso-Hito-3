@@ -2,6 +2,7 @@ package com.example.Backend.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -15,4 +16,7 @@ public class tiporeporteEntity {
 
     @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;
+
+    @Column(name = "descripcion", length = 256, nullable = false)
+    private String descripcion;
 }
