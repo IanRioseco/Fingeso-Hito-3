@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
+
+/*BD->Repository->Servicio(Logica de negocio)-> Controller */
 @Service
 public class administradorServices {
     private administradorRepository administradorRepo;
@@ -21,7 +24,8 @@ public class administradorServices {
         return administradorRepo.save(administrador);
     }
 
-    public List<administradorEntity> ObetenerTodosAdministrador() {
+    public List<administradorEntity> ObtenerTodosAdministrador()
+    {
         return administradorRepo.findAll();
     }
 
@@ -37,5 +41,8 @@ public class administradorServices {
         return administradorRepo.save(administrador);
     }
 
+    public Optional<administradorEntity> obtenerAdministradorPorEmail(String email) {
+        return administradorRepo.FindByEmail(email);
+    }
 
 }
