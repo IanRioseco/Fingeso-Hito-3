@@ -12,7 +12,7 @@ import java.util.List;
 public class recepcionistaEntity {
 
     @Id
-    @Column(name = "ID_recepcionista")
+    @Column(name = "Id_recepcionista")
     private Long IdRecepcionista;
 
     @Column(name = "nombre", length = 50, nullable = false)
@@ -27,6 +27,7 @@ public class recepcionistaEntity {
     @Column(name = "telefono", length = 10)
     private String Telefono;
 
-    @OneToMany(mappedBy = "recepcionistas", cascade = CascadeType.ALL)
+    /*Recepcionista->Citamedica*/
+    @OneToMany(mappedBy = "recepcionista", cascade = CascadeType.ALL)
     private List<citamedicaEntity> citamedicas = new ArrayList<>();
 }

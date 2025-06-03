@@ -12,7 +12,7 @@ public class tiporeporteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_tipodereporte")
-    private int id_tipodereporte;
+    private Long id_tipodereporte;
 
     @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;

@@ -11,8 +11,8 @@ import lombok.Data;
 public class farmaceuticoEntity {
 
     @Id
-    @Column(name = "Id_farceutico")
-    private Long Id_farceutico;
+    @Column(name = "Id_farmaceutico")
+    private Long Id_farmaceutico;
 
     @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;
@@ -26,6 +26,7 @@ public class farmaceuticoEntity {
     @Column(name = "Telefono", length = 50)
     private String telefono;
 
+    /*Farmaceutico->Farmacia*/
     @ManyToOne
     @JoinColumn(name = "Id_farmacia", referencedColumnName = "Id_farmacia")
     private farmaciaEntity farmacia;

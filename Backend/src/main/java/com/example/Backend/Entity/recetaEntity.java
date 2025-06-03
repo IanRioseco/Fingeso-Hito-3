@@ -20,19 +20,18 @@ public class recetaEntity {
     @Column(name = "fecha", length = 10, nullable = false)
     private LocalDate fecha;
 
+    /*Receta->Medico*/
     @ManyToOne
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
     private medicoEntity medico;
 
+    /*Receta->Paciente*/
     @ManyToOne
     @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
     private pacienteEntity paciente;
 
-    @ManyToOne
-    @JoinColumn(name = "Id_citamedica",referencedColumnName = "Id_citamedica")
-    private citamedicaEntity citamedica;
-
-    @OneToMany(mappedBy = "recetas", cascade = CascadeType.ALL)
-    private List<receta_medicamentoEntity> recetaMedicamento = new ArrayList<>();
+    /*Receta->Receta-Medicamento*/
+    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL)
+    private List<receta_medicamentoEntity> receta_medicamentos = new ArrayList<>();
 
 }

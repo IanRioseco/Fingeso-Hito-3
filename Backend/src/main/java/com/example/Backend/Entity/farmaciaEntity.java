@@ -20,10 +20,13 @@ public class farmaciaEntity {
     @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;
 
-    @OneToMany(mappedBy = "farmacias", cascade = CascadeType.ALL)
+    /*Farmacia->Farmaceutico*/
+    @OneToMany(mappedBy = "farmacia", cascade = CascadeType.ALL)
     private List<farmaceuticoEntity> farmaceuticos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "farmacias", cascade = CascadeType.ALL)
-    private List<farmacia_medicamentoEntity> farmaciaMedicamento = new ArrayList<>();
+    /*Farmacia->Farmacia-Medicamento*/
+    @OneToMany(mappedBy = "farmacia", cascade = CascadeType.ALL)
+    private List<farmacia_medicamentoEntity> farmaciaMedicamentos = new ArrayList<>();
+
 
 }

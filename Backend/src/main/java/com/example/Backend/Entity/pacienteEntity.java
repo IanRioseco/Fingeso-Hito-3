@@ -32,17 +32,21 @@ public class pacienteEntity {
     @Column(name = "direccion", length = 80)
     private String direccion;
 
-    @OneToMany(mappedBy = "pacientes", cascade = CascadeType.ALL)
+    /*Paciente->Citamedica*/
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
     private List<citamedicaEntity> citamedicas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "pacientes", cascade = CascadeType.ALL)
+    /*Paciente->Examen*/
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
     private List<examenEntity> examenes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "pacientes", cascade = CascadeType.ALL)
-    private List<recetaEntity> recetas = new ArrayList<>();
-
+    /*Paciente->Fichamedica*/
     @OneToOne
     @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
     private fichamedicaEntity fichamedica;
+
+    /*Paciente->Receta*/
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    private List<recetaEntity> recetas = new ArrayList<>();
 
 }

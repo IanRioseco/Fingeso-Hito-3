@@ -16,24 +16,20 @@ public class citamedicaEntity {
     @Column(name = "Estado", nullable = false)
     private String Estado;
 
-    @ManyToOne
-    @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
-    private medicoEntity medico;
-
-    @ManyToOne
-    @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
-    private pacienteEntity paciente;
-
-    @ManyToOne
-    @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
-    private fichamedicaEntity fichamedica;
-
+    /*Citamedica->Recepcionista*/
     @ManyToOne
     @JoinColumn(name = "Id_recepcionista", referencedColumnName = "Id_recepcionista")
     private recepcionistaEntity recepcionista;
 
-    @OneToOne
-    @JoinColumn(name = "Id_citamedica", referencedColumnName = "Id_citamedica")
-    private citamedicaEntity citamedica;
+    /*Citamedica->Medico*/
+    @ManyToOne
+    @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
+    private medicoEntity medico;
+
+    /*Citamedica->Paciente*/
+    @ManyToOne
+    @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
+    private pacienteEntity paciente;
+
 
 }

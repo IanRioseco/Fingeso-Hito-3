@@ -22,18 +22,20 @@ public class reporteEntity {
     @Column(name = "contenido", length = 256)
     private String Contenido;
 
+    /*Reporte->Medico*/
     @ManyToOne
-    @JoinColumn(name = "Id_admin", referencedColumnName = "Id_admin")
-    private administradorEntity admin;
-
-    @ManyToOne
-    @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
+    @JoinColumn(name = "Id_medico", columnDefinition = "Id_medico")
     private medicoEntity medico;
 
+    /*Reporte->TipoReporte*/
     @OneToOne
-    @JoinColumn(name = "Id_tiporeporte", referencedColumnName = "Id_tiporeporte")
-    private tiporeporteEntity tiporeporte;
+    @JoinColumn(name = "Id_tipodereporte", referencedColumnName = "Id_tipodereporte")
+    private tiporeporteEntity tipodereporte;
 
+    /*Reporte->Administrador*/
+    @ManyToOne
+    @JoinColumn(name = "Id_admin", referencedColumnName = "Id_admin")
+    private administradorEntity Admin;
 
 
 }

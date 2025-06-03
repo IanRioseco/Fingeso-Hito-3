@@ -27,8 +27,9 @@ public class administradorEntity {
     @Column(name = "Telefono", length = 50)
     private String telefono;
 
-    @OneToMany(mappedBy = "administradores", cascade = CascadeType.ALL)
-    private List<reporteEntity> reporte  = new ArrayList<>();
+    /*Administrador->Reporte*/
+    @OneToMany(mappedBy = "Admin", cascade = CascadeType.ALL)
+    private List<reporteEntity> reportes = new ArrayList<>();
 
 
 }

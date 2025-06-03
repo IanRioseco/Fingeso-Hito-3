@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 
 @Data
@@ -20,14 +20,17 @@ public class examenEntity {
     @Column(name = "fecha", nullable = false)
     private LocalDateTime fecha;
 
+    /*Examen->Medico*/
     @ManyToOne
-    @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
+    @JoinColumn(name = "Id_medico", columnDefinition = "Id_medico")
     private medicoEntity medico;
 
+    /*Examen->FichaMedica*/
     @ManyToOne
     @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
     private fichamedicaEntity fichamedica;
 
+    /*Examen->Paciente*/
     @ManyToOne
     @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
     private pacienteEntity paciente;
