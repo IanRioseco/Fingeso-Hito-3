@@ -1,6 +1,7 @@
 package com.example.Backend.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,11 +25,12 @@ public class reporteEntity {
 
     /*Reporte->Medico*/
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
     private medicoEntity medico;
 
     /*Reporte->TipoReporte*/
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "Id_tipodereporte", referencedColumnName = "Id_tipodereporte")
     private tiporeporteEntity tipodereporte;
 

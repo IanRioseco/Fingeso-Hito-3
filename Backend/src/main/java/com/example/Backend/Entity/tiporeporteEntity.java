@@ -3,6 +3,8 @@ package com.example.Backend.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,4 +21,6 @@ public class tiporeporteEntity {
 
     @Column(name = "descripcion", length = 256, nullable = false)
     private String descripcion;
+
+
 }

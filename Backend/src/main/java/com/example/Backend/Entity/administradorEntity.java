@@ -31,7 +31,6 @@ public class administradorEntity {
 
     /*Administrador->Reporte*/
     @OneToMany(mappedBy = "Admin", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<reporteEntity> reportes = new ArrayList<>();
 
 

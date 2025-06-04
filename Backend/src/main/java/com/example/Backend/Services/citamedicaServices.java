@@ -10,11 +10,11 @@ import java.util.Optional;
 
 @Service
 public class citamedicaServices {
-    private citamedicaRepository citamedicaRepo;
+    private final citamedicaRepository citamedicaRepo;
 
     @Autowired
-    public citamedicaServices(citamedicaRepository repo) {
-        this.citamedicaRepo = repo;
+    public citamedicaServices(citamedicaRepository citamedicaRepo) {
+        this.citamedicaRepo = citamedicaRepo;
     }
 
     public citamedicaEntity guardarCitamedica(citamedicaEntity citamedica) {
@@ -25,15 +25,15 @@ public class citamedicaServices {
         return citamedicaRepo.findAll();
     }
 
-    public Optional<citamedicaEntity> ObtenerCitamedicaPorId(Long Id) {
-        return citamedicaRepo.findById(Id);
-    }
-
-    public void eliminarCitamedicaPorId(Long Id) {
-        citamedicaRepo.deleteById(Id);
+    public Optional<citamedicaEntity> obtenerCitamedicaPorId(Long id) {
+        return citamedicaRepo.findById(id);
     }
 
     public citamedicaEntity actualizarCitamedica(citamedicaEntity citamedica) {
         return citamedicaRepo.save(citamedica);
+    }
+
+    public void eliminarCitamedica(Long id) {
+        citamedicaRepo.deleteById(id);
     }
 }

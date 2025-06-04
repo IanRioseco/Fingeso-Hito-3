@@ -27,11 +27,11 @@ public class administradorController {
     @GetMapping("/")
     public ResponseEntity<List<administradorEntity>> ObtenerTodosAdministrador() {
         List<administradorEntity> administrador = administradorServ.ObtenerTodosAdministrador();
-        return new ResponseEntity<>(administrador, HttpStatus.OK);
+        return new ResponseEntity<>(administrador, HttpStatus.CREATED);
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<administradorEntity> obtenerPorId(@PathVariable Long id) {
         return administradorServ.obtenerAdministradorPorId(id)
                 .map(administrador ->new ResponseEntity<>(administrador, HttpStatus.OK))
@@ -39,6 +39,14 @@ public class administradorController {
 
 
     }
+
+    @GetMapping("/correo/{correo}")
+    public ResponseEntity<administradorEntity> obtenerPorCorreo(@PathVariable String correo){
+        return administradorServ.obtenerAdministradorPorCorreo(correo)
+                .map(administrador ->new ResponseEntity<>(administrador, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
 
     @PostMapping("/")
     public ResponseEntity<administradorEntity> crearAdministrador(@RequestBody administradorEntity administrador) {
@@ -59,7 +67,7 @@ public class administradorController {
         return administradorServ.obtenerAdministradorPorId(id)
                 .map(administrador ->{
                 administradorServ.eliminarAdministrador(id);
-                return new ResponseEntity<>(administrador, HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(administrador, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

@@ -12,28 +12,50 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/citamedica")
 public class citamedicaController {
-
-    private citamedicaServices citamedicaServ;
+    private final citamedicaServices citamedicaServ;
 
     @Autowired
     public citamedicaController(citamedicaServices citamedicaServ) {
         this.citamedicaServ = citamedicaServ;
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<citamedicaEntity> crearCitamedica(@RequestBody citamedicaEntity citamedica) {
-        citamedicaEntity citamedicaEntity = citamedicaServ.guardarCitamedica(citamedica);
-        return new ResponseEntity<>(citamedicaEntity, HttpStatus.OK);
+        citamedicaEntity nuevaCita = citamedicaServ.guardarCitamedica(citamedica);
+        return new ResponseEntity<>(nuevaCita, HttpStatus.CREATED);
     }
 
-
-    @GetMapping
-    public ResponseEntity<List<citamedicaEntity>> obtenerTodasCitasMedicas(){
-        List<citamedicaEntity> citamedica = citamedicaServ.ObtenerLasCitamedica();
-        return new ResponseEntity<>(citamedica, HttpStatus.OK);
+    @GetMapping("/")
+    public ResponseEntity<List<citamedicaEntity>> obtenerTodasCitasMedicas() {
+        List<citamedicaEntity> citas = citamedicaServ.ObtenerLasCitamedica();
+        return new ResponseEntity<>(citas, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<citamedicaEntity> obtenerCitamedicaPorId(@PathVariable Long id) {
+        return citamedicaServ.obtenerCitamedicaPorId(id)
+                .map(cita -> new ResponseEntity<>(cita, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<citamedicaEntity> actualizarCitamedica(@PathVariable Long id, @RequestBody citamedicaEntity citamedica) {
+        return citamedicaServ.obtenerCitamedicaPorId(id)
+                .map(citaExist -> {
+                    citamedica.setId_citamedica(id);
+                    return new ResponseEntity<>(citamedicaServ.actualizarCitamedica(citamedica), HttpStatus.OK);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<citamedicaEntity> eliminarCitamedica(@PathVariable Long id) {
+        return citamedicaServ.obtenerCitamedicaPorId(id)
+                .map(cita -> {
+                    citamedicaServ.eliminarCitamedica(id);
+                    return new ResponseEntity<>(cita, HttpStatus.OK);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }
+

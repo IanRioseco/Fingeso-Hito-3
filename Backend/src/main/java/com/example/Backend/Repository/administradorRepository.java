@@ -7,5 +7,5 @@ import java.util.Optional;
 
 
 public interface administradorRepository extends JpaRepository<administradorEntity, Long> {
-
+    Optional<administradorEntity> findByCorreo(String Correo);
 }
