@@ -15,16 +15,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/administrador")
 /*localhost:8080/api/administrador*/
-public class admistradorController {
+public class administradorController {
 
     private administradorServices administradorServ;
 
     @Autowired
-    public admistradorController(administradorServices administradorServ) {
+    public administradorController(administradorServices administradorServ) {
         this.administradorServ = administradorServ;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<administradorEntity>> ObtenerTodosAdministrador() {
         List<administradorEntity> administrador = administradorServ.ObtenerTodosAdministrador();
         return new ResponseEntity<>(administrador, HttpStatus.OK);
@@ -40,7 +40,7 @@ public class admistradorController {
 
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<administradorEntity> crearAdministrador(@RequestBody administradorEntity administrador) {
         administradorEntity nuevoAdmin = administradorServ.guardarAdministrador(administrador);
         return new ResponseEntity<>(nuevoAdmin, HttpStatus.OK);
@@ -63,12 +63,7 @@ public class admistradorController {
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<administradorEntity> obtenerPorEmail(@PathVariable String email) {
-        return administradorServ.obtenerAdministradorPorEmail(email)
-                .map(admin -> new ResponseEntity<>(admin, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+
 
 
 }

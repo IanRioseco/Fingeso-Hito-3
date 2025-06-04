@@ -1,5 +1,6 @@
 package com.example.Backend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.util.List;
 public class administradorEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_admin")
     private Long id_admin;
 
@@ -29,6 +31,7 @@ public class administradorEntity {
 
     /*Administrador->Reporte*/
     @OneToMany(mappedBy = "Admin", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<reporteEntity> reportes = new ArrayList<>();
 
 

@@ -41,8 +41,5 @@ public class administradorServices {
         return administradorRepo.save(administrador);
     }
 
-    public Optional<administradorEntity> obtenerAdministradorPorEmail(String email) {
-        return administradorRepo.FindByEmail(email);
-    }
 
 }
