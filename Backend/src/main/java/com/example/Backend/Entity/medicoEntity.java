@@ -13,7 +13,7 @@ public class medicoEntity {
 
     @Id
     @Column(name = "Id_medico")
-    private Long id_medico;
+    private Long idmedico;
 
     @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;

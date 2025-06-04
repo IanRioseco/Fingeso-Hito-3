@@ -14,7 +14,7 @@ public class reporteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_reportes")
-    private int Id_reporte;
+    private Long Id_reporte;
 
     @Column(name = "fecha", nullable = false)
     private LocalDate Fecha;
@@ -24,7 +24,7 @@ public class reporteEntity {
 
     /*Reporte->Medico*/
     @ManyToOne
-    @JoinColumn(name = "Id_medico", columnDefinition = "Id_medico")
+    @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
     private medicoEntity medico;
 
     /*Reporte->TipoReporte*/

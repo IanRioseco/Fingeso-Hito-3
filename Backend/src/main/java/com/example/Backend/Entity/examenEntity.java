@@ -22,7 +22,7 @@ public class examenEntity {
 
     /*Examen->Medico*/
     @ManyToOne
-    @JoinColumn(name = "Id_medico", columnDefinition = "Id_medico")
+    @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
     private medicoEntity medico;
 
     /*Examen->FichaMedica*/
