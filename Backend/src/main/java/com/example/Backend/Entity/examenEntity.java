@@ -25,6 +25,7 @@ public class examenEntity {
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
     private medicoEntity medico;
 
+    /*Solamente se deja en uno*/
     /*Examen->FichaMedica*/
     @ManyToOne
     @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")

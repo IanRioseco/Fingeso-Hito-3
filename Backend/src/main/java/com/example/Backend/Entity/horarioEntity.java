@@ -24,11 +24,6 @@ public class horarioEntity {
     @Column(name = "horafin", nullable = false)
     private LocalTime horafin;
 
-    /*Citamedica->Horario*/
-    @OneToOne
-    @JoinColumn(name = "Id_citamedica", referencedColumnName = "Id_citamedica")
-    private citamedicaEntity citamedica;
-
     /*Horario->Medico*/
     @ManyToOne
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")

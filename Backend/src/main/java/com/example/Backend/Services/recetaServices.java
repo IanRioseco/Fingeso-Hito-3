@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class recetaServices {
-    private final recetaRepository recetaRepo;
+    private recetaRepository recetaRepo;
 
     @Autowired
     public recetaServices(recetaRepository recetaRepo) {

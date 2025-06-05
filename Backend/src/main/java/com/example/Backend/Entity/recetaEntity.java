@@ -30,8 +30,5 @@ public class recetaEntity {
     @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
     private pacienteEntity paciente;
 
-    /*Receta->Receta-Medicamento*/
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL)
-    private List<receta_medicamentoEntity> receta_medicamentos = new ArrayList<>();
 
 }

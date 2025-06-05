@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class farmaceuticoServices {
-    private final farmaceuticoRepository farmaceuticoRepo;
+    private farmaceuticoRepository farmaceuticoRepo;
 
     @Autowired
     public farmaceuticoServices(farmaceuticoRepository farmaceuticoRepo) {

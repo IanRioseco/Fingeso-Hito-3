@@ -2,7 +2,6 @@ package com.example.Backend.Services;
 
 import com.example.Backend.Entity.administradorEntity;
 import com.example.Backend.Repository.administradorRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

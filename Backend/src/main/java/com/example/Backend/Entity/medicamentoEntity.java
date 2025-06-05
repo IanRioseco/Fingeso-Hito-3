@@ -36,12 +36,5 @@ public class medicamentoEntity {
     @Column(name = "descripcion", length = 256, nullable = false)
     private String descripcion;
 
-    /*Medicamento->Farmacia-Medicamento*/
-    @OneToMany(mappedBy = "medicamento", cascade = CascadeType.ALL)
-    private List<farmacia_medicamentoEntity> farmaciaMedicamentos = new ArrayList<>();
-
-    /*Medicamento->Receta-Medicamento*/
-    @OneToMany(mappedBy = "medicamento", cascade = CascadeType.ALL)
-    private List<receta_medicamentoEntity> recetaMedicamentos = new ArrayList<>();
 
 }

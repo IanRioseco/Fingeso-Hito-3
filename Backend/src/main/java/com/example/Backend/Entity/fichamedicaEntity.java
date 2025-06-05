@@ -34,10 +34,6 @@ public class fichamedicaEntity {
     @Column(name = "altura")
     private Double altura;
 
-    /*FichaMedica -> Examen*/
-    @OneToMany(mappedBy = "fichamedica", cascade = CascadeType.ALL)
-    private List<examenEntity> examenes =  new ArrayList<>();
-
     /*FichaMedica -> PersonalTecnico*/
     @OneToOne
     @JoinColumn(name = "Id_pertec", referencedColumnName = "Id_pertec")

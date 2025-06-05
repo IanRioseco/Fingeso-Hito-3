@@ -1,5 +1,6 @@
 package com.example.Backend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class citamedicaEntity {
 
     /*Citamedica->Recepcionista*/
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "Id_recepcionista", referencedColumnName = "Id_recepcionista")
     private recepcionistaEntity recepcionista;
 
@@ -31,5 +33,9 @@ public class citamedicaEntity {
     @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
     private pacienteEntity paciente;
 
+    /*Citamedica->FichaMedica*/
+    @ManyToOne
+    @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
+    private fichamedicaEntity fichamedica;
 
 }

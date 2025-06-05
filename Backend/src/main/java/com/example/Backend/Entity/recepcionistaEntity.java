@@ -27,7 +27,4 @@ public class recepcionistaEntity {
     @Column(name = "telefono", length = 10)
     private String Telefono;
 
-    /*Recepcionista->Citamedica*/
-    @OneToMany(mappedBy = "recepcionista", cascade = CascadeType.ALL)
-    private List<citamedicaEntity> citamedicas = new ArrayList<>();
 }

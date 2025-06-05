@@ -11,6 +11,7 @@ import lombok.Data;
 public class farmaceuticoEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_farmaceutico")
     private Long Id_farmaceutico;
 
@@ -30,4 +31,5 @@ public class farmaceuticoEntity {
     @ManyToOne
     @JoinColumn(name = "Id_farmacia", referencedColumnName = "Id_farmacia")
     private farmaciaEntity farmacia;
+
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class examenServices {
-    private final examenRepository examenRepo;
+    private  examenRepository examenRepo;
 
     @Autowired
     public examenServices(examenRepository examenRepo) {

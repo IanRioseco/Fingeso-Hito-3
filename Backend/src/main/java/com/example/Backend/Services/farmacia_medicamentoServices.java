@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class farmacia_medicamentoServices {
-    private final farmacia_medicamentoRepository farmacia_medicamentoRepo;
+    private farmacia_medicamentoRepository farmacia_medicamentoRepo;
 
     @Autowired
     public farmacia_medicamentoServices(farmacia_medicamentoRepository farmacia_medicamentoRepo) {

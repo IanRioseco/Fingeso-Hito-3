@@ -1,6 +1,7 @@
 package com.example.Backend.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,14 +20,5 @@ public class farmaciaEntity {
 
     @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;
-
-    /*Farmacia->Farmaceutico*/
-    @OneToMany(mappedBy = "farmacia", cascade = CascadeType.ALL)
-    private List<farmaceuticoEntity> farmaceuticos = new ArrayList<>();
-
-    /*Farmacia->Farmacia-Medicamento*/
-    @OneToMany(mappedBy = "farmacia", cascade = CascadeType.ALL)
-    private List<farmacia_medicamentoEntity> farmaciaMedicamentos = new ArrayList<>();
-
 
 }

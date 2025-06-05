@@ -16,4 +16,6 @@ public class rolEntity {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
+
+
 }

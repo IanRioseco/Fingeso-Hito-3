@@ -25,7 +25,7 @@ public class personaltecnicoEntity {
     private String telefono; //no creo que sea muy necesario el telefono
 
     /*Personal tecnico -> Rol*/
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
     private rolEntity rol;
 }

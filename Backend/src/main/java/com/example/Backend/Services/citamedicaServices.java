@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class citamedicaServices {
-    private final citamedicaRepository citamedicaRepo;
+    private citamedicaRepository citamedicaRepo;
 
     @Autowired
     public citamedicaServices(citamedicaRepository citamedicaRepo) {
