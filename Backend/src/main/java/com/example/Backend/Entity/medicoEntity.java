@@ -12,6 +12,7 @@ import java.util.List;
 public class medicoEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_medico")
     private Long idmedico;
 

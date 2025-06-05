@@ -1,4 +1,7 @@
 package com.example.Backend.Repository;
 
-public interface recepcionistaRepository {
+import com.example.Backend.Entity.recepcionistaEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface recepcionistaRepository extends JpaRepository<recepcionistaEntity, Long> {
 }

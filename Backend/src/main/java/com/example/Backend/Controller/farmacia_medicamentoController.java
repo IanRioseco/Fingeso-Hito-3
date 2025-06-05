@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/farmacia-medicamento")
 public class farmacia_medicamentoController {
-    private final farmacia_medicamentoServices farmacia_medicamentoServ;
+    private farmacia_medicamentoServices farmacia_medicamentoServ;
 
     @Autowired
     public farmacia_medicamentoController(farmacia_medicamentoServices farmacia_medicamentoServ) {

@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/examen")
 public class examenController {
-    private final examenServices examenServ;
+    private  examenServices examenServ;
 
     @Autowired
     public examenController(examenServices examenServ) {

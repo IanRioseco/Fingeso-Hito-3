@@ -14,8 +14,9 @@ import java.util.List;
 public class pacienteEntity {
 
     @Id
-    @Column(name = "Id_paciente", length = 10)
-    private String rutPa;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id_paciente")
+    private Long rutPa;
 
     @Column(name = "nombre_paciente", length = 80, nullable = false)
     private String nombrePa;

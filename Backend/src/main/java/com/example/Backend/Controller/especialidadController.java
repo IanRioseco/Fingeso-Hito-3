@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/especialidad")
 public class especialidadController {
-    private final especialidadServices especialidadServ;
+    private especialidadServices especialidadServ;
 
     @Autowired
     public especialidadController(especialidadServices especialidadServ) {

@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/citamedica")
 public class citamedicaController {
-    private final citamedicaServices citamedicaServ;
+    private citamedicaServices citamedicaServ;
 
     @Autowired
     public citamedicaController(citamedicaServices citamedicaServ) {
