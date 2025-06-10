@@ -42,7 +42,7 @@ defineProps({
   object-fit: contain;
 }
 .especialidad-card h3 {
-  color: #009999;
+  color: #0875C1;
   font-size: 16px;
   line-height: 18px;
   font-weight: 600;

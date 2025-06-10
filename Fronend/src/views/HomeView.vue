@@ -88,7 +88,7 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
 }
 .banner {
   width: 100%;
-  background: linear-gradient(90deg, #099 0%, #C51A6F 100%);
+  background: linear-gradient(90deg, #0875C1 0%, #C51A6F 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -115,26 +115,26 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
 .btn-home {
   padding: 1rem 2rem;
   background: #fff;
-  color: #009999;
+  color: #0875C1;
   border-radius: 6px;
   text-decoration: none;
   font-weight: bold;
-  border: 2px solid #099;
+  border: 2px solid #0875C1;
 }
 .btn-home:hover {
   background: #C51A6F;
   color: #fff;
-  border: 2px solid #099;
+  border: 2px solid #0875C1;
 }
 .btn-secondary {
   font-weight: bold;
-  background: #099;
+  background: #0875C1;
   color: #fff;
   border: 2px solid #C51A6F;
 }
 .btn-secondary:hover {
   background: #fff;
-  color: #099;
+  color: #0875C1;
 }
 .especialidades-container {
   margin: 2rem auto;
@@ -152,7 +152,7 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
 }
 .especialidades h2 {
   margin-bottom: 1rem;
-  color: #099;
+  color: #0875C1;
 }
 .especialidades-container-info {
   display: grid;
@@ -182,7 +182,7 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
   box-shadow: 0 2px 8px #0001;
   padding: 1.5rem;
   text-align: center;
-  color: #099;
+  color: #0875C1;
 }
 .aside-container-info {
   margin: 0 auto;
@@ -240,7 +240,7 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
 }
 .footer {
   width: 100%;
-  background: linear-gradient(90deg, #099 0%, #56b36b 100%);
+  background: linear-gradient(90deg, #0875C1 0%, #C51A6F 100%);
   color: #fff;
   display: flex;
   align-items: center;
