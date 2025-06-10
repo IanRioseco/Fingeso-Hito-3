@@ -88,7 +88,7 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
 }
 .banner {
   width: 100%;
-  background: linear-gradient(90deg, #099 0%, #9df0b0 100%);
+  background: linear-gradient(90deg, #099 0%, #C51A6F 100%);
   color: #fff;
   display: flex;
   align-items: center;
