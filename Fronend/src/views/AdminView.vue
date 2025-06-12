@@ -58,7 +58,7 @@ export default {
 }
 
 .admin-header h1 {
-  color: #009999;
+  color: #0875C1;
   margin-bottom: 1rem;
 }
 
@@ -78,7 +78,7 @@ export default {
 }
 
 .admin-nav button.active {
-  background-color: #009999;
+  background-color: #C51A6F;
   color: white;
 }
 

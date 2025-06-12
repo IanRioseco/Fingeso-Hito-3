@@ -197,7 +197,7 @@ export default {
 }
 
 .btn-add-user {
-  background-color: #009999;
+  background-color: #C51A6F;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -245,7 +245,7 @@ th, td {
 th {
   background-color: #f5f5f5;
   font-weight: 600;
-  color: #009999;
+    color: #0875C1;
 }
 
 .status-badge {

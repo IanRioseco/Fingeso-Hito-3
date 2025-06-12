@@ -55,6 +55,6 @@ defineProps({
   margin-bottom: 0;
 }
 .especialidad-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
 }
 </style>

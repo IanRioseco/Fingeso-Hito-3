@@ -227,7 +227,7 @@ export default {
 }
 
 .calendar-header h2 {
-  color: #009999;
+  color: #0875C1;
   margin: 0;
 }
 
@@ -260,7 +260,7 @@ export default {
 }
 
 .btn-set-availability {
-  background-color: #99cc00;
+  background-color: #0875C1;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -286,7 +286,7 @@ export default {
 }
 
 .time-header {
-  background-color: #009999;
+  background-color: #0875C1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,7 +296,7 @@ export default {
 }
 
 .day-header {
-  background-color: #009999;
+  background-color: #0875C1;
   height: 72px;
   display: flex;
   flex-direction: column;
@@ -321,7 +321,7 @@ export default {
 }
 
 .day-column.today .day-header {
-  background-color: #007777;
+  background-color: #0875C1;
 }
 
 .time-slot {
@@ -331,6 +331,9 @@ export default {
   padding: 0.25rem;
   position: relative;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .time-slot:hover {

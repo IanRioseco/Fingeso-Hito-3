@@ -28,7 +28,7 @@
   border-radius: 8px;
 }
 .btn-close {
-  background-color: #099;
+  background-color: #0875C1;
   color: #fff;
   font-weight: bold;
   border: none;

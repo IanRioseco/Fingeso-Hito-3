@@ -23,12 +23,13 @@ import corazon from '@/assets/img/cardiologia.png'
 import kinesiologia from '@/assets/img/asistencia-medica-y-medicina.png'
 import examenes from '@/assets/img/prescripcion.png'
 import dermatologia from '@/assets/img/medicina.png'
-import pediatria from '@/assets/img/pediatria.png'
+import pediatria from '@/assets/img/recien-nacido.png'
 import urologia from '@/assets/img/urologia.png'
 import ginecologia from '@/assets/img/ginecologia.png'
 import ortopedia from '@/assets/img/vendaje.png'
-import neurologia from '@/assets/img/medicina-complementaria.png'
+import neurologia from '@/assets/img/cabeza.png'
 import oftalmologia from '@/assets/img/optometria.png'
+import urgencias from '@/assets/img/cuidado-de-la-salud.png'
 
 
 const especialidades = [
@@ -37,7 +38,7 @@ const especialidades = [
   { nombre: 'Cardiología', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: corazon },  
   { nombre: 'Kinesiología', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: kinesiologia },
   { nombre: 'Examenes', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: examenes },
-  { nombre: 'Urgencias', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: bancodesangre },
+  { nombre: 'Urgencias', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: urgencias },
   { nombre: 'Radiologia', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: bancodesangre },
   { nombre: 'Dermatologia', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: dermatologia },
   { nombre: 'Pediatria', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: pediatria },
@@ -94,5 +95,6 @@ const config = {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 10px;
 }
 </style>

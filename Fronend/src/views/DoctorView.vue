@@ -76,7 +76,7 @@ export default {
 }
 
 .doctor-header h1 {
-  color: #009999;
+  color: #0875C1;
   margin: 0;
 }
 
@@ -90,7 +90,7 @@ export default {
 
 .doctor-info span:first-child {
   font-weight: 600;
-  color: #009999;
+  color: #0875C1;
 }
 
 .doctor-nav {
@@ -110,7 +110,7 @@ export default {
 }
 
 .doctor-nav button.active {
-  background-color: #009999;
+  background-color: #C51A6F;
   color: white;
 }
 

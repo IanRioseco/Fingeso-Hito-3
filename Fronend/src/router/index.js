@@ -4,10 +4,10 @@ import store from '@/store';
 // Ejemplo de rutas, ajusta según tus vistas/componentes
 const routes = [
   {
-  path: '/',
-  name: 'Home',
-  component: () => import('@/views/HomeView.vue'),
-  meta: { requiresAuth: false }
+    path: '/',
+    name: 'Home',
+    component: () => import('@/views/HomeView.vue'),
+    meta: { requiresAuth: false }
   },
   {
     path: '/login',
@@ -52,14 +52,14 @@ const routes = [
     meta: { requiresAuth: true, role: 'pharmacy' }
   },
   {
-    path: '/:pathMatch(.*)*',
-    redirect: '/'
-  },
-  {
     path: '/register',
     name: 'Register',
     component: () => import('@/views/RegisterView.vue'),
     meta: { requiresAuth: false }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ];
 
@@ -68,15 +68,17 @@ const router = createRouter({
   routes
 });
 
+// Navegación guard
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = store.getters['auth/isAuthenticated'];
-  const userRole = store.getters['auth/userRole'];
+  console.log('Navegando a:', to.path);
+  console.log('Meta requiresAuth:', to.meta.requiresAuth);
+  console.log('Meta role:', to.meta.role);
   
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/');
-  } else if (to.meta.requiresAuth && to.meta.role && userRole !== to.meta.role) {
-    next('/unauthorized');
+  if (to.meta.requiresAuth) {
+    console.log('Ruta requiere autenticación');
+    next();
   } else {
+    console.log('Ruta no requiere autenticación');
     next();
   }
 });

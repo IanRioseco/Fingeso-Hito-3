@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <img src="@/assets/img/logo-ultrahealt.png" alt="RedSalud Logo" class="logo">
+      <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo">
       <h2>Iniciar Sesión</h2>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
@@ -36,7 +36,13 @@
             <option value="pharmacy">Farmacia</option>
           </select>
         </div>
-        <button type="submit" class="btn-login">Ingresar</button>
+        <button 
+          type="submit" 
+          class="btn-login" 
+          :disabled="isLoading"
+        >
+          {{ isLoading ? 'Iniciando sesión...' : 'Ingresar' }}
+        </button>
         <p v-if="error" class="error-message">{{ error }}</p>
       </form>
       <p class="register-link">
@@ -48,8 +54,23 @@
 </template>
 
 <script>
+import axios from 'axios';
+
+/* Formato RUT chileno */
+function formatRut(rut) {
+  rut = rut.replace(/[^0-9kK]/g, '');
+  if (rut.length > 1) {
+    const dv = rut.slice(-1);
+    const rutBody = rut.slice(0, -1);
+
+    rut = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+  }
+  return rut;
+}
+
+
+
 export default {
-  name: 'LoginView',
   data() {
     return {
       credentials: {
@@ -57,50 +78,111 @@ export default {
         password: '',
         role: ''
       },
-      error: ''
+      error: '',
+      isLoading: false
     }
   },
   methods: {
     formatRut() {
-      // Implementar lógica de formato RUT chileno
+      // Eliminar cualquier carácter que no sea número o 'k'
+      let value = this.credentials.rut.replace(/[^0-9kK]/g, '');
+      
+      if (value.length > 1) {
+        // Separar el dígito verificador
+        const dv = value.slice(-1);
+        const rutBody = value.slice(0, -1);
+        
+        // Formatear con puntos y guión
+        this.credentials.rut = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+      } else {
+        this.credentials.rut = value;
+      }
     },
     async handleLogin() {
       try {
-        console.log('Credenciales enviadas:', this.credentials); // <-- Agrega esto
+        this.isLoading = true;
+        this.error = '';
 
-        // Lógica de autenticación con backend
-        await this.$store.dispatch('auth/login', { ...this.credentials });
-        // Obtén el rol real del usuario autenticado desde el store
-        const userRole = this.$store.getters['auth/userRole'];
+        const rutLimpio = this.credentials.rut.replace(/[.-]/g, '');
 
-        switch(userRole) {
-          case 'admin':
-            this.$router.push('/admin');
-            break;
-          case 'doctor':
-            this.$router.push('/doctor');
-            break;
-          case 'patient':
-            this.$router.push('/patient');
-            break;
-          case 'technician':
-            this.$router.push('/technician');
-            break;
-          case 'receptionist':
-            this.$router.push('/receptionist');
-            break;
-          case 'pharmacy':
-            this.$router.push('/pharmacy');
-            break;
-          default:
-            this.$router.push('/');
+        const user = {
+          rut: rutLimpio,
+          password: this.credentials.password,  
+          role: this.credentials.role
+        };
+
+        console.log('Intentando login con:', user);
+        
+        const response = await axios.post(import.meta.env.VITE_BASE_URL + '/api/administrador/login', user);
+        
+        console.log('Respuesta del servidor:', response.data);
+
+        // Si llegamos aquí, el login fue exitoso
+        if (response.data) {
+          console.log('Login exitoso, rol:', this.credentials.role);
+          
+          try {
+            switch(this.credentials.role) {
+              case 'admin':
+                console.log('Redirigiendo a Admin');
+                await this.$router.push({ name: 'Admin' });
+                break;
+              case 'doctor':
+                await this.$router.push({ name: 'Doctor' });
+                break;
+              case 'patient':
+                await this.$router.push({ name: 'Patient' });
+                break;
+              case 'technician':
+                await this.$router.push({ name: 'Technician' });
+                break;
+              case 'pharmacy':
+                await this.$router.push({ name: 'Pharmacy' });
+                break;
+              case 'receptionist':
+                await this.$router.push({ name: 'Receptionist' });
+                break;
+              default:
+                console.log('Rol no válido:', this.credentials.role);
+                this.error = 'Rol no válido';
+            }
+          } catch (routerError) {
+            console.error('Error en la redirección:', routerError);
+            this.error = 'Error al redireccionar: ' + routerError.message;
+          }
         }
       } catch (error) {
-        this.error = 'Credenciales incorrectas';
+        console.error('Error completo:', error);
+        if (error.response) {
+          console.log('Error de respuesta:', error.response.data);
+          switch (error.response.status) {
+            case 401:
+              this.error = 'Contraseña incorrecta';
+              break;
+            case 403:
+              this.error = 'Rol incorrecto';
+              break;
+            case 404:
+              this.error = 'Usuario no encontrado';
+              break;
+            case 500:
+              this.error = 'Error en el servidor';
+              break;
+            default:
+              this.error = error.response.data || 'Error durante el inicio de sesión';
+          }
+        } else if (error.request) {
+          this.error = 'No se pudo conectar con el servidor';
+        } else {
+          this.error = 'Error durante el inicio de sesión';
+        }
+      } finally {
+        this.isLoading = false;
       }
     }
   }
 }
+
 </script>
 
 <style scoped>

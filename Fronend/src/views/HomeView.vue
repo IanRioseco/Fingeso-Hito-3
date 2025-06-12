@@ -5,7 +5,7 @@
     <div class="home-main">
       <!-- Banner principal -->
       <section class="banner">
-        <img src="@/assets/img/logo-ultrahealt.png" alt="RedSalud" class="banner-img" />
+        <img src="@/assets/img/logoUH.png" alt="RedSalud" class="banner-img" />
         <div class="banner-content">
           <h1>Bienvenido a UltraHealth</h1>
           <p>Tu salud, nuestra prioridad. Agenda tus citas, consulta tus exámenes y accede a tu historial médico.</p>
@@ -28,6 +28,9 @@
               <h2>Especialidades Médicas</h2>
               <p>Explora nuestras especialidades médicas y reserva tu hora en línea.</p>
               <p>Con presencia de Arica a Punta Arenas.</p>
+              <div class="btn-citas-container">
+                <router-link to="/login" class="btn-citas">Agendar Cita</router-link>
+              </div>
             </aside>
           </section>
         </section>
@@ -100,7 +103,7 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
   max-width: 220px;
   margin: 0 2rem 1rem 0;
   background: #fff;
-  border-radius: 45%;
+  border-radius: 50%;
   box-shadow: 0 2px 8px #0001;
 }
 .banner-content {
@@ -149,6 +152,7 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
 }
 .especialidades h2 {
   margin-bottom: 1rem;
@@ -187,18 +191,42 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
 .aside-container-info {
   margin: 0 auto;
 }
+.btn-citas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+.btn-citas {
+  background: #0875C1;
+  color: #fff;
+  border: 2px solid #C51A6F;
+  border-radius: 6px;
+  padding: 5px 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.btn-citas:hover {
+  background: #C51A6F;
+  color: #fff;
+  border: 2px solid #0875C1;
+}
 .servicios {
   display: flex;
   gap: 2rem;
   justify-content: center;
   margin: 2rem 0;
   flex-wrap: wrap;
+  background: #fff;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 2rem;
 }
 .servicio-card {
   background: #fff;
   padding: 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 2px 8px #0001;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.20);
   min-width: 220px;
   text-align: center;
   max-width: 300px;
