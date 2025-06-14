@@ -25,7 +25,7 @@ public class pacienteEntity {
     private String apellidoPa;
 
     @Column(name = "telefono")
-    private Long telefono;
+    private String telefono;
 
     @Column(name = "correo", length = 80)
     private String correo;
@@ -33,10 +33,19 @@ public class pacienteEntity {
     @Column(name = "direccion", length = 80)
     private String direccion;
 
+    @Column(name = "password", length = 100)
+    private String password;
+
+    @Column(name = "rut", length = 20, nullable = false, unique = true)
+    private String rut;
+
     /*Paciente->Fichamedica*/
     @OneToOne
     @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
     private fichamedicaEntity fichamedica;
 
+    @ManyToOne
+    @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
+    private rolEntity rol;
 
 }

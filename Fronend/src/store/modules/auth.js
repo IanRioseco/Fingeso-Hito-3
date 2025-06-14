@@ -1,4 +1,4 @@
-import AuthService from '@/services/auth.service.js'
+import { authService } from '@/services/auth.service.js'
 
 const state = {
   user: null,
@@ -37,7 +37,7 @@ const actions = {
     localStorage.removeItem('token');
   },
   async loginOld({ commit }, credentials) {
-    const response = await AuthService.login(credentials)
+    const response = await authService.login(credentials.rut, credentials.password, credentials.role)
     commit('loginSuccess', response)
   }
 }

@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/medicos")
+@RequestMapping("/api/medicos")
+@CrossOrigin(origins = "http://localhost:5173")
 public class medicoController {
 
     private final medicoServices medicoServ;

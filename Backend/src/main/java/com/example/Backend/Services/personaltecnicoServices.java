@@ -24,7 +24,7 @@ public class personaltecnicoServices {
         return personaltecnicoRepo.save(personaltecnico);
     }
 
-    public List<personaltecnicoEntity> obtenerTodosPersonalTecnicos () {
+    public List<personaltecnicoEntity> obtenerTodosPersonalTecnicos() {
         return personaltecnicoRepo.findAll();
     }
 

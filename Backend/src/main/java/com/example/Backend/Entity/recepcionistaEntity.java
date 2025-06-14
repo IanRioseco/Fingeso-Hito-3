@@ -12,19 +12,30 @@ import java.util.List;
 public class recepcionistaEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_recepcionista")
-    private Long IdRecepcionista;
+    private Long idRecepcionista;
 
     @Column(name = "nombre", length = 50, nullable = false)
-    private String Nombre;
+    private String nombre;
 
     @Column(name = "apellido", length = 50, nullable = false)
-    private String Apellido;
+    private String apellido;
 
-    @Column(name = "correo", length = 20, nullable = false)
-    private String Correo;
+    @Column(name = "correo", length = 100, nullable = false)
+    private String correo;
 
-    @Column(name = "telefono", length = 10)
-    private String Telefono;
+    @Column(name = "telefono", length = 20)
+    private String telefono;
 
+    @Column(name = "password", length = 100)
+    private String password;
+
+    @Column(name = "rut", length = 20, nullable = false, unique = true)
+    private String rut;
+
+    /*Recepcionista->Rol*/
+    @ManyToOne
+    @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
+    private rolEntity rol;
 }

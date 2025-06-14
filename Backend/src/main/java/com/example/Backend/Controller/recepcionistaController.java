@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/recepcionistas")
+@CrossOrigin(origins = "http://localhost:5173")
 public class recepcionistaController {
 
     private final recepcionistaServices recepcionistaServ;
@@ -19,38 +20,40 @@ public class recepcionistaController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<recepcionistaEntity> crear(@RequestBody recepcionistaEntity r) {
-        return new ResponseEntity<>(recepcionistaServ.guardarRecepcionista(r), HttpStatus.CREATED);
+    public ResponseEntity<recepcionistaEntity> crearRecepcionista(@RequestBody recepcionistaEntity recepcionista) {
+        recepcionistaEntity nuevoRecepcionista = recepcionistaServ.guardarRecepcionista(recepcionista);
+        return new ResponseEntity<>(nuevoRecepcionista, HttpStatus.CREATED);
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<recepcionistaEntity>> obtenerTodos() {
-        return new ResponseEntity<>(recepcionistaServ.obtenerTodosRecepcionistas(), HttpStatus.OK);
+    public ResponseEntity<List<recepcionistaEntity>> obtenerTodosRecepcionistas() {
+        List<recepcionistaEntity> recepcionistas = recepcionistaServ.obtenerTodosRecepcionistas();
+        return new ResponseEntity<>(recepcionistas, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<recepcionistaEntity> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<recepcionistaEntity> obtenerRecepcionistaPorId(@PathVariable Long id) {
         return recepcionistaServ.obtenerRecepcionistaPorId(id)
-                .map(r -> new ResponseEntity<>(r, HttpStatus.OK))
+                .map(recepcionista -> new ResponseEntity<>(recepcionista, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<recepcionistaEntity> actualizar(@PathVariable Long id, @RequestBody recepcionistaEntity r) {
+    public ResponseEntity<recepcionistaEntity> actualizarRecepcionista(@PathVariable Long id, @RequestBody recepcionistaEntity recepcionista) {
         return recepcionistaServ.obtenerRecepcionistaPorId(id)
-                .map(rExist -> {
-                    r.setIdRecepcionista(id);
-                    return new ResponseEntity<>(recepcionistaServ.actualizarRecepcionista(r), HttpStatus.OK);
+                .map(recepcionistaExist -> {
+                    recepcionista.setIdRecepcionista(id);
+                    return new ResponseEntity<>(recepcionistaServ.actualizarRecepcionista(recepcionista), HttpStatus.OK);
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+    public ResponseEntity<recepcionistaEntity> eliminarRecepcionista(@PathVariable Long id) {
         return recepcionistaServ.obtenerRecepcionistaPorId(id)
-                .map(r -> {
+                .map(recepcionista -> {
                     recepcionistaServ.eliminarRecepcionista(id);
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    return new ResponseEntity<>(recepcionista, HttpStatus.OK);
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

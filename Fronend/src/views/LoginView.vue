@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { authService } from '@/services/auth.service';
 
 /* Formato RUT chileno */
 function formatRut(rut) {
@@ -67,8 +67,6 @@ function formatRut(rut) {
   }
   return rut;
 }
-
-
 
 export default {
   data() {
@@ -105,20 +103,22 @@ export default {
 
         const rutLimpio = this.credentials.rut.replace(/[.-]/g, '');
 
-        const user = {
+        console.log('Intentando login con:', {
           rut: rutLimpio,
-          password: this.credentials.password,  
+          password: this.credentials.password,
           role: this.credentials.role
-        };
-
-        console.log('Intentando login con:', user);
+        });
         
-        const response = await axios.post(import.meta.env.VITE_BASE_URL + '/api/administrador/login', user);
+        const response = await authService.login(
+          rutLimpio,
+          this.credentials.password,
+          this.credentials.role
+        );
         
-        console.log('Respuesta del servidor:', response.data);
+        console.log('Respuesta del servidor:', response);
 
         // Si llegamos aquí, el login fue exitoso
-        if (response.data) {
+        if (response) {
           console.log('Login exitoso, rol:', this.credentials.role);
           
           try {

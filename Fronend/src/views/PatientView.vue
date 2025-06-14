@@ -5,7 +5,6 @@
         <h1>Bienvenido, {{ patientName }}</h1>
         <div class="patient-meta">
           <span>RUT: {{ patientRut }}</span>
-          <span>Edad: {{ patientAge }} años</span>
         </div>
       </div>
       <div class="patient-actions">
@@ -44,6 +43,7 @@ import MedicalHistory from '@/components/patient/MedicalHistory.vue';
 import PatientExams from '@/components/patient/PatientExams.vue';
 import PatientPrescriptions from '@/components/patient/PatientPrescriptions.vue';
 import PatientSettings from '@/components/patient/PatientSettings.vue';
+import { authService } from '@/services/auth.service';
 
 export default {
   name: 'PatientView',
@@ -66,9 +66,17 @@ export default {
         { id: 'prescriptions', label: 'Mis Recetas' },
         { id: 'settings', label: 'Configuración' },
       ],
-      patientName: 'Ana López', // Esto vendría del backend
-      patientRut: '12.345.678-9', // Esto vendría del backend
-      patientAge: 35 // Esto vendría del backend
+      patientName: '',
+      patientRut: '', 
+    }
+  },
+  created() {
+    const userData = authService.getCurrentUser();
+    if (userData && userData.usuario) {
+      this.patientName = `${userData.usuario.nombrePa} ${userData.usuario.apellidoPa}`;
+      this.patientRut = userData.usuario.rut;
+      // Si tienes la edad en el backend, puedes agregarla aquí
+      // this.patientAge = userData.usuario.edad;
     }
   }
 }

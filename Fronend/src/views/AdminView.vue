@@ -1,7 +1,7 @@
 <template>
   <div class="admin-dashboard">
     <header class="admin-header">
-      <h1>Panel de Administración</h1>
+      <h1>Panel de Administración de {{ adminName }}</h1>
       <nav class="admin-nav">
         <button @click="activeTab = 'users'" :class="{ active: activeTab === 'users' }">
           Gestión de Usuarios
@@ -27,6 +27,7 @@
 import UserManagement from '@/components/admin/UserManagement.vue';
 import ReportsGenerator from '@/components/admin/ReportsGenerator.vue';
 import SettingsPanel from '@/components/admin/SettingsPanel.vue';
+import { authService } from '@/services/auth.service';
 
 export default {
   name: 'AdminView',
@@ -37,7 +38,14 @@ export default {
   },
   data() {
     return {
-      activeTab: 'users'
+      activeTab: 'users',
+      adminName: ''
+    }
+  },
+  created() {
+    const userData = authService.getCurrentUser();
+    if (userData && userData.usuario) {
+      this.adminName = `${userData.usuario.nombre} ${userData.usuario.apellido}`;
     }
   }
 }

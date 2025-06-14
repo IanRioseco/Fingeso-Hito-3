@@ -33,6 +33,7 @@ import DoctorCalendar from '@/components/doctor/DoctorCalendar.vue';
 import PatientProfiles from '@/components/doctor/PatientProfiles.vue';
 import MedicalReports from '@/components/doctor/MedicalReports.vue';
 import DoctorSettings from '@/components/doctor/DoctorSettings.vue';
+import { authService } from '@/services/auth.service';
 
 export default {
   name: 'DoctorView',
@@ -51,8 +52,15 @@ export default {
         { id: 'reports', label: 'Reportes' },
         { id: 'settings', label: 'Configuración' }
       ],
-      doctorName: 'Juan Pérez', // Esto vendría del backend
-      specialty: 'Cardiología' // Esto vendría del backend
+      doctorName: '', // Esto vendría del backend
+      specialty: '' // Esto vendría del backend
+    }
+  },
+  created() {
+    const userData = authService.getCurrentUser();
+    if (userData && userData.usuario) {
+      this.doctorName = `${userData.usuario.nombre} ${userData.usuario.apellido}`;
+      this.specialty = userData.usuario.especialidad;
     }
   }
 }

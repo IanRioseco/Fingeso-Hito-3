@@ -3,7 +3,6 @@ package com.example.Backend.Services;
 import com.example.Backend.Entity.rolEntity;
 import com.example.Backend.Repository.rolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,20 +21,27 @@ public class rolServices {
         return rolRepo.save(rol);
     }
 
-    public List<rolEntity> ObtenerTodoLosRoles(){
+    public List<rolEntity> obtenerTodosRoles() {
         return rolRepo.findAll();
     }
 
-    public Optional<rolEntity> ObtenerRolId(Long Id) {
-        return rolRepo.findById(Id);
+    public Optional<rolEntity> obtenerRolPorId(Long id) {
+        return rolRepo.findById(id);
     }
 
-    public void eliminarRol(Long Id) {
-        rolRepo.deleteById(Id);
-    }
-
-    public rolEntity ActualizarRol(rolEntity rol) {
+    public rolEntity actualizarRol(rolEntity rol) {
         return rolRepo.save(rol);
     }
 
+    public void eliminarRol(Long id) {
+        rolRepo.deleteById(id);
+    }
+
+    public boolean existeRolPorNombre(String nombre) {
+        return rolRepo.findByNombre(nombre).isPresent();
+    }
+
+    public void eliminarTodosLosRoles() {
+        rolRepo.deleteAll();
+    }
 }

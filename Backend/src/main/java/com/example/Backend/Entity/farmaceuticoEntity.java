@@ -27,9 +27,20 @@ public class farmaceuticoEntity {
     @Column(name = "Telefono", length = 50)
     private String telefono;
 
+    @Column(name = "password", length = 100)
+    private String password;
+
+    @Column(name = "rut", length = 20, nullable = false, unique = true)
+    private String rut;
+
     /*Farmaceutico->Farmacia*/
     @ManyToOne
     @JoinColumn(name = "Id_farmacia", referencedColumnName = "Id_farmacia")
     private farmaciaEntity farmacia;
+
+    /*Farmaceutico->Rol*/
+    @ManyToOne
+    @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
+    private rolEntity rol;
 
 }
