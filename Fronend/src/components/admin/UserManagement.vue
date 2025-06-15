@@ -25,7 +25,7 @@
             <td>{{ formatRut(employee.rut) }}</td>
             <td>{{ employee.nombre }}</td>
             <td>{{ employee.apellido }}</td>
-            <td>{{ employee.rol }}</td>
+            <td>{{ employee.rol?.nombre }}</td>
             <td>{{ employee.correo }}</td>
             <td class="actions">
               <button class="btn-edit" @click="editEmployee(employee)">
@@ -87,10 +87,9 @@ export default {
         console.error('Error al cargar empleados:', error);
         errorMessage.value = 'Error al cargar la lista de empleados';
       }
-    };
-
-    const handleSubmit = async (employeeData) => {
+    };    const handleSubmit = async (employeeData) => {
       try {
+        console.log('Datos enviados desde UserManagement:', JSON.stringify(employeeData, null, 2));
         const response = await employeeService.registerEmployee(employeeData);
         if (response.success) {
           showModal.value = false;

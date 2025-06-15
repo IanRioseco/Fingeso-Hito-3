@@ -4,7 +4,7 @@
       <h1>Panel Médico</h1>
       <div class="doctor-info">
         <span>Dr. {{ doctorName }}</span>
-        <span>{{ specialty }}</span>
+        <span>{{ specialty.nombre }}</span>
         <button class="logout-btn" @click="logout">Cerrar sesión</button>
       </div>
     </header>

@@ -39,8 +39,5 @@ public class medicoEntity {
     @JoinColumn(name = "Id_especialidad", referencedColumnName = "Id_especialidad")
     private especialidadEntity especialidad;
 
-    /*Medico->Rol*/
-    @ManyToOne
-    @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
-    private rolEntity rol;
+
 }

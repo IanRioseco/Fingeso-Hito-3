@@ -13,7 +13,8 @@ import java.util.List;
 @RequestMapping("/api/farmaceuticos")
 @CrossOrigin(origins = "http://localhost:5173")
 public class farmaceuticoController {
-    private farmaceuticoServices farmaceuticoServ;
+
+    private final farmaceuticoServices farmaceuticoServ;
 
     @Autowired
     public farmaceuticoController(farmaceuticoServices farmaceuticoServ) {
@@ -41,21 +42,17 @@ public class farmaceuticoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<farmaceuticoEntity> actualizarFarmaceutico(@PathVariable Long id, @RequestBody farmaceuticoEntity farmaceutico) {
-        return farmaceuticoServ.obtenerFarmaceuticoPorId(id)
-                .map(farmaceuticoExist -> {
-                    farmaceutico.setId_farmaceutico(id);
-                    return new ResponseEntity<>(farmaceuticoServ.actualizarFarmaceutico(farmaceutico), HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return farmaceuticoServ.obtenerFarmaceuticoPorId(id).map(farmaceuticoExist -> {
+            farmaceutico.setId_farmaceutico(id);
+            return new ResponseEntity<>(farmaceuticoServ.actualizarFarmaceutico(farmaceutico), HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<farmaceuticoEntity> eliminarFarmaceutico(@PathVariable Long id) {
-        return farmaceuticoServ.obtenerFarmaceuticoPorId(id)
-                .map(farmaceutico -> {
-                    farmaceuticoServ.eliminarFarmaceutico(id);
-                    return new ResponseEntity<>(farmaceutico, HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return farmaceuticoServ.obtenerFarmaceuticoPorId(id).map(farmaceutico -> {
+            farmaceuticoServ.eliminarFarmaceutico(id);
+            return new ResponseEntity<>(farmaceutico, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

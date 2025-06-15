@@ -3,21 +3,46 @@ import api from './api';
 export default {
     // Registrar un nuevo empleado
     async registerEmployee(employeeData) {
+        console.log('Datos recibidos en employee.service:', JSON.stringify(employeeData, null, 2));
+        console.log('Tipo de rol:', typeof employeeData.rol);
+        
         if (!employeeData) {
             throw new Error('Los datos del empleado son requeridos');
         }
 
-        if (!employeeData.rol) {
-            throw new Error('El rol es requerido');
+        if (!employeeData.rol || typeof employeeData.rol !== 'object') {
+            throw new Error('El rol es requerido y debe ser un objeto');
         }
 
-        console.log('Datos recibidos en registerEmployee:', employeeData); // Para debugging
+        if (!employeeData.rol.id_rol || !employeeData.rol.nombre) {
+            throw new Error('El rol debe tener id_rol y nombre');
+        }
 
         try {
-            const response = await api.post('/api/employees', employeeData);
-            return response.data; // Devolver solo los datos de la respuesta
+            // Datos base que son comunes para todos los tipos de empleados
+            const baseData = {
+                rut: employeeData.rut,
+                nombre: employeeData.nombre,
+                apellido: employeeData.apellido,
+                correo: employeeData.correo,
+                telefono: employeeData.telefono,
+                rol: employeeData.rol.nombre // Enviamos solo el nombre del rol
+            };
+
+            // Si hay datos adicionales específicos del rol, agregarlos
+            if (employeeData.especialidad) {
+                baseData.especialidad = employeeData.especialidad;
+            }
+
+            console.log('Datos a enviar al servidor:', JSON.stringify(baseData, null, 2));
+            
+            const response = await api.post('/api/employees', baseData);
+            return response.data;
         } catch (error) {
             console.error('Error en registerEmployee:', error);
+            if (error.response) {
+                console.error('Detalles del error:', error.response.data);
+            }
             throw error;
         }
     },
@@ -70,4 +95,4 @@ export default {
             throw error;
         }
     }
-}; 
+};

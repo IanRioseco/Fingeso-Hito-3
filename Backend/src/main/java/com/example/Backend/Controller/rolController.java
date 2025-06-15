@@ -25,11 +25,12 @@ public class rolController {
         List<rolEntity> rolesCreados = new ArrayList<>();
 
         String[] roles = {
-                "Paciente",     // ID 1
+                "Administrador",     // ID 1
                 "Médico",       // ID 2
                 "Técnico",      // ID 3
                 "Recepcionista", // ID 4
-                "Farmacéutico"  // ID 5
+                "Farmacéutico", // ID 5
+                "Paciente" // ID 6
         };
 
         for (String rolNombre : roles) {

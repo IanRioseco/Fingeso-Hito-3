@@ -13,12 +13,12 @@ public class farmaceuticoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_farmaceutico")
-    private Long Id_farmaceutico;
+    private Long id_farmaceutico; // Cambié el nombre para seguir un formato similar a administradorEntity
 
-    @Column(name = "nombre", length = 50, nullable = false)
+    @Column(name = "Nombre", length = 100, nullable = false)
     private String nombre;
 
-    @Column(name = "apellido", length = 50, nullable = false)
+    @Column(name = "Apellido", length = 100, nullable = false)
     private String apellido;
 
     @Column(name = "Correo", length = 50, nullable = false)
@@ -33,14 +33,13 @@ public class farmaceuticoEntity {
     @Column(name = "rut", length = 20, nullable = false, unique = true)
     private String rut;
 
-    /*Farmaceutico->Farmacia*/
-    @ManyToOne
-    @JoinColumn(name = "Id_farmacia", referencedColumnName = "Id_farmacia")
-    private farmaciaEntity farmacia;
-
     /*Farmaceutico->Rol*/
     @ManyToOne
     @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
     private rolEntity rol;
 
+    /*Farmaceutico->Farmacia*/
+    @ManyToOne
+    @JoinColumn(name = "Id_farmacia", referencedColumnName = "Id_farmacia")
+    private farmaciaEntity farmacia;
 }

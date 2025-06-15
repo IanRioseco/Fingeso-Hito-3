@@ -73,12 +73,12 @@
         <h3>Información Laboral</h3>
         <div class="form-group">
           <label for="rol">Rol:</label>
-          <select id="rol" v-model="formData.rol" required>
+          <select id="rol" v-model="selectedRol" required @change="handleRolChange">
             <option value="">Seleccione un rol</option>
-            <option value="medico">Médico</option>
-            <option value="tecnico">Técnico</option>
-            <option value="recepcionista">Recepcionista</option>
-            <option value="farmaceutico">Farmacéutico</option>
+            <option value="MEDICO">Médico</option>
+            <option value="TECNICO">Técnico</option>
+            <option value="RECEPCIONISTA">Recepcionista</option>
+            <option value="FARMACEUTICO">Farmacéutico</option>
           </select>
         </div>
 
@@ -88,8 +88,8 @@
             type="text" 
             id="especialidad" 
             v-model="formData.especialidad"
-            :disabled="formData.rol !== 'medico'"
-            :required="formData.rol === 'medico'"
+            :disabled="!isMedico"
+            :required="isMedico"
           />
         </div>
       </div>
@@ -103,9 +103,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import employeeService from '@/services/employee.service';
 
+const rolMap = {
+  'MEDICO': { id_rol: 2, nombre: 'Médico' },
+  'TECNICO': { id_rol: 3, nombre: 'Técnico' },
+  'RECEPCIONISTA': { id_rol: 4, nombre: 'Recepcionista' },
+  'FARMACEUTICO': { id_rol: 5, nombre: 'Farmacéutico' }
+};
+
+const selectedRol = ref('');
 const formData = ref({
   nombre: '',
   apellido: '',
@@ -113,11 +121,21 @@ const formData = ref({
   correo: '',
   telefono: '',
   password: '',
-  rol: '',
+  rol: null,
   especialidad: ''
 });
 
 const emit = defineEmits(['submit', 'cancel', 'error']);
+
+const isMedico = computed(() => selectedRol.value === 'MEDICO');
+
+const handleRolChange = () => {
+  if (selectedRol.value) {
+    formData.value.rol = rolMap[selectedRol.value];
+  } else {
+    formData.value.rol = null;
+  }
+};
 
 const formatRut = () => {
   let value = formData.value.rut.replace(/[^0-9kK]/g, '');
@@ -133,61 +151,33 @@ const formatRut = () => {
 
 const handleSubmit = async () => {
   try {
-    // Formatear el RUT (eliminar puntos y guión)
-    const rutLimpio = formData.value.rut.replace(/[.-]/g, '');
-    
     // Validar que el rol esté seleccionado
     if (!formData.value.rol) {
       emit('error', 'Debe seleccionar un rol');
       return;
     }
 
-    // Preparar los datos base
-    const baseData = {
-      rut: rutLimpio,
+    // Crear el objeto base del empleado
+    const employeeData = {
+      rut: formData.value.rut,
       nombre: formData.value.nombre,
       apellido: formData.value.apellido,
       correo: formData.value.correo,
       telefono: formData.value.telefono,
-      password: formData.value.password,
-      rol: formData.value.rol // El rol ya viene en minúsculas del select
+      rol: formData.value.rol  // Ya es un objeto completo con id_rol y nombre
     };
 
-    // Preparar los datos específicos según el rol
-    let employeeData;
-    switch (formData.value.rol) {
-      case 'medico':
-        employeeData = {
-          ...baseData,
-          especialidad: formData.value.especialidad
-        };
-        break;
-      case 'tecnico':
-        employeeData = {
-          ...baseData
-        };
-        break;
-      case 'recepcionista':
-        employeeData = {
-          ...baseData
-        };
-        break;
-      case 'farmaceutico':
-        employeeData = {
-          ...baseData
-        };
-        break;
-      default:
-        throw new Error('Rol no válido');
+    if (formData.value.especialidad && isMedico.value) {
+      employeeData.especialidad = formData.value.especialidad;
     }
-
-    console.log('Enviando datos de empleado:', employeeData); // Para debugging
+    
+    console.log('Objeto empleado a enviar:', JSON.stringify(employeeData, null, 2));
+    
     const response = await employeeService.registerEmployee(employeeData);
-    console.log('Respuesta del servidor:', response); // Para debugging
     emit('submit', response);
   } catch (error) {
     console.error('Error al registrar empleado:', error);
-    emit('error', error.response?.data?.message || 'Error al registrar el empleado');
+    emit('error', error.message || 'Error al registrar el empleado');
   }
 };
 

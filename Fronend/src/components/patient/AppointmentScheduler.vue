@@ -192,6 +192,7 @@
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, addMonths, subMonths, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 
+
 export default {
   name: 'AppointmentScheduler',
   filters: {
