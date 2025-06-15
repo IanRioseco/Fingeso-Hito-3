@@ -5,6 +5,7 @@
       <div class="doctor-info">
         <span>Dr. {{ doctorName }}</span>
         <span>{{ specialty }}</span>
+        <button class="logout-btn" @click="logout">Cerrar sesión</button>
       </div>
     </header>
 
@@ -60,7 +61,13 @@ export default {
     const userData = authService.getCurrentUser();
     if (userData && userData.usuario) {
       this.doctorName = `${userData.usuario.nombre} ${userData.usuario.apellido}`;
-      this.specialty = userData.usuario.especialidad;
+      this.specialty = userData.usuario.especialidad.nombre || 'Especialidad no definida';
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('auth/logout');
+      this.$router.push('/login');
     }
   }
 }
@@ -128,5 +135,16 @@ export default {
   padding: 2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   min-height: 500px;
+}
+
+.logout-btn {
+  background: #C51A6F;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-left: 1rem;
+  font-weight: bold;
+  cursor: pointer;
 }
 </style>

@@ -2,15 +2,58 @@
   <div class="modal">
     <div class="modal-content">
       <h3>Configurar Disponibilidad</h3>
-      <!-- Aquí puedes agregar el formulario de disponibilidad -->
+      <form @submit.prevent="guardarDisponibilidad">
+        <label>Día:
+          <input v-model="dia" required type="number" min="1" max="5" />
+        </label>
+        <label>Hora inicio:
+          <input v-model="horaInicio" required type="time" />
+        </label>
+        <label>Hora fin:
+          <input v-model="horaFin" required type="time" />
+        </label>
+        <button class="btn-save" type="submit">Guardar</button>
+      </form>
       <button class="btn-close" @click="$emit('close')">Cerrar</button>
-      <button class="btn-save" @click="$emit('save', {})">Guardar</button>
     </div>
   </div>
 </template>
 
 <script setup>
-// Puedes agregar props y lógica aquí si lo necesitas
+import { ref } from 'vue'
+import horarioService from '@/services/horarioService'
+
+const dia = ref('')
+const horaInicio = ref('')
+const horaFin = ref('')
+
+const emit = defineEmits(['close', 'save'])
+
+function guardarDisponibilidad() {
+  const user = JSON.parse(localStorage.getItem('user'))
+  const idMedico = user?.idmedico || user?.usuario?.idmedico
+  if (!idMedico) {
+    alert('No se encontró el ID del médico autenticado')
+    return
+  }
+  const disponibilidad = {
+    dia: Number(dia.value),
+    horainicio: horaInicio.value,
+    horafin: horaFin.value,
+    medico: {
+      idmedico: idMedico
+    }
+  }
+  horarioService.crear(disponibilidad)
+    .then(() => {
+      emit('save') // Notifica al calendario para refrescar
+      emit('close') // Cierra el modal
+    })
+    .catch(err => {
+      alert('Error al guardar')
+      console.error(err)
+    })
+}
 </script>
 
 <style scoped>

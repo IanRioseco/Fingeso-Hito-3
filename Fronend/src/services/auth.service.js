@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 export const authService = {
     login(rut, password, role) {
@@ -27,7 +27,7 @@ export const authService = {
             direccion: userData.direccion,
             password: userData.password,
             rol: {
-                id_rol: 18, // ID del rol "Paciente"
+                id_rol: 1, // ID del rol "Paciente"
                 nombre: "Paciente"
             }
         };

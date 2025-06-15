@@ -35,6 +35,7 @@ public class especialidadController {
         return especialidadServ.obtenerEspecialidadPorId(id)
                 .map(especialidad -> new ResponseEntity<>(especialidad, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
     }
 
     @PutMapping("/{id}")

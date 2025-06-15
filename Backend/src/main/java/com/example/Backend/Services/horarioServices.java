@@ -17,11 +17,36 @@ public class horarioServices {
     public horarioServices(horarioRepository horarioRepo) {
         this.horarioRepo = horarioRepo;
     }
-    
-    public horarioEntity guardarHorario(horarioEntity horario) {
+
+    public horarioEntity registrarHorarioValidado(horarioEntity horario) {
+        // Validación: campos obligatorios
+        if (horario.getDia() == null || horario.getHorainicio() == null || horario.getHorafin() == null) {
+            throw new IllegalArgumentException("Debe ingresar todos los campos requeridos.");
+        }
+
+        if (horario.getHorainicio().isAfter(horario.getHorafin()) || horario.getHorainicio().equals(horario.getHorafin())) {
+            throw new IllegalArgumentException("Hora de inicio debe ser menor que la hora de fin.");
+        }
+
+        // Validación: traslapes
+        List<horarioEntity> existentes = horarioRepo.findByMedico_Idmedico(horario.getMedico().getIdmedico());
+        boolean traslape = existentes.stream().anyMatch(h ->
+                h.getDia().equals(horario.getDia()) &&
+                        (
+                                (horario.getHorainicio().isBefore(h.getHorafin()) && horario.getHorainicio().isAfter(h.getHorainicio())) ||
+                                        (horario.getHorafin().isAfter(h.getHorainicio()) && horario.getHorafin().isBefore(h.getHorafin())) ||
+                                        (horario.getHorainicio().equals(h.getHorainicio())) ||
+                                        (horario.getHorafin().equals(h.getHorafin()))
+                        )
+        );
+
+        if (traslape) {
+            throw new IllegalStateException("El horario ingresado se traslapa con uno existente.");
+        }
+
         return horarioRepo.save(horario);
     }
-    
+
     public List<horarioEntity> obtenerTodosHorarios() {
         return horarioRepo.findAll();
     }
@@ -36,5 +61,9 @@ public class horarioServices {
     
     public void eliminarHorario(Long id) {
         horarioRepo.deleteById(id);
+    }
+
+    public List<horarioEntity> obtenerHorariosPorMedico(Long idMedico) {
+        return horarioRepo.findByMedico_Idmedico(idMedico);
     }
 }

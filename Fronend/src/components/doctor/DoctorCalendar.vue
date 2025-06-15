@@ -52,6 +52,7 @@
           </div>
           <div v-else-if="isSlotAvailable(day.date, timeSlot)" class="slot-status">
             Disponible
+            <button @click.stop="eliminarDisponibilidad(day.date, timeSlot)" style="margin-left:8px; color:#C51A6F; background:none; border:none; cursor:pointer;">🗑️</button>
           </div>
           <div v-else class="slot-status">
             No disponible
@@ -166,13 +167,15 @@ export default {
     },
     async fetchData() {
       try {
-        // Obtener disponibilidad y citas para la semana actual
+        // Obtener año y mes visibles
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth(); // 0-indexed
+        // Obtener disponibilidad y citas para el mes visible
+        await this.$store.dispatch('doctor/fetchAvailability', { year, month });
+        // Puedes seguir usando la semana para las citas si lo deseas
         const weekStart = format(startOfWeek(this.currentDate, { weekStartsOn: 1 }), 'yyyy-MM-dd');
         const weekEnd = format(addDays(startOfWeek(this.currentDate, { weekStartsOn: 1 }), 4), 'yyyy-MM-dd');
-        
-        await this.$store.dispatch('doctor/fetchAvailability', { start: weekStart, end: weekEnd });
         await this.$store.dispatch('doctor/fetchAppointments', { start: weekStart, end: weekEnd });
-        
         this.availability = this.$store.state.doctor.availability;
         this.appointments = this.$store.state.doctor.appointments;
       } catch (error) {
@@ -204,6 +207,15 @@ export default {
       } catch (error) {
         console.error('Error al cancelar cita:', error);
       }
+    },
+    async eliminarDisponibilidad(date, time) {
+      const slot = this.availability.find(a => a.date === date && a.time === time && a.available);
+      if (!slot || !slot.id) {
+        alert('No se encontró el ID del horario para eliminar.');
+        return;
+      }
+      await this.$store.dispatch('doctor/eliminarDisponibilidad', slot.id);
+      this.fetchData();
     }
   },
   created() {

@@ -327,7 +327,9 @@ export default {
     selectDate(day) {
       if (day.isAvailable) {
         this.selectedDate = day.date;
-        this.fetchAvailableTimeSlots();
+        // Usar los slots generados en el frontend
+        const found = this.availableDates.find(d => d.date === day.date);
+        this.availableTimeSlots = found ? found.slotTimes.map(time => ({ time })) : [];
       }
     },
     selectTimeSlot(slot) {
@@ -335,8 +337,6 @@ export default {
     },
     async fetchDoctors() {
       try {
-        // Simular llamada al backend
-        // Esto debería ser una llamada real al backend con la especialidad seleccionada
         this.doctors = await this.$store.dispatch('appointments/fetchDoctors', this.selectedSpecialty.id);
       } catch (error) {
         console.error('Error al cargar médicos:', error);
@@ -345,32 +345,17 @@ export default {
     async fetchAvailableDates() {
       try {
         if (!this.selectedDoctor) return;
-        
-        // Simular llamada al backend
-        const startDate = startOfMonth(this.currentDate);
-        const endDate = endOfMonth(this.currentDate);
-        
-        this.availableDates = await this.$store.dispatch('appointments/fetchAvailability', {
-          doctorId: this.selectedDoctor.id,
-          startDate: format(startDate, 'yyyy-MM-dd'),
-          endDate: format(endDate, 'yyyy-MM-dd')
+        const horarios = await this.$store.dispatch('appointments/fetchAvailability', {
+          doctorId: this.selectedDoctor.id
         });
+        this.availableDates = this.generateAvailableDatesForMonth(horarios, this.currentDate);
       } catch (error) {
         console.error('Error al cargar fechas disponibles:', error);
       }
     },
     async fetchAvailableTimeSlots() {
-      try {
-        if (!this.selectedDate || !this.selectedDoctor) return;
-        
-        // Simular llamada al backend
-        this.availableTimeSlots = await this.$store.dispatch('appointments/fetchTimeSlots', {
-          doctorId: this.selectedDoctor.id,
-          date: format(this.selectedDate, 'yyyy-MM-dd')
-        });
-      } catch (error) {
-        console.error('Error al cargar horarios disponibles:', error);
-      }
+      // Ya no es necesario llamar al backend, los slots se generan en el frontend
+      // Esta función puede quedar vacía o eliminarse si no se usa en otro lado
     },
     async confirmAppointment() {
       try {
@@ -381,14 +366,47 @@ export default {
           time: this.selectedTimeSlot.time,
           patientId: this.$store.state.auth.user.id
         };
-        
         await this.$store.dispatch('appointments/createAppointment', appointmentData);
-        
-        // Mostrar confirmación y redirigir
         this.$router.push('/patient/appointments');
       } catch (error) {
         console.error('Error al confirmar cita:', error);
       }
+    },
+    generateAvailableDatesForMonth(horarios, currentDate) {
+      const start = startOfMonth(currentDate);
+      const end = endOfMonth(currentDate);
+      const days = eachDayOfInterval({ start, end });
+      const availableDates = [];
+      days.forEach(date => {
+        const jsDay = date.getDay() === 0 ? 7 : date.getDay();
+        const horario = horarios.find(h => h.dayOfWeek === jsDay);
+        if (
+          horario &&
+          typeof horario.start === 'string' && horario.start &&
+          typeof horario.end === 'string' && horario.end
+        ) {
+          const slots = [];
+          const [startHour, startMin] = horario.start.split(':').map(Number);
+          const [endHour, endMin] = horario.end.split(':').map(Number);
+          if (!isNaN(startHour) && !isNaN(startMin) && !isNaN(endHour) && !isNaN(endMin)) {
+            let current = new Date(date);
+            current.setHours(startHour, startMin, 0, 0);
+            const endTime = new Date(date);
+            endTime.setHours(endHour, endMin, 0, 0);
+            while (current < endTime) {
+              slots.push(format(new Date(current), 'HH:mm'));
+              current.setMinutes(current.getMinutes() + 30);
+            }
+          }
+          availableDates.push({
+            date: format(date, 'yyyy-MM-dd'),
+            slots: slots.length,
+            available: slots.length > 0,
+            slotTimes: slots
+          });
+        }
+      });
+      return availableDates;
     }
   }
 }

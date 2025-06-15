@@ -37,4 +37,10 @@ public class medicoServices {
     public void eliminarMedico(Long id) {
         medicoRepo.deleteById(id);
     }
+
+    public List<medicoEntity> obtenerMedicosPorEspecialidad(Long Id_especialidad) {
+        return medicoRepo.findByEspecialidadId(Id_especialidad);
+    }
+
+
 }

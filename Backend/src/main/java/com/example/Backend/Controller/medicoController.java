@@ -29,7 +29,12 @@ public class medicoController {
         return new ResponseEntity<>(medicoServ.obtenerTodosMedicos(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/especialidad/{idEspecialidad}")
+    public ResponseEntity<List<medicoEntity>> obtenerPorEspecialidad(@PathVariable Long idEspecialidad) {
+        return new ResponseEntity<>(medicoServ.obtenerMedicosPorEspecialidad(idEspecialidad), HttpStatus.OK);
+    }
+
+    @GetMapping("/id/{id}")
     public ResponseEntity<medicoEntity> obtenerPorId(@PathVariable Long id) {
         return medicoServ.obtenerMedicoPorId(id)
                 .map(m -> new ResponseEntity<>(m, HttpStatus.OK))

@@ -1,5 +1,22 @@
 // src/store/doctor.js
-// import axios from 'axios'; // Descomenta cuando tengas la API
+import axios from 'axios'; // Descomenta cuando tengas la API
+import horarioService from '@/services/horarioService';
+import { startOfWeek, addDays, format } from 'date-fns';
+
+function generateTimeBlocks(start, end, blockDuration = 30) {
+  const blocks = [];
+  let [startHour, startMin] = start.split(':').map(Number);
+  let [endHour, endMin] = end.split(':').map(Number);
+  let current = startHour * 60 + startMin;
+  const endTime = endHour * 60 + endMin;
+  while (current < endTime) {
+    const hour = Math.floor(current / 60).toString().padStart(2, '0');
+    const min = (current % 60).toString().padStart(2, '0');
+    blocks.push(`${hour}:${min}`);
+    current += blockDuration;
+  }
+  return blocks;
+}
 
 export default {
   namespaced: true,
@@ -16,21 +33,40 @@ export default {
     }
   },
   actions: {
-    async fetchAvailability({ commit }, { start, end }) {
-      // Cuando tengas la API, usa este código:
-      /*
-      const response = await axios.get(`/api/availability?start=${start}&end=${end}`);
-      commit('setAvailability', response.data);
-      return;
-      */
-
-      // Datos simulados mientras no hay API:
-      const fakeAvailability = [
-        { date: start, time: "08:00", available: false },
-        { date: start, time: "09:00", available: false }
-        // ...agrega más si lo necesitas
-      ];
-      commit('setAvailability', fakeAvailability);
+    async fetchAvailability({ commit }, { year, month } = {}) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const idMedico = user?.idmedico || user?.usuario?.idmedico;
+      if (!idMedico) {
+        commit('setAvailability', []);
+        return;
+      }
+      const response = await horarioService.Obtenerdisponibilidadpormédico(idMedico);
+      // Usar el mes/año visible si se pasan como parámetro, si no el actual
+      const today = new Date();
+      const targetYear = year ?? today.getFullYear();
+      const targetMonth = month ?? today.getMonth(); // 0-indexed
+      const start = new Date(targetYear, targetMonth, 1);
+      const end = new Date(targetYear, targetMonth + 1, 0);
+      let availability = [];
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        const jsDay = d.getDay() === 0 ? 7 : d.getDay();
+        response.data.forEach(horario => {
+          if (horario.dia === jsDay) {
+            let startStr = typeof horario.horainicio === 'string' ? horario.horainicio : (horario.horainicio?.toString?.() || '');
+            let endStr = typeof horario.horafin === 'string' ? horario.horafin : (horario.horafin?.toString?.() || '');
+            const blocks = generateTimeBlocks(startStr.substring(0,5), endStr.substring(0,5));
+            blocks.forEach(time => {
+              availability.push({
+                id: horario.idHorario,
+                date: format(new Date(d), 'yyyy-MM-dd'),
+                time,
+                available: true
+              });
+            });
+          }
+        });
+      }
+      commit('setAvailability', availability);
     },
     async fetchAppointments({ commit }, { start, end }) {
       // Cuando tengas la API, usa este código:
@@ -48,15 +84,11 @@ export default {
       commit('setAppointments', fakeAppointments);
     },
     async saveAvailability({ dispatch }, newAvailability) {
-      // Cuando tengas la API, usa este código:
-      /*
-      await axios.post('/api/availability', newAvailability);
-      await dispatch('fetchAvailability', { start: newAvailability[0].date, end: newAvailability[0].date });
-      return;
-      */
-
-      // Simulación: solo recarga los datos
-      await dispatch('fetchAvailability', { start: newAvailability[0].date, end: newAvailability[0].date });
+      await dispatch('fetchAvailability');
+    },
+    async eliminarDisponibilidad({ dispatch }, id) {
+      await horarioService.eliminar(id);
+      await dispatch('fetchAvailability');
     },
     async updateAppointment({ dispatch }, updatedAppointment) {
       // Cuando tengas la API, usa este código:

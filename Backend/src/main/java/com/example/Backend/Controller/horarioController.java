@@ -19,11 +19,17 @@ public class horarioController {
     public horarioController(horarioServices horarioServ) {
         this.horarioServ = horarioServ;
     }
-    
+
     @PostMapping("/")
-    public ResponseEntity<horarioEntity> crearHorario(@RequestBody horarioEntity horario) {
-        horarioEntity nuevoHorario = horarioServ.guardarHorario(horario);
-        return new ResponseEntity<>(nuevoHorario, HttpStatus.CREATED);
+    public ResponseEntity<?>  registrar(@RequestBody horarioEntity horario) {
+        try {
+            horarioEntity guardado = horarioServ.registrarHorarioValidado(horario);
+            return new ResponseEntity<>(guardado, HttpStatus.CREATED); // Paso 5 normal
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); // Excepción 2
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT); // Excepción 1 (traslape)
+        }
     }
     
     @GetMapping("/")
@@ -39,7 +45,7 @@ public class horarioController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     
-    @PutMapping("/{id}")
+    @PutMapping("/horario/{id}")
     public ResponseEntity<horarioEntity> actualizarHorario(@PathVariable Long id, @RequestBody horarioEntity horario) {
         return horarioServ.obtenerHorarioPorId(id)
                 .map(horarioExist -> {
@@ -49,7 +55,7 @@ public class horarioController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/horario/{id}")
     public ResponseEntity<horarioEntity> eliminarHorario(@PathVariable Long id) {
         return horarioServ.obtenerHorarioPorId(id)
                 .map(horario -> {
@@ -57,5 +63,11 @@ public class horarioController {
                     return new ResponseEntity<>(horario, HttpStatus.OK);
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    // Obtener disponibilidad por médico
+    @GetMapping("/horario/medico/{idMedico}")
+    public ResponseEntity<List<horarioEntity>> listarPorMedico(@PathVariable Long idMedico) {
+        return new ResponseEntity<>(horarioServ.obtenerHorariosPorMedico(idMedico), HttpStatus.OK);
     }
 }
