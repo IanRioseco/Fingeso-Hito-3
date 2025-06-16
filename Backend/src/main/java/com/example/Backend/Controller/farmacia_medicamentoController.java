@@ -61,4 +61,10 @@ public class farmacia_medicamentoController {
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @GetMapping("/farmacia/{farmaciaId}")
+    public ResponseEntity<List<farmacia_medicamentoEntity>> obtenerPorFarmacia(@PathVariable Long farmaciaId) {
+        List<farmacia_medicamentoEntity> lista = farmacia_medicamentoServ.obtenerPorFarmaciaId(farmaciaId);
+        return new ResponseEntity<>(lista, HttpStatus.OK);
+    }
 }

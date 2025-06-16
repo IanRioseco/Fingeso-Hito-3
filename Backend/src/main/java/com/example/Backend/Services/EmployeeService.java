@@ -108,7 +108,6 @@ public class EmployeeService {
         medico.setCorreo((String) data.get("correo"));
         medico.setTelefono((String) data.get("telefono"));
         medico.setPassword((String) data.get("password"));
-        medico.setRol(rol);
 
         // Manejar la especialidad
         String especialidadNombre = (String) data.get("especialidad");

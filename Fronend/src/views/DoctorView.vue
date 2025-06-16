@@ -61,7 +61,7 @@ export default {
     const userData = authService.getCurrentUser();
     if (userData && userData.usuario) {
       this.doctorName = `${userData.usuario.nombre} ${userData.usuario.apellido}`;
-      this.specialty = userData.usuario.especialidad.nombre || 'Especialidad no definida';
+      this.specialty = userData.usuario.especialidad || {nombre: 'Especialidad no definida' };
     }
   },
   methods: {
