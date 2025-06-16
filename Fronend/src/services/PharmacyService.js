@@ -24,9 +24,5 @@ export default {
   async deleteFarmaciaMedicamento(id) {
     // Elimina la relación farmacia-medicamento por ID
     return await api.delete(`/api/farmacia-medicamento/${id}`)
-  },
-  async updateFarmaciaMedicamento(id_farmacia_medicamento, data) {
-    // Actualiza todos los campos de un medicamento en la farmacia
-    return await api.put(`/api/farmacia-medicamento/${id_farmacia_medicamento}`, data)
   }
 }

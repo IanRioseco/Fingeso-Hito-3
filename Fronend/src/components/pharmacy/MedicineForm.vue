@@ -65,11 +65,9 @@ const addMedicine = async () => {
   border-radius: 8px;
 }
 .medicine-form h3 {
-  margin-top: 1rem;
   color: #0875C1;
 }
 .medicine-form input, .medicine-form textarea {
-  margin-top: 1rem;
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #ddd;
@@ -77,7 +75,6 @@ const addMedicine = async () => {
   font-size: 1rem;
 }
 .medicine-form button {
-  margin-top: 1rem;
   background-color: #C51A6F;
   color: #fff;
   border: none;

@@ -116,7 +116,14 @@
         </div>
         
         <div v-if="selectedDate" class="time-selection">
-          <h4>Horarios disponibles para el {{ selectedDate | formatDate }}</h4>
+          <h4>
+            <template v-if="availableTimeSlots.length > 0">
+              Horarios disponibles para el {{ formatDateForDisplay(selectedDate) }}
+            </template>
+            <template v-else>
+              No hay horarios disponibles para el {{ formatDateForDisplay(selectedDate) }}
+            </template>
+          </h4>
           <div class="time-slots">
             <button 
               v-for="slot in availableTimeSlots" 
@@ -145,7 +152,7 @@
           </div>
           <div class="summary-item">
             <span class="summary-label">Fecha:</span>
-            <span class="summary-value">{{ selectedDate | formatDate }}</span>
+            <span class="summary-value">{{ formatDateForDisplay(selectedDate) }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Hora:</span>
@@ -164,6 +171,14 @@
           <button @click="confirmAppointment" class="btn-confirm">
             Confirmar Cita <i class="fas fa-check"></i>
           </button>
+        </div>
+        
+        <!-- Mensajes de éxito y error -->
+        <div v-if="appointmentSuccess" class="alert alert-success">
+          {{ appointmentSuccess }}
+        </div>
+        <div v-if="appointmentError" class="alert alert-error">
+          {{ appointmentError }}
         </div>
       </div>
     </div>
@@ -197,7 +212,12 @@ export default {
   name: 'AppointmentScheduler',
   filters: {
     formatDate(date) {
-      return format(date, "EEEE d 'de' MMMM 'de' yyyy", { locale: es });
+      if (!date) return '';
+      // Forzar a string yyyy-MM-dd
+      if (typeof date === 'string' && date.length === 10 && date[4] === '-' && date[7] === '-') {
+        return format(parseISO(date), "EEEE d 'de' MMMM 'de' yyyy", { locale: es });
+      }
+      return '';
     }
   },
   data() {
@@ -221,7 +241,9 @@ export default {
       ],
       doctors: [], // Esto se cargaría según la especialidad seleccionada
       availableDates: [], // Esto vendría del backend
-      availableTimeSlots: [] // Esto vendría del backend
+      availableTimeSlots: [], // Esto vendría del backend
+      appointmentError: null,
+      appointmentSuccess: null
     }
   },
   computed: {
@@ -251,53 +273,57 @@ export default {
       return ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     },
     calendarDays() {
+      // Genera la grilla del calendario mensual, alineando correctamente los días de la semana
       const start = startOfMonth(this.currentDate);
       const end = endOfMonth(this.currentDate);
-      const days = eachDayOfInterval({ start, end });
-      
-      // Añadir días del mes anterior para completar la primera semana
-      const firstDayOfWeek = start.getDay() === 0 ? 6 : start.getDay() - 1;
-      if (firstDayOfWeek > 0) {
-        const prevMonthDays = eachDayOfInterval({
-          start: subMonths(start, 1),
-          end: subMonths(start, 1)
-        }).slice(-firstDayOfWeek);
-        days.unshift(...prevMonthDays.map(date => ({ date, isCurrentMonth: false })));
+      const days = [];
+      // Día de la semana del primer día del mes (0=domingo, 1=lunes...)
+      let firstDay = start.getDay();
+      firstDay = firstDay === 0 ? 7 : firstDay; // Ajuste: 1=lunes, 7=domingo
+      // Rellenar días vacíos al inicio para alinear con lunes
+      for (let i = 1; i < firstDay; i++) {
+        days.push({ empty: true });
       }
-      
-      // Añadir días del próximo mes para completar la última semana
-      const lastDayOfWeek = end.getDay() === 0 ? 0 : 7 - end.getDay();
-      if (lastDayOfWeek > 0) {
-        const nextMonthDays = eachDayOfInterval({
-          start: addMonths(end, 1),
-          end: addMonths(end, 1)
-        }).slice(0, lastDayOfWeek);
-        days.push(...nextMonthDays.map(date => ({ date, isCurrentMonth: false })));
+      // Días reales del mes
+      for (let d = 0; d < end.getDate(); d++) {
+        const dateObj = new Date(start.getFullYear(), start.getMonth(), d + 1);
+        const dateStr = format(dateObj, 'yyyy-MM-dd');
+        const availableObj = this.availableDates.find(ad => ad.date === dateStr);
+        days.push({
+          date: dateStr,
+          day: (d + 1).toString(),
+          isCurrentMonth: true,
+          isAvailable: !!availableObj,
+          isSelected: this.selectedDate === dateStr,
+          isToday: format(new Date(), 'yyyy-MM-dd') === dateStr,
+          availableSlots: availableObj ? availableObj.slots : 0
+        });
       }
-      
-      return days.map(day => {
-        const date = day.date || day;
-        const isCurrentMonth = day.isCurrentMonth !== false;
-        const isAvailable = this.availableDates.some(d => 
-          isSameDay(parseISO(d.date), date) && d.available
-        );
-        const availableSlots = this.availableDates.find(d => 
-          isSameDay(parseISO(d.date), date)
-        )?.slots || 0;
-        
-        return {
-          date,
-          day: format(date, 'd'),
-          isCurrentMonth,
-          isAvailable: isCurrentMonth && isAvailable,
-          isSelected: this.selectedDate && isSameDay(date, this.selectedDate),
-          isToday: isToday(date),
-          availableSlots
-        };
-      });
+      // Rellenar días vacíos al final para completar la última semana
+      while (days.length % 7 !== 0) {
+        days.push({ empty: true });
+      }
+      return days;
     }
   },
   methods: {
+    formatDateForDisplay(date) {
+      if (!date) return '';
+      try {
+        // Si ya es string yyyy-MM-dd
+        if (typeof date === 'string' && date.length === 10 && date[4] === '-' && date[7] === '-') {
+          return format(parseISO(date), "EEEE d 'de' MMMM 'de' yyyy", { locale: es });
+        }
+        // Si es Date
+        if (date instanceof Date) {
+          return format(date, "EEEE d 'de' MMMM 'de' yyyy", { locale: es });
+        }
+        // Fallback
+        return String(date);
+      } catch (e) {
+        return String(date);
+      }
+    },
     nextStep() {
       if (this.canProceed) {
         if (this.currentStep === 1) {
@@ -327,10 +353,11 @@ export default {
     },
     selectDate(day) {
       if (day.isAvailable) {
+        // Siempre guardar la fecha seleccionada como string yyyy-MM-dd
         this.selectedDate = day.date;
-        // Usar los slots generados en el frontend
-        const found = this.availableDates.find(d => d.date === day.date);
+        const found = this.availableDates.find(d => d.date === this.selectedDate);
         this.availableTimeSlots = found ? found.slotTimes.map(time => ({ time })) : [];
+        this.selectedTimeSlot = null;
       }
     },
     selectTimeSlot(slot) {
@@ -346,10 +373,34 @@ export default {
     async fetchAvailableDates() {
       try {
         if (!this.selectedDoctor) return;
+        // Obtener horarios reales del backend (por médico)
         const horarios = await this.$store.dispatch('appointments/fetchAvailability', {
           doctorId: this.selectedDoctor.id
         });
-        this.availableDates = this.generateAvailableDatesForMonth(horarios, this.currentDate);
+        // Agrupa por fecha real (el backend entrega fecha y hora exacta)
+        const grouped = {};
+        horarios.forEach(horario => {
+          // Si el backend entrega la fecha como string yyyy-MM-dd, úsala directamente
+          const fecha = horario.fecha;
+          if (!grouped[fecha]) grouped[fecha] = [];
+          // Genera slots de 30 minutos entre horainicio y horafin
+          let [startHour, startMin] = horario.horainicio.split(':').map(Number);
+          let [endHour, endMin] = horario.horafin.split(':').map(Number);
+          let current = startHour * 60 + startMin;
+          const endTime = endHour * 60 + endMin;
+          while (current < endTime) {
+            const hour = Math.floor(current / 60).toString().padStart(2, '0');
+            const min = (current % 60).toString().padStart(2, '0');
+            grouped[fecha].push(`${hour}:${min}`);
+            current += 30;
+          }
+        });
+        this.availableDates = Object.keys(grouped).map(date => ({
+          date,
+          slots: grouped[date].length,
+          available: grouped[date].length > 0,
+          slotTimes: grouped[date]
+        }));
       } catch (error) {
         console.error('Error al cargar fechas disponibles:', error);
       }
@@ -359,18 +410,26 @@ export default {
       // Esta función puede quedar vacía o eliminarse si no se usa en otro lado
     },
     async confirmAppointment() {
+      this.appointmentError = null;
+      this.appointmentSuccess = null;
       try {
         const appointmentData = {
-          specialtyId: this.selectedSpecialty.id,
-          doctorId: this.selectedDoctor.id,
-          date: format(this.selectedDate, 'yyyy-MM-dd'),
-          time: this.selectedTimeSlot.time,
-          patientId: this.$store.state.auth.user.id
+          medicoId: this.selectedDoctor.id,
+          fecha: this.selectedDate,
+          hora: this.selectedTimeSlot.time
         };
-        await this.$store.dispatch('appointments/createAppointment', appointmentData);
-        this.$router.push('/patient/appointments');
+        const result = await this.$store.dispatch('appointments/createAppointment', appointmentData);
+        if (result.success) {
+          this.appointmentSuccess = '¡Cita agendada exitosamente!';
+          // Redirigir tras un breve delay
+          setTimeout(() => {
+            this.$router.push('/patient/appointments');
+          }, 1200);
+        } else {
+          this.appointmentError = result.error || 'No se pudo agendar la cita.';
+        }
       } catch (error) {
-        console.error('Error al confirmar cita:', error);
+        this.appointmentError = error.message || 'Error inesperado al agendar la cita.';
       }
     },
     generateAvailableDatesForMonth(horarios, currentDate) {
@@ -800,5 +859,24 @@ export default {
 .btn-next:disabled {
   background-color: #ddd;
   cursor: not-allowed;
+}
+
+.alert {
+  padding: 0.75rem 1.25rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.alert-success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 </style>
