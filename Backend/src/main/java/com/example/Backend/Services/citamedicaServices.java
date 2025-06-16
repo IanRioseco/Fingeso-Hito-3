@@ -1,6 +1,7 @@
 package com.example.Backend.Services;
 
 import com.example.Backend.Entity.citamedicaEntity;
+import com.example.Backend.Entity.horarioEntity;
 import com.example.Backend.Repository.citamedicaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,5 +39,19 @@ public class citamedicaServices {
 
     public void eliminarCitamedica(Long id) {
         citamedicaRepo.deleteById(id);
+    }
+
+    public List<citamedicaEntity> obtenerCitasPorPaciente(Long idPaciente) {
+        List<citamedicaEntity> citas = citamedicaRepo.findByPacienteId(idPaciente);
+        // Para cada cita, buscar y asociar el horario correspondiente (si existe)
+        for (citamedicaEntity cita : citas) {
+            List<horarioEntity> horarios = horarioRepo.findByCitamedicaId(cita.getId_citamedica());
+            if (!horarios.isEmpty()) {
+                horarioEntity horario = horarios.get(0);
+                horario.setCitamedica(null); // Rompe la referencia cíclica para evitar bucles infinitos
+                cita.setHorario(horario);
+            }
+        }
+        return citas;
     }
 }

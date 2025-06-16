@@ -41,31 +41,22 @@ export default {
         return;
       }
       const response = await horarioService.Obtenerdisponibilidadpormédico(idMedico);
-      // Usar el mes/año visible si se pasan como parámetro, si no el actual
-      const today = new Date();
-      const targetYear = year ?? today.getFullYear();
-      const targetMonth = month ?? today.getMonth(); // 0-indexed
-      const start = new Date(targetYear, targetMonth, 1);
-      const end = new Date(targetYear, targetMonth + 1, 0);
+      // Solo usar las fechas reales devueltas por el backend
       let availability = [];
-      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        const jsDay = d.getDay() === 0 ? 7 : d.getDay();
-        response.data.forEach(horario => {
-          if (horario.dia === jsDay) {
-            let startStr = typeof horario.horainicio === 'string' ? horario.horainicio : (horario.horainicio?.toString?.() || '');
-            let endStr = typeof horario.horafin === 'string' ? horario.horafin : (horario.horafin?.toString?.() || '');
-            const blocks = generateTimeBlocks(startStr.substring(0,5), endStr.substring(0,5));
-            blocks.forEach(time => {
-              availability.push({
-                id: horario.idHorario,
-                date: format(new Date(d), 'yyyy-MM-dd'),
-                time,
-                available: true
-              });
-            });
-          }
+      response.data.forEach(horario => {
+        const fecha = typeof horario.fecha === 'string' ? horario.fecha : (horario.fecha?.toString?.() || '');
+        let startStr = typeof horario.horainicio === 'string' ? horario.horainicio : (horario.horainicio?.toString?.() || '');
+        let endStr = typeof horario.horafin === 'string' ? horario.horafin : (horario.horafin?.toString?.() || '');
+        const blocks = generateTimeBlocks(startStr.substring(0,5), endStr.substring(0,5));
+        blocks.forEach(time => {
+          availability.push({
+            id: horario.idHorario,
+            date: fecha,
+            time,
+            available: true
+          });
         });
-      }
+      });
       commit('setAvailability', availability);
     },
     async fetchAppointments({ commit }, { start, end }) {

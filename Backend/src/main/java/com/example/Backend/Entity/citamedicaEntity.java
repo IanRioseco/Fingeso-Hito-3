@@ -42,5 +42,8 @@ public class citamedicaEntity {
     @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
     private fichamedicaEntity fichamedica;
 
+    @Transient
+    private horarioEntity horario;
+
 
 }

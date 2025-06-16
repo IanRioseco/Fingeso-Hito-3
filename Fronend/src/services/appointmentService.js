@@ -16,5 +16,11 @@ export default {
   },
   eliminarCita(id) {
     return api.delete(`/api/citamedica/${id}`);
+  },
+  obtenerCitasPorPaciente(idPaciente) {
+    return api.get(`/api/citamedica/paciente/${idPaciente}`);
+  },
+  obtenerCitasConHorarioPorPaciente(idPaciente) {
+    return api.get(`/api/citamedica/paciente/${idPaciente}/con-horario`);
   }
 };

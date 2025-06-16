@@ -10,7 +10,7 @@
         <span> | Vence: {{ item.medicamento?.fecha_vencimieto }}</span>
         <div v-if="item.medicamento?.cantidad <= 10" class="alert">⚠ Medicamento por agotarse</div>
         <button @click="editMedicine(item)">Editar</button>
-        <button @click="deleteFarmaciaMedicamento(item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID)">Eliminar</button>
+        <button @click="deleteFarmaciaMedicamento(item)">Eliminar</button>
         <div v-if="editingId === (item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID)">
           <form @submit.prevent="saveEdit(item)">
             <input v-model="editData.nombre" placeholder="Nombre" required />
@@ -69,10 +69,23 @@ const saveEdit = async (item) => {
   }
 }
 
-const deleteFarmaciaMedicamento = async (id) => {
+const getFarmaciaMedicamentoId = (item) => {
+  // Prueba todas las variantes posibles de ID
+  return (
+    item.idFarmaciaMedicamento ||
+    item.Id_farmacia_medicamento ||
+    item.id_farmacia_medicamento ||
+    item.id ||
+    item.ID
+  );
+};
+
+const deleteFarmaciaMedicamento = async (item) => {
+  const id = getFarmaciaMedicamentoId(item);
   if (!id) {
-    alert('ID de farmacia-medicamento no encontrado. Revisa la estructura de los datos.')
-    return
+    console.error('Estructura del item al eliminar:', item);
+    alert('ID de farmacia-medicamento no encontrado. Revisa la estructura de los datos.');
+    return;
   }
   try {
     await PharmacyService.deleteFarmaciaMedicamento(id)

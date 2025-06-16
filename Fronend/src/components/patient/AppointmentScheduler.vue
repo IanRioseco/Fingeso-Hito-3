@@ -411,11 +411,28 @@ export default {
       this.appointmentError = null;
       this.appointmentSuccess = null;
       try {
-        // Construir el objeto cita para el backend
+        // Obtener el usuario autenticado del store
+        const paciente = this.$store.getters['auth/currentUser'];
+        const usuario = paciente?.usuario || paciente;
+        // Log detallado de la estructura del usuario
+        console.log('Usuario autenticado para cita:', usuario, {
+          id_paciente: usuario?.id_paciente,
+          idPaciente: usuario?.idPaciente,
+          id: usuario?.id,
+          rutPa: usuario?.rutPa
+        });
+        // Validar usuario y idPaciente
+        const idPaciente = usuario?.id_paciente || usuario?.idPaciente || usuario?.id || usuario?.rutPa;
+        if (!usuario || !idPaciente) {
+          this.appointmentError = 'No se encontró un paciente autenticado válido. Por favor, inicia sesión nuevamente.';
+          return;
+        }
+        // Construir el objeto cita para el backend con idPaciente correcto
         const appointmentData = {
+          estado: 'CitaAgendada',
           idMedico: this.selectedDoctor.id,
-          idHorario: this.selectedTimeSlot.idHorario, // Ahora sí se envía el idHorario correcto
-          estado: 'CitaAgendada'
+          idHorario: this.selectedTimeSlot.idHorario, // idHorario correcto
+          idPaciente
         };
         console.log('appointmentData', appointmentData, 'selectedTimeSlot', this.selectedTimeSlot, 'selectedDoctor', this.selectedDoctor);
         // Llama a la acción del store para crear la cita

@@ -3,8 +3,8 @@
     <div class="modal-content">
       <h3>Configurar Disponibilidad</h3>
       <form @submit.prevent="guardarDisponibilidad">
-        <label>Día:
-          <input v-model="dia" required type="number" min="1" max="5" />
+        <label>Fecha:
+          <input v-model="fecha" required type="date" />
         </label>
         <label>Hora inicio:
           <input v-model="horaInicio" required type="time" />
@@ -23,7 +23,7 @@
 import { ref } from 'vue'
 import horarioService from '@/services/horarioService'
 
-const dia = ref('')
+const fecha = ref('')
 const horaInicio = ref('')
 const horaFin = ref('')
 
@@ -37,7 +37,7 @@ function guardarDisponibilidad() {
     return
   }
   const disponibilidad = {
-    dia: Number(dia.value),
+    fecha: fecha.value, // yyyy-MM-dd
     horainicio: horaInicio.value,
     horafin: horaFin.value,
     medico: {

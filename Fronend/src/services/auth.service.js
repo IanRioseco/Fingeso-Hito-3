@@ -23,15 +23,16 @@ export const authService = {
             apellidoPa: userData.apellidoPa,
             rut: userData.rut,
             correo: userData.correo,
-            telefono: userData.telefono.toString(),
+            telefono: userData.telefono ? userData.telefono.toString() : '',
             direccion: userData.direccion,
             password: userData.password,
             rol: {
-                id_rol: 6, // ID del rol "Paciente"
+                id_rol: 1, // ID del rol "Paciente"
                 nombre: "Paciente"
             }
         };
-        
+        // Log para depuración
+        console.log('Payload registro paciente:', pacienteData);
         return axios.post(API_URL + '/api/pacientes/', pacienteData)
             .then(response => {
                 if (response.data) {

@@ -85,5 +85,11 @@ public class citamedicaController {
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @GetMapping("/paciente/{idPaciente}")
+    public ResponseEntity<List<citamedicaEntity>> obtenerCitasPorPaciente(@PathVariable Long idPaciente) {
+        List<citamedicaEntity> citas = citamedicaServ.obtenerCitasPorPaciente(idPaciente);
+        return new ResponseEntity<>(citas, HttpStatus.OK);
+    }
 }
 
