@@ -12,6 +12,7 @@
         <button @click="activeTab = 'settings'" :class="{ active: activeTab === 'settings' }">
           Configuración
         </button>
+        <button class="logout-btn" @click="logout">Cerrar sesión</button>
       </nav>
     </header>
 
@@ -46,6 +47,12 @@ export default {
     const userData = authService.getCurrentUser();
     if (userData && userData.usuario) {
       this.adminName = `${userData.usuario.nombre} ${userData.usuario.apellido}`;
+    }
+  },
+  methods: {
+    logout() {
+      authService.logout("auth/logout");
+      this.$router.push('/login');
     }
   }
 }
@@ -95,5 +102,15 @@ export default {
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.logout-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #C51A6F;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: white;
 }
 </style>

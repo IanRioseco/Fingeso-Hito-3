@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch('auth/logout');
+      authService.logout("auth/logout");
       this.$router.push('/login');
     }
   }

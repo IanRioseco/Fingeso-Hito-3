@@ -21,12 +21,17 @@ export default {
         try {
             // Datos base que son comunes para todos los tipos de empleados
             const baseData = {
-                rut: employeeData.rut,
+                rut: employeeData.rut.replaceAll("[.-]", ""), 
                 nombre: employeeData.nombre,
                 apellido: employeeData.apellido,
                 correo: employeeData.correo,
                 telefono: employeeData.telefono,
-                rol: employeeData.rol.nombre // Enviamos solo el nombre del rol
+                rol: employeeData.rol.nombre
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "") // quitar tildes
+                    .replace(/\s+/g, "") // quitar espacios
+                    .toLowerCase() // minúsculas
+                ,password: employeeData.password
             };
 
             // Si hay datos adicionales específicos del rol, agregarlos
@@ -42,6 +47,10 @@ export default {
             console.error('Error en registerEmployee:', error);
             if (error.response) {
                 console.error('Detalles del error:', error.response.data);
+                // Mostrar el error del backend en un alert para depuración rápida
+                alert('Error backend: ' + JSON.stringify(error.response.data));
+            } else {
+                alert('Error desconocido al registrar empleado');
             }
             throw error;
         }

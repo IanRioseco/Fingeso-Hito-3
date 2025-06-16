@@ -87,10 +87,9 @@ export default {
         console.error('Error al cargar empleados:', error);
         errorMessage.value = 'Error al cargar la lista de empleados';
       }
-    };    const handleSubmit = async (employeeData) => {
+    };    const handleSubmit = async (response) => {
       try {
-        console.log('Datos enviados desde UserManagement:', JSON.stringify(employeeData, null, 2));
-        const response = await employeeService.registerEmployee(employeeData);
+        // response es la respuesta del backend emitida por el modal
         if (response.success) {
           showModal.value = false;
           await loadEmployees();

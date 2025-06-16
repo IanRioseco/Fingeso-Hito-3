@@ -103,7 +103,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import employeeService from '@/services/employee.service';
 
 const rolMap = {
@@ -164,6 +164,7 @@ const handleSubmit = async () => {
       apellido: formData.value.apellido,
       correo: formData.value.correo,
       telefono: formData.value.telefono,
+      password: formData.value.password, // <-- Agregar password
       rol: formData.value.rol  // Ya es un objeto completo con id_rol y nombre
     };
 
@@ -184,6 +185,10 @@ const handleSubmit = async () => {
 const cancelar = () => {
   emit('cancel');
 };
+
+onMounted(() => {
+  handleRolChange();
+});
 </script>
 
 <style scoped>

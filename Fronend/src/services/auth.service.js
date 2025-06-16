@@ -27,7 +27,7 @@ export const authService = {
             direccion: userData.direccion,
             password: userData.password,
             rol: {
-                id_rol: 1, // ID del rol "Paciente"
+                id_rol: 6, // ID del rol "Paciente"
                 nombre: "Paciente"
             }
         };

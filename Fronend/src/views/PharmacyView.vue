@@ -14,14 +14,22 @@
       <ul>
         <li><button @click="vistaActual = 'formulario'">Ingresar Medicamento</button></li>
         <li><button @click="vistaActual = 'inventario'">Inventario</button></li>
-        <li><button class="logout" @click="logout">Cerrar sesión</button></li>
+        <li><button class="logout-btn" @click="logout">Cerrar sesión</button></li>
       </ul>
     </aside>
 
     <!-- Contenido dinámico -->
     <main class="main-content">
       <h2>{{ titulo }}</h2>
-      <Inventory v-if="vistaActual === 'inventario'" :medicines="medicines" @reload="loadMedicines" />
+      <div v-if="vistaActual === 'inventario'">
+        <input
+          v-model="searchMedicine"
+          type="text"
+          placeholder="Buscar medicamento por nombre..."
+          class="search-bar"
+        />
+        <Inventory :medicines="medicines" :search="searchMedicine" @reload="loadMedicines" />
+      </div>
       <MedicineForm v-else-if="vistaActual === 'formulario'" @medAdded="loadMedicines" />
     </main>
   </div>
@@ -39,6 +47,7 @@ const vistaActual = ref('inventario')
 const farmaciaNombre = ref('')
 const farmaceuticoNombre = ref('')
 const medicines = ref([])
+const searchMedicine = ref("");
 const router = useRouter()
 
 const titulo = computed(() =>
@@ -80,8 +89,8 @@ const loadMedicines = async () => {
 }
 
 const logout = () => {
-  authService.logout()
-  router.push('/login')
+  authService.logout("auth/logout");
+  router.push('/login');
 }
 
 onMounted(() => {
@@ -165,5 +174,14 @@ onMounted(() => {
   right: 2rem;
   text-align: right;
   z-index: 10;
+}
+.search-bar {
+  width: 100%;
+  max-width: 350px;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 </style>

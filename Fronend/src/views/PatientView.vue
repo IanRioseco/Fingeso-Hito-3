@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="patient-actions">
-        <button @click="$router.push('/')" class="btn-quick-action">
+        <button class="logout-btn" @click="logout">
           <i class="fas fa-sign-out"></i> Cerrar Sesión
         </button>
       </div>
@@ -78,6 +78,12 @@ export default {
       // Si tienes la edad en el backend, puedes agregarla aquí
       // this.patientAge = userData.usuario.edad;
     }
+  },
+  methods: {
+    logout() {
+      authService.logout("auth/logout");
+      this.$router.push('/login');
+    }
   }
 }
 </script>
@@ -115,7 +121,7 @@ export default {
   gap: 1rem;
 }
 
-.btn-quick-action {
+.logout-btn {
   background-color: #99cc00;
   color: white;
   border: none;
@@ -128,7 +134,7 @@ export default {
   gap: 0.5rem;
 }
 
-.btn-quick-action:hover {
+.logout-btn:hover {
   background-color: #009999;
 }
 

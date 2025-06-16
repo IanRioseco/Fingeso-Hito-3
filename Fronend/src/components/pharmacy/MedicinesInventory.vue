@@ -2,7 +2,7 @@
   <div class="medicine-list">
     <h3>Lista de Medicamentos</h3>
     <ul>
-      <li v-for="item in medicines" :key="item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID">
+      <li v-for="item in filteredMedicines" :key="item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID">
         <strong>{{ item.medicamento?.nombre }}</strong>
         ({{ item.medicamento?.cantidad }} unidades) - {{ item.medicamento?.descripcion }}
         <span> | Tipo: {{ item.medicamento?.tipo }}</span>
@@ -29,16 +29,27 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue'
+import { defineProps, defineEmits, ref, computed } from 'vue'
 import PharmacyService from '@/services/PharmacyService'
 
 const props = defineProps({
-  medicines: Array
+  medicines: Array,
+  search: {
+    type: String,
+    default: ''
+  }
 })
 const emit = defineEmits(['reload'])
 
 const editingId = ref(null)
 const editData = ref({})
+
+const filteredMedicines = computed(() => {
+  if (!props.search) return props.medicines;
+  return props.medicines.filter(item =>
+    item.medicamento?.nombre?.toLowerCase().includes(props.search.toLowerCase())
+  );
+});
 
 const editMedicine = (item) => {
   editingId.value = item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID

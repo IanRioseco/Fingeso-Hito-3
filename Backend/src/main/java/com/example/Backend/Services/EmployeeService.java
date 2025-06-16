@@ -102,12 +102,14 @@ public class EmployeeService {
 
     private medicoEntity registerMedico(Map<String, Object> data, rolEntity rol) {
         medicoEntity medico = new medicoEntity();
-        medico.setRut((String) data.get("rut"));
+        String rutLimpio = ((String) data.get("rut")).replaceAll("[./-]", "");
+        medico.setRut(rutLimpio);
         medico.setNombre((String) data.get("nombre"));
         medico.setApellido((String) data.get("apellido"));
         medico.setCorreo((String) data.get("correo"));
         medico.setTelefono((String) data.get("telefono"));
         medico.setPassword((String) data.get("password"));
+        medico.setRol(rol); // <--- Asignar el rol correctamente
 
         // Manejar la especialidad
         String especialidadNombre = (String) data.get("especialidad");
@@ -129,7 +131,8 @@ public class EmployeeService {
 
     private personaltecnicoEntity registerTecnico(Map<String, Object> data, rolEntity rol) {
         personaltecnicoEntity tecnico = new personaltecnicoEntity();
-        tecnico.setRut((String) data.get("rut"));
+        String rutLimpio = ((String) data.get("rut")).replaceAll("[./-]", "");
+        tecnico.setRut(rutLimpio);
         tecnico.setNombre((String) data.get("nombre"));
         tecnico.setApellido((String) data.get("apellido"));
         tecnico.setCorreo((String) data.get("correo"));
@@ -141,7 +144,8 @@ public class EmployeeService {
 
     private recepcionistaEntity registerRecepcionista(Map<String, Object> data, rolEntity rol) {
         recepcionistaEntity recepcionista = new recepcionistaEntity();
-        recepcionista.setRut((String) data.get("rut"));
+        String rutLimpio = ((String) data.get("rut")).replaceAll("[./-]", "");
+        recepcionista.setRut(rutLimpio);
         recepcionista.setNombre((String) data.get("nombre"));
         recepcionista.setApellido((String) data.get("apellido"));
         recepcionista.setCorreo((String) data.get("correo"));
@@ -153,7 +157,8 @@ public class EmployeeService {
 
     private farmaceuticoEntity registerFarmaceutico(Map<String, Object> data, rolEntity rol) {
         farmaceuticoEntity farmaceutico = new farmaceuticoEntity();
-        farmaceutico.setRut((String) data.get("rut"));
+        String rutLimpio = ((String) data.get("rut")).replaceAll("[./-]", "");
+        farmaceutico.setRut(rutLimpio);
         farmaceutico.setNombre((String) data.get("nombre"));
         farmaceutico.setApellido((String) data.get("apellido"));
         farmaceutico.setCorreo((String) data.get("correo"));
@@ -268,4 +273,4 @@ public class EmployeeService {
 
         throw new IllegalArgumentException("No se encontró ningún empleado con el RUT: " + rut);
     }
-} 
+}

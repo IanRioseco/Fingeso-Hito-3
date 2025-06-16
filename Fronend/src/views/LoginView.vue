@@ -169,7 +169,7 @@ export default {
               this.error = 'Error en el servidor';
               break;
             default:
-              this.error = error.response.data || 'Error durante el inicio de sesión';
+              this.error = error.response.data.message || 'Error durante el inicio de sesión';
           }
         } else if (error.request) {
           this.error = 'No se pudo conectar con el servidor';
