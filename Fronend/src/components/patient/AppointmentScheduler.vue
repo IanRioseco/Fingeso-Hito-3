@@ -353,10 +353,10 @@ export default {
     },
     selectDate(day) {
       if (day.isAvailable) {
-        // Siempre guardar la fecha seleccionada como string yyyy-MM-dd
         this.selectedDate = day.date;
         const found = this.availableDates.find(d => d.date === this.selectedDate);
-        this.availableTimeSlots = found ? found.slotTimes.map(time => ({ time })) : [];
+        // slotTimes ya tiene { time, idHorario }
+        this.availableTimeSlots = found ? found.slotTimes : [];
         this.selectedTimeSlot = null;
       }
     },
@@ -380,10 +380,9 @@ export default {
         // Agrupa por fecha real (el backend entrega fecha y hora exacta)
         const grouped = {};
         horarios.forEach(horario => {
-          // Si el backend entrega la fecha como string yyyy-MM-dd, úsala directamente
           const fecha = horario.fecha;
           if (!grouped[fecha]) grouped[fecha] = [];
-          // Genera slots de 30 minutos entre horainicio y horafin
+          // Genera slots de 30 minutos entre horainicio y horafin, cada slot lleva idHorario
           let [startHour, startMin] = horario.horainicio.split(':').map(Number);
           let [endHour, endMin] = horario.horafin.split(':').map(Number);
           let current = startHour * 60 + startMin;
@@ -391,7 +390,10 @@ export default {
           while (current < endTime) {
             const hour = Math.floor(current / 60).toString().padStart(2, '0');
             const min = (current % 60).toString().padStart(2, '0');
-            grouped[fecha].push(`${hour}:${min}`);
+            grouped[fecha].push({
+              time: `${hour}:${min}`,
+              idHorario: horario.id // Asocia el idHorario a cada slot
+            });
             current += 30;
           }
         });
@@ -405,23 +407,21 @@ export default {
         console.error('Error al cargar fechas disponibles:', error);
       }
     },
-    async fetchAvailableTimeSlots() {
-      // Ya no es necesario llamar al backend, los slots se generan en el frontend
-      // Esta función puede quedar vacía o eliminarse si no se usa en otro lado
-    },
     async confirmAppointment() {
       this.appointmentError = null;
       this.appointmentSuccess = null;
       try {
+        // Construir el objeto cita para el backend
         const appointmentData = {
-          medicoId: this.selectedDoctor.id,
-          fecha: this.selectedDate,
-          hora: this.selectedTimeSlot.time
+          idMedico: this.selectedDoctor.id,
+          idHorario: this.selectedTimeSlot.idHorario, // Ahora sí se envía el idHorario correcto
+          estado: 'CitaAgendada'
         };
+        console.log('appointmentData', appointmentData, 'selectedTimeSlot', this.selectedTimeSlot, 'selectedDoctor', this.selectedDoctor);
+        // Llama a la acción del store para crear la cita
         const result = await this.$store.dispatch('appointments/createAppointment', appointmentData);
         if (result.success) {
           this.appointmentSuccess = '¡Cita agendada exitosamente!';
-          // Redirigir tras un breve delay
           setTimeout(() => {
             this.$router.push('/patient/appointments');
           }, 1200);

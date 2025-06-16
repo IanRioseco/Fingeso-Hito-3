@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Data
 @Entity
 @Table(name = "citas_medicas")
@@ -35,7 +38,9 @@ public class citamedicaEntity {
 
     /*Citamedica->FichaMedica*/
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
     private fichamedicaEntity fichamedica;
+
 
 }

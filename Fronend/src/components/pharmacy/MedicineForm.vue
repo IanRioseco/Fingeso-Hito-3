@@ -44,8 +44,12 @@ const addMedicine = async () => {
     const user = authService.getCurrentUser()
     const usuario = user?.usuario || user
     const farmaciaId = usuario?.farmacia?.idFarmacia || usuario?.idFarmacia
+    console.log('farmaciaId', farmaciaId, 'medicamentoId', medicamentoId)
     if (farmaciaId && medicamentoId) {
-      await PharmacyService.addMedicamentoToFarmacia(farmaciaId, medicamentoId)
+      const res = await PharmacyService.addMedicamentoToFarmacia(farmaciaId, medicamentoId)
+      console.log('Respuesta addMedicamentoToFarmacia:', res)
+    } else {
+      alert('No se pudo asociar el medicamento a la farmacia. Verifica los IDs.')
     }
     emit('medAdded')
     nombre.value = tipo.value = marca.value = descripcion.value = ''

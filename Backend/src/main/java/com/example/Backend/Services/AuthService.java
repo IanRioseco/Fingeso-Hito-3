@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -72,7 +74,18 @@ public class AuthService {
     private Object loginPaciente(String rut, String password) {
         Optional<pacienteEntity> paciente = pacienteRepo.findByRut(rut);
         if (paciente.isPresent() && password.equals(paciente.get().getPassword())) {
-            return paciente.get();
+            // Armar un DTO para exponer el id como id_paciente
+            pacienteEntity p = paciente.get();
+            Map<String, Object> dto = new HashMap<>();
+            dto.put("id_paciente", p.getRutPa());
+            dto.put("nombrePa", p.getNombrePa());
+            dto.put("apellidoPa", p.getApellidoPa());
+            dto.put("correo", p.getCorreo());
+            dto.put("telefono", p.getTelefono());
+            dto.put("direccion", p.getDireccion());
+            dto.put("rut", p.getRut());
+            // Agrega otros campos si es necesario
+            return dto;
         }
         return null;
     }
@@ -148,4 +161,4 @@ public class AuthService {
         }
         return null;
     }
-} 
+}

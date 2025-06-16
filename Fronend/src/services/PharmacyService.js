@@ -8,6 +8,9 @@ export default {
   async create(data) {
     return await api.post('/api/medicamentos/', data)
   },
+  async updateMedicine(id, data) {
+    return await api.put(`/api/medicamentos/${id}`, data)
+  },
   async delete(id) {
     return await api.delete(`/api/medicamentos/${id}`)
   },

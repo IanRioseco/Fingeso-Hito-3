@@ -20,7 +20,7 @@ public class horarioServices {
 
     public horarioEntity registrarHorarioValidado(horarioEntity horario) {
         // Validación: campos obligatorios
-        if (horario.getDia() == null || horario.getHorainicio() == null || horario.getHorafin() == null) {
+        if (horario.getFecha() == null || horario.getHorainicio() == null || horario.getHorafin() == null) {
             throw new IllegalArgumentException("Debe ingresar todos los campos requeridos.");
         }
 
@@ -31,7 +31,7 @@ public class horarioServices {
         // Validación: traslapes
         List<horarioEntity> existentes = horarioRepo.findByMedico_Idmedico(horario.getMedico().getIdmedico());
         boolean traslape = existentes.stream().anyMatch(h ->
-                h.getDia().equals(horario.getDia()) &&
+                h.getFecha().equals(horario.getFecha()) &&
                         (
                                 (horario.getHorainicio().isBefore(h.getHorafin()) && horario.getHorainicio().isAfter(h.getHorainicio())) ||
                                         (horario.getHorafin().isAfter(h.getHorainicio()) && horario.getHorafin().isBefore(h.getHorafin())) ||

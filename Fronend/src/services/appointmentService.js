@@ -2,8 +2,8 @@ import api from './api';
 
 export default {
   crearCita(cita) {
-    // POST a /api/citamedica/
-    return api.post('/api/citamedica/', cita);
+    // POST a /api/citamedica/crear
+    return api.post('/api/citamedica/crear', cita);
   },
   obtenerCitas() {
     return api.get('/api/citamedica/');

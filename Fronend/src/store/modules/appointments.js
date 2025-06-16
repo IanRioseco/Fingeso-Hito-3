@@ -54,26 +54,30 @@ export default {
       // commit('setUsers', datos);
     },
     async createAppointment({ commit, rootGetters }, cita) {
-      const appointmentService = require('@/services/appointmentService').default;
+      const appointmentService = (await import('@/services/appointmentService')).default;
       const paciente = rootGetters['auth/currentUser'];
+      const usuario = paciente?.usuario || paciente;
+      console.log('Paciente autenticado:', usuario);
+      // Construir el payload exactamente como espera el backend
       const citaPayload = {
-        estado: 'pendiente',
-        medico: { idmedico: cita.medicoId || cita.medico?.id || cita.doctorId },
-        paciente: { rutPa: paciente?.rutPa || paciente?.id || paciente?.rut },
-        fecha: cita.fecha,
-        hora: cita.hora,
+        estado: 'CitaAgendada',
+        idMedico: cita.medicoId || cita.idMedico || cita.medico?.id || cita.doctorId,
+        idPaciente: usuario?.id_paciente || usuario?.idPaciente || usuario?.id || usuario?.rutPa,
+        idHorario: cita.idHorario // Debe venir del slot seleccionado
       };
+      console.log('citaPayload', citaPayload);
+      // Validar que todos los campos requeridos estén presentes
+      if (!citaPayload.estado || !citaPayload.idMedico || !citaPayload.idPaciente || !citaPayload.idHorario) {
+        return { success: false, error: 'Faltan datos requeridos para crear la cita.' };
+      }
       try {
         const response = await appointmentService.crearCita(citaPayload);
         if (response && response.status === 201 && response.data) {
-          // Puedes mostrar un mensaje de éxito aquí si usas notificaciones globales
           return { success: true, data: response.data };
         } else {
-          // Mensaje de error genérico
           return { success: false, error: 'No se pudo crear la cita. Intenta nuevamente.' };
         }
       } catch (error) {
-        // Extrae mensaje de error del backend si existe
         const errorMsg = error.response?.data?.message || error.message || 'Error al crear la cita';
         return { success: false, error: errorMsg };
       }

@@ -4,17 +4,20 @@ import com.example.Backend.Entity.citamedicaEntity;
 import com.example.Backend.Repository.citamedicaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.Backend.Repository.horarioRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class citamedicaServices {
-    private citamedicaRepository citamedicaRepo;
+    private final citamedicaRepository citamedicaRepo;
+    private final horarioRepository horarioRepo;
 
     @Autowired
-    public citamedicaServices(citamedicaRepository citamedicaRepo) {
+    public citamedicaServices(citamedicaRepository citamedicaRepo, horarioRepository horarioRepo) {
         this.citamedicaRepo = citamedicaRepo;
+        this.horarioRepo = horarioRepo;
     }
 
     public citamedicaEntity guardarCitamedica(citamedicaEntity citamedica) {

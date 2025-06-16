@@ -3,37 +3,71 @@
     <h3>Lista de Medicamentos</h3>
     <ul>
       <li v-for="item in medicines" :key="item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID">
-        <pre>{{ item }}</pre>
         <strong>{{ item.medicamento?.nombre }}</strong>
         ({{ item.medicamento?.cantidad }} unidades) - {{ item.medicamento?.descripcion }}
         <span> | Tipo: {{ item.medicamento?.tipo }}</span>
         <span v-if="item.medicamento?.marca"> | Marca: {{ item.medicamento?.marca }}</span>
         <span> | Vence: {{ item.medicamento?.fecha_vencimieto }}</span>
         <div v-if="item.medicamento?.cantidad <= 10" class="alert">⚠ Medicamento por agotarse</div>
+        <button @click="editMedicine(item)">Editar</button>
         <button @click="deleteFarmaciaMedicamento(item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID)">Eliminar</button>
+        <div v-if="editingId === (item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID)">
+          <form @submit.prevent="saveEdit(item)">
+            <input v-model="editData.nombre" placeholder="Nombre" required />
+            <input v-model="editData.tipo" placeholder="Tipo" required />
+            <input v-model="editData.marca" placeholder="Marca" />
+            <input v-model.number="editData.cantidad" type="number" placeholder="Cantidad" min="0" required />
+            <input v-model="editData.fecha_vencimieto" type="date" placeholder="Fecha de Vencimiento" required />
+            <textarea v-model="editData.descripcion" placeholder="Descripción" required></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" @click="cancelEdit">Cancelar</button>
+          </form>
+        </div>
       </li>
     </ul>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, watch } from 'vue'
+import { defineProps, defineEmits, ref } from 'vue'
 import PharmacyService from '@/services/PharmacyService'
 
 const props = defineProps({
   medicines: Array
 })
-
 const emit = defineEmits(['reload'])
 
-watch(() => props.medicines, (newVal) => {
-  console.log('Medicines updated:', newVal)
-}, { immediate: true })
+const editingId = ref(null)
+const editData = ref({})
 
-onMounted(() => {
-  // Mostrar la estructura de los datos para depuración
-  console.log('Medicines:', props.medicines)
-})
+const editMedicine = (item) => {
+  editingId.value = item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID
+  editData.value = {
+    nombre: item.medicamento?.nombre || '',
+    tipo: item.medicamento?.tipo || '',
+    marca: item.medicamento?.marca || '',
+    cantidad: item.medicamento?.cantidad || 0,
+    fecha_vencimieto: item.medicamento?.fecha_vencimieto || '',
+    descripcion: item.medicamento?.descripcion || ''
+  }
+}
+
+const cancelEdit = () => {
+  editingId.value = null
+  editData.value = {}
+}
+
+const saveEdit = async (item) => {
+  try {
+    // Actualiza el medicamento en el backend
+    await PharmacyService.updateMedicine(item.medicamento.idmedicamento || item.medicamento.id, editData.value)
+    editingId.value = null
+    emit('reload')
+  } catch (e) {
+    alert('Error al editar medicamento')
+    console.error(e)
+  }
+}
 
 const deleteFarmaciaMedicamento = async (id) => {
   if (!id) {
