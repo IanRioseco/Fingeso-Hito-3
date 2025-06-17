@@ -87,9 +87,12 @@
 </template>
 
 <script>
+//IMPORTACIONES
 import { authService } from '@/services/auth.service';
 
+//EXPORTACIONES
 export default {
+  //DATOS REACTIVOS PARA EL FORMULARIO
   data() {
     return {
       userData: {
@@ -106,35 +109,40 @@ export default {
     }
   },
   methods: {
+    //FORMATEO DEL RUT
+    // Esta funcion formatea el RUT ingresado por el usuario
     formatRut() {
-      let value = this.userData.rut.replace(/[^0-9kK]/g, '');
-      
+      let value = this.userData.rut.replace(/[^0-9kK]/g, '');//elimina caracteres no numericos y la 'k' o 'K'
+      //si el rut tiene más de 1 caracter, se divide en dos partes
       if (value.length > 1) {
         const dv = value.slice(-1);
         const rutBody = value.slice(0, -1);
         
-        this.userData.rut = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+        this.userData.rut = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;//formatea el rut con puntos y guion
       } else {
         this.userData.rut = value;
       }
     },
+    //MeTODO PARA MANEJAR EL REGISTRO
     async handleRegister() {
       try {
         this.isLoading = true;
         this.error = '';
 
-        const rutLimpio = this.userData.rut.replace(/[.-]/g, '');
+        const rutLimpio = this.userData.rut.replace(/[.-]/g, '');//elimina puntos y guiones del RUT para enviarlo limpio al servidor
+        //crea un objeto con los datos del usuario
         const userData = {
           ...this.userData,
           rut: rutLimpio
         };
 
-        console.log('Intentando registro con:', userData);
-        
+        console.log('Intentando registro con:', userData);//para debbuging
+        //llamada al servicio de autenticación para registrar al usuario
         const response = await authService.register(userData);
         
-        console.log('Respuesta del servidor:', response);
+        console.log('Respuesta del servidor:', response);//para debbuging
 
+        //verifica si la respuesta es exitosa
         if (response && response.success) {
           // Mostrar mensaje de éxito
           alert('Registro exitoso. Por favor, inicia sesión.');
@@ -143,6 +151,7 @@ export default {
         } else {
           this.error = 'Error durante el registro: No se recibió una respuesta válida del servidor';
         }
+        //manejo de errores en el registro
       } catch (error) {
         console.error('Error completo:', error);
         if (error.response) {
@@ -160,6 +169,7 @@ export default {
             default:
               this.error = error.response.data?.message || 'Error durante el registro';
           }
+          //MANEJO DE ERRORES DE LA CONEXIÓN
         } else if (error.request) {
           this.error = 'No se pudo conectar con el servidor. Por favor, verifica tu conexión.';
         } else {

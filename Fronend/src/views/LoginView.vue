@@ -58,16 +58,17 @@ import { authService } from '@/services/auth.service';
 
 /* Formato RUT chileno */
 function formatRut(rut) {
-  rut = rut.replace(/[^0-9kK]/g, '');
+  rut = rut.replace(/[^0-9kK]/g, '');//eliminar caracteres no numerico
   if (rut.length > 1) {
-    const dv = rut.slice(-1);
-    const rutBody = rut.slice(0, -1);
+    const dv = rut.slice(-1);//obtener el digito verificador
+    const rutBody = rut.slice(0, -1);//obtener el número de RUT
 
-    rut = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+    rut = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;//formatear con puntos y guión
   }
   return rut;
 }
 
+//componente
 export default {
   data() {
     return {
@@ -81,6 +82,7 @@ export default {
     }
   },
   methods: {
+    //método para formatear el rut
     formatRut() {
       // Eliminar cualquier carácter que no sea número o 'k'
       let value = this.credentials.rut.replace(/[^0-9kK]/g, '');
@@ -96,32 +98,35 @@ export default {
         this.credentials.rut = value;
       }
     },
+    //método para manejar el inicio de sesión
     async handleLogin() {
       try {
         this.isLoading = true;
         this.error = '';
 
-        const rutLimpio = this.credentials.rut.replace(/[.-]/g, '');
+        const rutLimpio = this.credentials.rut.replace(/[.-]/g, '');//eliminar caracteres no numerico
 
-        console.log('Intentando login con:', {
+        console.log('Intentando login con:', {//para debugging
           rut: rutLimpio,
           password: this.credentials.password,
           role: this.credentials.role
         });
         
+        //llamar al servicio de login
         const response = await authService.login(
           rutLimpio,
           this.credentials.password,
           this.credentials.role
         );
         
-        console.log('Respuesta del servidor:', response);
+        console.log('Respuesta del servidor:', response);//para debugging
 
         // Si llegamos aquí, el login fue exitoso
         if (response) {
           console.log('Login exitoso, rol:', this.credentials.role);
           
           try {
+            //redireccionar según el rol
             switch(this.credentials.role) {
               case 'admin':
                 console.log('Redirigiendo a Admin');
@@ -143,16 +148,19 @@ export default {
                 await this.$router.push({ name: 'Receptionist' });
                 break;
               default:
-                console.log('Rol no válido:', this.credentials.role);
+                console.log('Rol no válido:', this.credentials.role);//para debugging
+                // Si el rol no es válido, mostrar un mensaje de error
                 this.error = 'Rol no válido';
             }
+            //MANEJO DE ERRORES EN LA REDIRECCIÓN
           } catch (routerError) {
             console.error('Error en la redirección:', routerError);
             this.error = 'Error al redireccionar: ' + routerError.message;
           }
         }
+        //MANEJO DE ERRORES DE LA LOGICA DE LOGIN
       } catch (error) {
-        console.error('Error completo:', error);
+        console.error('Error completo:', error);//para debugging
         if (error.response) {
           console.log('Error de respuesta:', error.response.data);
           switch (error.response.status) {
@@ -171,6 +179,7 @@ export default {
             default:
               this.error = error.response.data.message || 'Error durante el inicio de sesión';
           }
+          //MANEJO DE ERRORES DE LA CONEXIÓN
         } else if (error.request) {
           this.error = 'No se pudo conectar con el servidor';
         } else {

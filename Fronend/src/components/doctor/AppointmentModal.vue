@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-defineProps(['appointment'])
+defineProps(['appointment'])// Define las propiedades que recibirá el componente
 </script>
 
 <style scoped>

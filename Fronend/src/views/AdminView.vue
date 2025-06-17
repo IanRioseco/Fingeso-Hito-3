@@ -25,11 +25,14 @@
 </template>
 
 <script>
+//IMPORTACIONES
 import UserManagement from '@/components/admin/UserManagement.vue';
 import ReportsGenerator from '@/components/admin/ReportsGenerator.vue';
 import SettingsPanel from '@/components/admin/SettingsPanel.vue';
 import { authService } from '@/services/auth.service';
 
+//EXPORTACIONES
+//componente de vista de administrador
 export default {
   name: 'AdminView',
   components: {
@@ -37,16 +40,18 @@ export default {
     ReportsGenerator,
     SettingsPanel
   },
+  //definición de datos reactivos
   data() {
     return {
       activeTab: 'users',
       adminName: ''
     }
   },
+  //carga de datos al crear el componente
   created() {
-    const userData = authService.getCurrentUser();
+    const userData = authService.getCurrentUser();//llamada al servicio de autenticación para obtener el usuario actual
     if (userData && userData.usuario) {
-      this.adminName = `${userData.usuario.nombre} ${userData.usuario.apellido}`;
+      this.adminName = `${userData.usuario.nombre} ${userData.usuario.apellido}`;//construcción del nombre del administrador
     }
   },
   methods: {

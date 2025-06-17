@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+//IMPORTACIONES
 import 'vue3-carousel/dist/carousel.css'
 import EspecialtiesCard from './SpecialtiesCard.vue'
 import microscopio from '@/assets/img/microscopio.png'
@@ -31,7 +32,7 @@ import neurologia from '@/assets/img/cabeza.png'
 import oftalmologia from '@/assets/img/optometria.png'
 import urgencias from '@/assets/img/cuidado-de-la-salud.png'
 
-
+//DATOS REACTIVOS PARA EL COMPONENTE
 const especialidades = [
   { nombre: 'Laboratorio', descripcion: 'Con presencia de Arica a Punta Arenas', img: microscopio },
   { nombre: 'Banco de Sangre', descripcion: 'Donar sangre es regalar vida. Reserva tu hora', img: bancodesangre },
@@ -57,9 +58,9 @@ function agruparEnFilas(array, porFila) {
   }
   return filas
 }
-
+// Agrupa las especialidades en pares para simular 2 filas
 const especialidadesAgrupadas = agruparEnFilas(especialidades, 2)
-
+// Configuración del carousel
 const config = {
   height: 250,
   itemsToShow: 4, // Cuántas tarjetas mostrar a la vez

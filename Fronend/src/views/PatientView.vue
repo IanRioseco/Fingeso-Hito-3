@@ -37,6 +37,7 @@
 </template>
 
 <script>
+//IMPORTACIONES
 import AppointmentScheduler from '@/components/patient/AppointmentScheduler.vue';
 import PatientAppointments from '@/components/patient/PatientAppointments.vue';
 import MedicalHistory from '@/components/patient/MedicalHistory.vue';
@@ -45,6 +46,7 @@ import PatientPrescriptions from '@/components/patient/PatientPrescriptions.vue'
 import PatientSettings from '@/components/patient/PatientSettings.vue';
 import { authService } from '@/services/auth.service';
 
+//EXPORTACIONES
 export default {
   name: 'PatientView',
   components: {
@@ -56,6 +58,7 @@ export default {
     PatientSettings
   },
   data() {
+    //definicion de las pestañas y datos del paciente
     return {
       activeTab: 'schedule',
       tabs: [
@@ -70,13 +73,12 @@ export default {
       patientRut: '', 
     }
   },
+  //metodo para obtener datos del usuario
   created() {
-    const userData = authService.getCurrentUser();
+    const userData = authService.getCurrentUser();//obtener datos del usuario
     if (userData && userData.usuario) {
       this.patientName = `${userData.usuario.nombrePa} ${userData.usuario.apellidoPa}`;
       this.patientRut = userData.usuario.rut;
-      // Si tienes la edad en el backend, puedes agregarla aquí
-      // this.patientAge = userData.usuario.edad;
     }
   },
   methods: {

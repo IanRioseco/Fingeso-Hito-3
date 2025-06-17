@@ -184,6 +184,7 @@
     </div>
     
     <div class="step-actions">
+
       <button 
         v-if="currentStep > 1" 
         @click="prevStep" 
@@ -204,13 +205,15 @@
 </template>
 
 <script>
+// Importaciones necesarias
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, addMonths, subMonths, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-
+// Definición de variables y funciones
 export default {
   name: 'AppointmentScheduler',
   filters: {
+    // Filtro para formatear la fecha
     formatDate(date) {
       if (!date) return '';
       // Forzar a string yyyy-MM-dd
@@ -220,6 +223,7 @@ export default {
       return '';
     }
   },
+  //DATOS REACTIVOS PARA EL COMPONENTE
   data() {
     return {
       currentStep: 1,
@@ -229,6 +233,7 @@ export default {
       selectedTimeSlot: null,
       doctorSearch: '',
       currentDate: new Date(),
+      // Lista de especialidades con iconos
       specialties: [
         { id: 1, name: 'Cardiología', icon: 'fas fa-heart' },
         { id: 2, name: 'Dermatología', icon: 'fas fa-allergies' },
@@ -239,14 +244,17 @@ export default {
         { id: 7, name: 'Ginecología', icon: 'fas fa-female' },
         { id: 8, name: 'Urología', icon: 'fas fa-male' }
       ],
-      doctors: [], // Esto se cargaría según la especialidad seleccionada
-      availableDates: [], // Esto vendría del backend
-      availableTimeSlots: [], // Esto vendría del backend
+      // Lista de médicos, citas, horarios y fechas disponibles
+      doctors: [], 
+      availableDates: [], 
+      availableTimeSlots: [], 
       appointmentError: null,
       appointmentSuccess: null
     }
   },
+  // Ciclo de vida del componente
   computed: {
+    // Verifica si se puede avanzar al siguiente paso
     canProceed() {
       switch(this.currentStep) {
         case 1: return this.selectedSpecialty !== null;
@@ -255,27 +263,34 @@ export default {
         default: return true;
       }
     },
+    // Filtra los médicos según la búsqueda
     filteredDoctors() {
+      // Si no hay búsqueda, devolver todos los médicos
       if (!this.doctorSearch) return this.doctors;
-      const search = this.doctorSearch.toLowerCase();
+      const search = this.doctorSearch.toLowerCase();// Convertir la búsqueda a minúsculas
+      // Filtrar médicos por nombre o apellido
       return this.doctors.filter(doctor => 
-        doctor.firstName.toLowerCase().includes(search) || 
-        doctor.lastName.toLowerCase().includes(search)
+        doctor.firstName.toLowerCase().includes(search) || // Comprobar si el nombre o apellido contiene la búsqueda
+        doctor.lastName.toLowerCase().includes(search)// Comprobar si el apellido contiene la búsqueda
       );
     },
+    // Formatea el nombre del mes actual
     currentMonthName() {
       return format(this.currentDate, 'MMMM', { locale: es });
     },
+    // Obtiene el año actual
     currentYear() {
       return format(this.currentDate, 'yyyy');
     },
+    // Obtiene los días de la semana
     dayNames() {
       return ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     },
+    // Genera la grilla del calendario mensual
     calendarDays() {
       // Genera la grilla del calendario mensual, alineando correctamente los días de la semana
-      const start = startOfMonth(this.currentDate);
-      const end = endOfMonth(this.currentDate);
+      const start = startOfMonth(this.currentDate);// Obtiene el primer día del mes
+      const end = endOfMonth(this.currentDate);// Obtiene el último día del mes
       const days = [];
       // Día de la semana del primer día del mes (0=domingo, 1=lunes...)
       let firstDay = start.getDay();
@@ -286,9 +301,13 @@ export default {
       }
       // Días reales del mes
       for (let d = 0; d < end.getDate(); d++) {
+        // Crear objeto de fecha para cada día del mes
         const dateObj = new Date(start.getFullYear(), start.getMonth(), d + 1);
+        // Formatear la fecha a yyyy-MM-dd
         const dateStr = format(dateObj, 'yyyy-MM-dd');
+        // Verificar si la fecha está disponible
         const availableObj = this.availableDates.find(ad => ad.date === dateStr);
+        // Agregar el día al array
         days.push({
           date: dateStr,
           day: (d + 1).toString(),
@@ -306,7 +325,9 @@ export default {
       return days;
     }
   },
+  // Métodos para manejar la lógica del calendario
   methods: {
+    // Formatea la fecha para mostrarla en el formato "EEEE d 'de' MMMM 'de' yyyy"
     formatDateForDisplay(date) {
       if (!date) return '';
       try {
@@ -324,33 +345,42 @@ export default {
         return String(date);
       }
     },
+    // Avanza al siguiente paso del agendamiento
     nextStep() {
+      // Verifica si se puede avanzar al siguiente paso
       if (this.canProceed) {
+        // Reinicia mensajes de error y éxito
         if (this.currentStep === 1) {
           this.fetchDoctors();
-        } else if (this.currentStep === 2) {
+        } else if (this.currentStep === 2) {// Paso 2: Selección de fecha y hora
           this.fetchAvailableDates();
         }
         this.currentStep++;
       }
     },
+    // Retrocede al paso anterior del agendamiento
     prevStep() {
       this.currentStep--;
     },
+    // Selecciona una especialidad
     selectSpecialty(specialty) {
       this.selectedSpecialty = specialty;
     },
+    // Selecciona un médico
     selectDoctor(doctor) {
       this.selectedDoctor = doctor;
     },
+    // Navega al mes anterior o siguiente
     prevMonth() {
       this.currentDate = subMonths(this.currentDate, 1);
       this.fetchAvailableDates();
     },
+    // Avanza al mes siguiente
     nextMonth() {
       this.currentDate = addMonths(this.currentDate, 1);
       this.fetchAvailableDates();
     },
+    // Selecciona una fecha del calendario
     selectDate(day) {
       if (day.isAvailable) {
         this.selectedDate = day.date;
@@ -360,9 +390,11 @@ export default {
         this.selectedTimeSlot = null;
       }
     },
+    // Selecciona un horario disponible
     selectTimeSlot(slot) {
       this.selectedTimeSlot = slot;
     },
+    // Carga los médicos según la especialidad seleccionada
     async fetchDoctors() {
       try {
         this.doctors = await this.$store.dispatch('appointments/fetchDoctors', this.selectedSpecialty.id);
@@ -370,6 +402,7 @@ export default {
         console.error('Error al cargar médicos:', error);
       }
     },
+    // Carga las fechas disponibles para el médico seleccionado
     async fetchAvailableDates() {
       try {
         if (!this.selectedDoctor) return;
@@ -387,6 +420,7 @@ export default {
           let [endHour, endMin] = horario.horafin.split(':').map(Number);
           let current = startHour * 60 + startMin;
           const endTime = endHour * 60 + endMin;
+          // Asegura que la fecha exista en el objeto agrupado
           while (current < endTime) {
             const hour = Math.floor(current / 60).toString().padStart(2, '0');
             const min = (current % 60).toString().padStart(2, '0');
@@ -397,19 +431,26 @@ export default {
             current += 30;
           }
         });
+        // Convierte el objeto agrupado en un array de fechas disponibles
         this.availableDates = Object.keys(grouped).map(date => ({
           date,
           slots: grouped[date].length,
           available: grouped[date].length > 0,
           slotTimes: grouped[date]
         }));
+        // Genera las fechas disponibles para el mes actual
+        //atrapado de errores
       } catch (error) {
         console.error('Error al cargar fechas disponibles:', error);
       }
     },
+    // Maneja la confirmación de la cita
     async confirmAppointment() {
+      // Reinicia mensajes de error y éxito
       this.appointmentError = null;
+      // Reinicia mensajes de éxito
       this.appointmentSuccess = null;
+      // tri catch para capturar errores
       try {
         // Obtener el usuario autenticado del store
         const paciente = this.$store.getters['auth/currentUser'];
@@ -423,7 +464,9 @@ export default {
         });
         // Validar usuario y idPaciente
         const idPaciente = usuario?.id_paciente || usuario?.idPaciente || usuario?.id || usuario?.rutPa;
+        // Verifica que el usuario y el idPaciente sean válidos
         if (!usuario || !idPaciente) {
+          // Si no hay usuario o idPaciente, muestra un mensaje de error
           this.appointmentError = 'No se encontró un paciente autenticado válido. Por favor, inicia sesión nuevamente.';
           return;
         }
@@ -434,49 +477,66 @@ export default {
           idHorario: this.selectedTimeSlot.idHorario, // idHorario correcto
           idPaciente
         };
+        //debbug
         console.log('appointmentData', appointmentData, 'selectedTimeSlot', this.selectedTimeSlot, 'selectedDoctor', this.selectedDoctor);
         // Llama a la acción del store para crear la cita
         const result = await this.$store.dispatch('appointments/createAppointment', appointmentData);
+        // Maneja la respuesta del backend
         if (result.success) {
+          // Si la cita se creo exitosamente, muestra un mensaje de éxito
           this.appointmentSuccess = '¡Cita agendada exitosamente!';
           setTimeout(() => {
             this.$router.push('/patient/appointments');
           }, 1200);
         } else {
+          // Si hubo un error al crear la cita, muestra el mensaje de error
           this.appointmentError = result.error || 'No se pudo agendar la cita.';
         }
       } catch (error) {
+        // Captura cualquier error inesperado y muestra un mensaje generico
         this.appointmentError = error.message || 'Error inesperado al agendar la cita.';
       }
     },
+    // Genera las fechas disponibles para el mes actual
     generateAvailableDatesForMonth(horarios, currentDate) {
+      // Genera un array de fechas disponibles para el mes actual basado en los horarios
       const start = startOfMonth(currentDate);
       const end = endOfMonth(currentDate);
       const days = eachDayOfInterval({ start, end });
       const availableDates = [];
+      // Recorre cada dia del mes
       days.forEach(date => {
-        const jsDay = date.getDay() === 0 ? 7 : date.getDay();
-        const horario = horarios.find(h => h.dayOfWeek === jsDay);
+        const jsDay = date.getDay() === 0 ? 7 : date.getDay();// Obtiene el dia de la semana en formato numerico
+        const horario = horarios.find(h => h.dayOfWeek === jsDay);// Obtiene el horario correspondiente al día
         if (
           horario &&
           typeof horario.start === 'string' && horario.start &&
           typeof horario.end === 'string' && horario.end
         ) {
+          // Crea un array de horarios disponibles para el dia
           const slots = [];
           const [startHour, startMin] = horario.start.split(':').map(Number);
           const [endHour, endMin] = horario.end.split(':').map(Number);
+          // Verifica que los horarios sean validos
           if (!isNaN(startHour) && !isNaN(startMin) && !isNaN(endHour) && !isNaN(endMin)) {
+            // Calcula el inicio y el final del horario
             let current = new Date(date);
             current.setHours(startHour, startMin, 0, 0);
             const endTime = new Date(date);
             endTime.setHours(endHour, endMin, 0, 0);
+            // Recorre cada horario disponible
             while (current < endTime) {
+              // Agrega el horario disponible al array
               slots.push(format(new Date(current), 'HH:mm'));
+              // Incrementa el tiempo del horario
               current.setMinutes(current.getMinutes() + 30);
             }
           }
+          // Agrega el día a la lista de fechas disponibles
           availableDates.push({
+            // Formatea la fecha a yyyy-MM-dd
             date: format(date, 'yyyy-MM-dd'),
+            // Calcula el número de horarios disponibles para el dia
             slots: slots.length,
             available: slots.length > 0,
             slotTimes: slots

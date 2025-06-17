@@ -59,9 +59,14 @@
 </template>
 
 <script setup>
+<<<<<<< Updated upstream
 import { defineProps, defineEmits, ref, computed } from 'vue'
+=======
+//IMPORTACIONES
+import { defineProps, defineEmits, ref } from 'vue'
+>>>>>>> Stashed changes
 import PharmacyService from '@/services/PharmacyService'
-
+//DATOS REACTIVOS PARA EL COMPONENTE
 const props = defineProps({
   medicines: Array,
   search: {
@@ -69,10 +74,12 @@ const props = defineProps({
     default: ''
   }
 })
+//emisiones de eventos
 const emit = defineEmits(['reload'])
-
+//DATOS REACTIVOS PARA EL FORMULARIO
 const editingId = ref(null)
 const editData = ref({})
+<<<<<<< Updated upstream
 
 const getFarmaciaMedicamentoId = (item) => {
   return (
@@ -104,7 +111,15 @@ const uniqueFilteredMedicines = computed(() => {
 
 const editMedicine = (item) => {
   editingId.value = getFarmaciaMedicamentoId(item)
+=======
+//FUNCIONES PARA MANEJAR EL FORMULARIO
+const editMedicine = (item) => {
+  // Si el ID del medicamento es valido, establece el valor en el formulario
+  editingId.value = item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID
+  // Crea un objeto vacío para guardar los datos del formulario
+>>>>>>> Stashed changes
   editData.value = {
+    // Obtiene los datos del medicamento
     nombre: item.medicamento?.nombre || '',
     tipo: item.medicamento?.tipo || '',
     marca: item.medicamento?.marca || '',
@@ -113,33 +128,53 @@ const editMedicine = (item) => {
     descripcion: item.medicamento?.descripcion || ''
   }
 }
-
+// Función para cancelar la edición del formulario
 const cancelEdit = () => {
   editingId.value = null
   editData.value = {}
 }
-
+// Función para guardar los cambios en el formulario
 const saveEdit = async (item) => {
   try {
     await PharmacyService.updateMedicine(item.medicamento.idmedicamento || item.medicamento.id, editData.value)
     editingId.value = null
     emit('reload')
+    // atrapado de errores
   } catch (e) {
     alert('Error al editar medicamento')
     console.error(e)
   }
 }
+<<<<<<< Updated upstream
 
+=======
+// Función para obtener el ID del medicamento
+const getFarmaciaMedicamentoId = (item) => {
+  // Prueba todas las variantes posibles de ID
+  return (
+    item.idFarmaciaMedicamento ||
+    item.Id_farmacia_medicamento ||
+    item.id_farmacia_medicamento ||
+    item.id ||
+    item.ID
+  );
+};
+// Función para eliminar un medicamento de la farmacia
+>>>>>>> Stashed changes
 const deleteFarmaciaMedicamento = async (item) => {
+  // Obtiene el ID del medicamento
   const id = getFarmaciaMedicamentoId(item);
+  // Verifica que el ID del medicamento sea valido
   if (!id) {
     console.error('Estructura del item al eliminar:', item);
     alert('ID de farmacia-medicamento no encontrado. Revisa la estructura de los datos.');
     return;
   }
+  // Intenta eliminar el medicamento de la farmacia
   try {
     await PharmacyService.deleteFarmaciaMedicamento(id)
     emit('reload')
+    // atrapado de errores
   } catch (e) {
     alert('Error al eliminar medicamento de la farmacia')
     console.error(e)

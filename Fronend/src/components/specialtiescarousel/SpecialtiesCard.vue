@@ -11,6 +11,7 @@
 </template>
 
 <script setup>
+//definicion de propiedades
 defineProps({
   especialidad: {
     type: Object,

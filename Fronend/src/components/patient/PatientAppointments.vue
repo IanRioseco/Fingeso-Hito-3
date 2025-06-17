@@ -18,19 +18,26 @@
 </template>
 
 <script setup>
+//IMPORTACIONES
 import { ref, onMounted } from 'vue'
 import appointmentService from '@/services/appointmentService'
 import { useStore } from 'vuex'
 
+//DATOS REACTIVOS PARA EL COMPONENTE
 const appointments = ref([])
 const store = useStore()
-
+//funciones para formatear la fecha y la hora
 function formatFecha(fecha) {
+  // Verifica si la fecha es una fecha valida
   if (!fecha) return ''
+  // Verifica si la fecha es una fecha valida
   const d = new Date(fecha)
+  // Si es una fecha válida, devuelve la fecha en formato DD/MM/AAAA
   if (!isNaN(d)) {
+    // Devuelve la fecha en formato DD/MM/AAAA
     return d.toLocaleDateString('es-CL')
   }
+  // Si la fecha no es una fecha válida, devuelve la fecha como string
   if (typeof fecha === 'string' && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
     const [y, m, d] = fecha.split('-')
     return `${d}/${m}/${y}`

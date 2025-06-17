@@ -20,22 +20,31 @@
 </template>
 
 <script setup>
+//IMPORTACIONES
 import { ref } from 'vue'
 import horarioService from '@/services/horarioService'
 
+// Composición del componente
+// Variables reactivas para la fecha y horas
 const fecha = ref('')
 const horaInicio = ref('')
 const horaFin = ref('')
 
+// Definición de eventos para emitir al componente padre
 const emit = defineEmits(['close', 'save'])
 
+// Función para guardar la disponibilidad
 function guardarDisponibilidad() {
+  //json.parse para obtener el usuario del localStorage
   const user = JSON.parse(localStorage.getItem('user'))
+  // Verifica si el usuario está autenticado
   const idMedico = user?.idmedico || user?.usuario?.idmedico
+  // Si no se encuentra el ID del médico, muestra un mensaje de error
   if (!idMedico) {
     alert('No se encontró el ID del médico autenticado')
     return
   }
+  // Crea el objeto de disponibilidad con los datos ingresados
   const disponibilidad = {
     fecha: fecha.value, // yyyy-MM-dd
     horainicio: horaInicio.value,
@@ -44,11 +53,13 @@ function guardarDisponibilidad() {
       idmedico: idMedico
     }
   }
+  // Llama al servicio para crear la disponibilidad
   horarioService.crear(disponibilidad)
     .then(() => {
       emit('save') // Notifica al calendario para refrescar
       emit('close') // Cierra el modal
     })
+    // Maneja errores en la creación de la disponibilidad
     .catch(err => {
       alert('Error al guardar')
       console.error(err)

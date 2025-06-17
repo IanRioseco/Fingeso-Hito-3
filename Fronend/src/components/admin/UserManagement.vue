@@ -60,35 +60,45 @@
 </template>
 
 <script>
+//IMPORTACIONES
 import { ref, onMounted } from 'vue';
 import UserFormModal from './UserFormModal.vue';
 import employeeService from '@/services/employee.service';
 
+// DEFINICIÓN DEL COMPONENTE
 export default {
   name: 'UserManagement',
   components: {
     UserFormModal
   },
+  //DATOS REACTIVOS PARA EL COMPONENTE
   setup() {
     const employees = ref([]);
     const showModal = ref(false);
     const errorMessage = ref('');
+<<<<<<< Updated upstream
     const editingEmployee = ref(null);
 
+=======
+    // Cargar empleados al montar el componente
+>>>>>>> Stashed changes
     const loadEmployees = async () => {
+      //try catch para capturar errores
       try {
-        const response = await employeeService.getAllEmployees();
+        const response = await employeeService.getAllEmployees();// Llamada al servicio para obtener todos los empleados
         // Convertir el objeto de empleados en un array
         const employeeArray = [];
-        if (response.medicos) employeeArray.push(...response.medicos);
-        if (response.tecnicos) employeeArray.push(...response.tecnicos);
-        if (response.recepcionistas) employeeArray.push(...response.recepcionistas);
-        if (response.farmaceuticos) employeeArray.push(...response.farmaceuticos);
+        if (response.medicos) employeeArray.push(...response.medicos);// Agregar los médicos
+        if (response.tecnicos) employeeArray.push(...response.tecnicos);// Agregar los técnicos
+        if (response.recepcionistas) employeeArray.push(...response.recepcionistas);// Agregar los recepcionistas
+        if (response.farmaceuticos) employeeArray.push(...response.farmaceuticos);// Agregar los farmacéuticos
         employees.value = employeeArray;
+        // atrapado de errores
       } catch (error) {
-        console.error('Error al cargar empleados:', error);
-        errorMessage.value = 'Error al cargar la lista de empleados';
+        console.error('Error al cargar empleados:', error);//debbugging
+        errorMessage.value = 'Error al cargar la lista de empleados';// Mostrar mensaje de error
       }
+<<<<<<< Updated upstream
     };
 
     const handleSubmit = async (response) => {
@@ -98,33 +108,54 @@ export default {
           showModal.value = false;
           editingEmployee.value = null;
           await loadEmployees();
+=======
+    };    const handleSubmit = async (employeeData) => {// Manejo del envío del formulario
+      //try catch para capturar errores
+      try {
+        //cosole.log para depuración
+        console.log('Datos enviados desde UserManagement:', JSON.stringify(employeeData, null, 2));
+        const response = await employeeService.registerEmployee(employeeData);// Llamada al servicio para registrar el empleado
+        //si la respuesta es exitosa, cerrar el modal y recargar empleados
+        if (response.success) {
+          showModal.value = false;
+          await loadEmployees();// Recargar empleados
+>>>>>>> Stashed changes
           errorMessage.value = '';
         } else {
           errorMessage.value = response.message || 'Error al registrar/actualizar el empleado';
         }
+        // atrapado de errores
       } catch (error) {
+<<<<<<< Updated upstream
         console.error('Error al registrar empleado:', error);
         errorMessage.value = error.response?.data?.message || 'Error al registrar/actualizar el empleado';
+=======
+        console.error('Error al registrar empleado:', error);//debbug
+        errorMessage.value = error.response?.data?.message || 'Error al registrar el empleado';
+>>>>>>> Stashed changes
       }
     };
-
+    //funcio para manejar el error del formulario
     const handleError = (message) => {
       errorMessage.value = message;
     };
-
+    // Función para editar un empleado
     const deleteEmployee = async (rut) => {
+      // Confirmación antes de eliminar
       if (confirm('¿Está seguro de eliminar este empleado?')) {
+        //try catch para capturar errores
         try {
-          await employeeService.deleteEmployee(rut);
-          await loadEmployees();
+          await employeeService.deleteEmployee(rut);// Llamada al servicio para eliminar el empleado
+          await loadEmployees();// Recargar empleados
           errorMessage.value = '';
+          // atrapado de errores
         } catch (error) {
-          console.error('Error al eliminar empleado:', error);
+          console.error('Error al eliminar empleado:', error);//debbug
           errorMessage.value = 'Error al eliminar el empleado';
         }
       }
     };
-
+    // Función para formatear el RUT
     const formatRut = (rut) => {
       if (!rut) return '';
       const rutLimpio = rut.replace(/[^0-9kK]/g, '');
@@ -135,6 +166,7 @@ export default {
       }
       return rut;
     };
+<<<<<<< Updated upstream
 
     const editEmployee = (employee) => {
       editingEmployee.value = { ...employee };
@@ -151,10 +183,13 @@ export default {
       showModal.value = true;
     };
 
+=======
+    // Cargar empleados al montar el componente
+>>>>>>> Stashed changes
     onMounted(() => {
       loadEmployees();
     });
-
+    // Retornar los datos y funciones reactivas
     return {
       employees,
       showModal,

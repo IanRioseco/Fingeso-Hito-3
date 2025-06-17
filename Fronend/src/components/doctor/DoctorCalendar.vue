@@ -80,33 +80,42 @@
 </template>
 
 <script>
+// Importaciones necesarias
 import AvailabilityModal from './AvailabilityModal.vue';
 import AppointmentModal from './AppointmentModal.vue';
 import { format, addDays, startOfWeek, isToday, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
-
+//IMPORTACIONES
+//definicion de variables y funciones
 export default {
   name: 'DoctorCalendar',
   components: {
     AvailabilityModal,
     AppointmentModal
   },
+  //DATOS REACTIVOS PARA EL COMPONENTE
   data() {
     return {
       currentDate: new Date(),
       showAvailabilityModal: false,
       selectedAppointment: null,
-      timeSlots: this.generateTimeSlots(),
-      availability: [], // Esto vendría del backend
-      appointments: [], // Esto vendría del backend
+      timeSlots: this.generateTimeSlots(),// Generar bloques de tiempo de 30 minutos
+      availability: [],
+      appointments: [], 
       blockDuration: 30 // Duración de cada bloque en minutos
     }
   },
+  // Computed properties para calcular días de la semana y rango de fechas
   computed: {
+    // Función para obtener los días de la semana
     weekDays() {
+      // Obtener el inicio de la semana (lunes)
       const startDate = startOfWeek(this.currentDate, { weekStartsOn: 1 });
+      // Crear un array de 5 días de la semana
       return Array.from({ length: 5 }, (_, i) => { // Solo días de semana (L-V)
+        // Sumar i días al inicio de la semana
         const date = addDays(startDate, i);
+        // Formatear la fecha y el nombre del día
         return {
           date: format(date, 'yyyy-MM-dd'),
           name: format(date, 'EEEE', { locale: es }),
@@ -114,50 +123,66 @@ export default {
         };
       });
     },
+    // Función para obtener el rango de fechas de la semana actual
     weekRange() {
+      // Obtener el inicio de la semana (lunes) y sumar 4 días para obtener el rango
       const start = startOfWeek(this.currentDate, { weekStartsOn: 1 });
+      // Formatear el rango de fechas
       const end = addDays(start, 4); // Solo días de semana
+      // Formatear el rango de fechas
       return `${format(start, 'd MMM', { locale: es })} - ${format(end, 'd MMM yyyy', { locale: es })}`;
     }
   },
+  // Métodos para manejar la lógica del calendario
   methods: {
+    // Generar bloques de tiempo de 30 minutos
     generateTimeSlots() {
       const slots = [];
       const startHour = 8; // 8 AM
       const endHour = 20; // 8 PM
-      
+      // Iterar entre los horarios de inicio y fin
       for (let hour = startHour; hour < endHour; hour++) {
+        // Iterar entre los minutos de cada hora
         for (let minutes = 0; minutes < 60; minutes += this.blockDuration) {
+          // Formatear la hora y los minutos
           const time = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+          // Agregar el bloque de tiempo al array
           slots.push(time);
         }
       }
-      
+      // Devolver el array de bloques de tiempo
       return slots;
     },
+    // Navegar a la semana anterior o siguiente
     prevWeek() {
       this.currentDate = addDays(this.currentDate, -7);
       this.fetchData();
     },
+    // Navegar a la semana siguiente
     nextWeek() {
       this.currentDate = addDays(this.currentDate, 7);
       this.fetchData();
     },
+    // Verificar si un bloque de tiempo está disponible o reservado
     isSlotAvailable(date, time) {
+      // Verificar si el bloque de tiempo está en la disponibilidad
       return this.availability.some(slot => 
         slot.date === date && slot.time === time && slot.available
       );
     },
+    // Verificar si un bloque de tiempo está reservado
     isSlotBooked(date, time) {
       return this.appointments.some(appt => 
         appt.date === date && appt.time === time
       );
     },
+    // Obtener la cita correspondiente a un bloque de tiempo
     getAppointment(date, time) {
       return this.appointments.find(appt => 
         appt.date === date && appt.time === time
       ) || {};
     },
+    // Manejar el clic en un bloque de tiempo
     handleSlotClick(date, time) {
       if (this.isSlotBooked(date, time)) {
         this.selectedAppointment = this.getAppointment(date, time);
@@ -165,6 +190,7 @@ export default {
         // Podría abrir un modal para crear una cita manualmente
       }
     },
+    // Funciones para manejar la disponibilidad y citas
     async fetchData() {
       try {
         // Obtener año y mes visibles
@@ -172,52 +198,68 @@ export default {
         const month = this.currentDate.getMonth(); // 0-indexed
         // Obtener disponibilidad y citas para el mes visible
         await this.$store.dispatch('doctor/fetchAvailability', { year, month });
-        // Puedes seguir usando la semana para las citas si lo deseas
+
+        // Calcular el inicio y fin de la semana actual
         const weekStart = format(startOfWeek(this.currentDate, { weekStartsOn: 1 }), 'yyyy-MM-dd');
+        // Sumar 4 días para obtener el fin de semana (viernes)
         const weekEnd = format(addDays(startOfWeek(this.currentDate, { weekStartsOn: 1 }), 4), 'yyyy-MM-dd');
+
+        // Llamada al store para obtener citas de la semana
         await this.$store.dispatch('doctor/fetchAppointments', { start: weekStart, end: weekEnd });
-        this.availability = this.$store.state.doctor.availability;
-        this.appointments = this.$store.state.doctor.appointments;
+        this.availability = this.$store.state.doctor.availability;// Obtener la disponibilidad
+        this.appointments = this.$store.state.doctor.appointments;// Obtener las citas
       } catch (error) {
         console.error('Error al cargar datos del calendario:', error);
       }
     },
+    // Funciones para manejar la disponibilidad y citas
     async saveAvailability(newAvailability) {
       try {
+        // Llamada al store para guardar la nueva disponibilidad
         await this.$store.dispatch('doctor/saveAvailability', newAvailability);
         this.fetchData();
       } catch (error) {
         console.error('Error al guardar disponibilidad:', error);
       }
     },
+    // Funciones para manejar citas
     async updateAppointment(updatedAppointment) {
       try {
+        // Llamada al store para actualizar la cita
         await this.$store.dispatch('doctor/updateAppointment', updatedAppointment);
+        // Refrescar los datos del calendario
         this.fetchData();
         this.selectedAppointment = null;
       } catch (error) {
         console.error('Error al actualizar cita:', error);
       }
     },
+    // Función para cancelar una cita
     async cancelAppointment(appointmentId) {
       try {
+        // Llamada al store para cancelar la cita
         await this.$store.dispatch('doctor/cancelAppointment', appointmentId);
+        // Refrescar los datos del calendario
         this.fetchData();
         this.selectedAppointment = null;
+        // atrapado de errores
       } catch (error) {
-        console.error('Error al cancelar cita:', error);
+        console.error('Error al cancelar cita:', error);///debbug
       }
     },
+    // Función para eliminar una disponibilidad
     async eliminarDisponibilidad(date, time) {
+      // Buscar el ID del horario correspondiente
       const slot = this.availability.find(a => a.date === date && a.time === time && a.available);
       if (!slot || !slot.id) {
         alert('No se encontró el ID del horario para eliminar.');
         return;
       }
-      await this.$store.dispatch('doctor/eliminarDisponibilidad', slot.id);
+      await this.$store.dispatch('doctor/eliminarDisponibilidad', slot.id);// Llamada al store para eliminar la disponibilidad
       this.fetchData();
     }
   },
+  // Ciclo de vida del componente para cargar datos al montarse
   created() {
     this.fetchData();
   }

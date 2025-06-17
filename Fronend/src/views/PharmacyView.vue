@@ -36,6 +36,7 @@
 </template>
 
 <script setup>
+//IMPORTACIONES
 import { ref, computed, onMounted } from 'vue'
 import MedicineForm from '@/components/pharmacy/MedicineForm.vue'
 import Inventory from '@/components/pharmacy/MedicinesInventory.vue'
@@ -43,6 +44,7 @@ import pharmacyService from '@/services/PharmacyService'
 import { authService } from '@/services/auth.service'
 import { useRouter } from 'vue-router'
 
+//VARIABLES REACTIVAS
 const vistaActual = ref('inventario')
 const farmaciaNombre = ref('')
 const farmaceuticoNombre = ref('')
@@ -50,49 +52,58 @@ const medicines = ref([])
 const searchMedicine = ref("");
 const router = useRouter()
 
+//titulo dinamico segun la vista actual
 const titulo = computed(() =>
   vistaActual.value === 'inventario'
     ? 'Inventario de Medicamentos'
     : 'Ingreso de Medicamentos'
 )
 
+//FUNCIONES PARA CARGAR DATOS DEL USUARIO
 const loadUserInfo = () => {
-  const user = authService.getCurrentUser();
+  const user = authService.getCurrentUser();//llamada al servicio de autenticación para obtener el usuario actual
   if (!user) {
     console.warn('No user found in localStorage');
     return;
-  }
+  }//si no hay usuario no carga nada
+  //obtener nombre del farmaceutico y farmacia
   const usuario = user.usuario || user;
+  //construccion del nombre de farmacia y farmaceutico
   farmaceuticoNombre.value = `${usuario.nombre || usuario.nombreFarmaceutico || ''} ${usuario.apellido || usuario.apellidoFarmaceutico || ''}`.trim();
+  // Si no hay nombre o apellido, se deja vacío
   if (usuario.farmacia && (usuario.farmacia.nombre || usuario.farmacia.nombreFarmacia)) {
     farmaciaNombre.value = usuario.farmacia.nombre || usuario.farmacia.nombreFarmacia;
-  } else if (usuario.nombreFarmacia) {
+  } else if (usuario.nombreFarmacia) {//si no hay farmacia, se toma el nombre de la farmacia
     farmaciaNombre.value = usuario.nombreFarmacia;
-  } else {
+  } else {//si no hay farmacia ni nombre, se deja vacío
     farmaciaNombre.value = '';
   }
 }
 
+//FUNCION PARA CARGAR MEDICAMENTOS
 const loadMedicines = async () => {
+  //try catch para capturar errores
   try {
-    const user = authService.getCurrentUser();
-    const usuario = user?.usuario || user;
-    const farmaciaId = usuario?.farmacia?.idFarmacia || usuario?.idFarmacia;
+    const user = authService.getCurrentUser();//llamada al servicio de autenticación para obtener el usuario actual
+    const usuario = user?.usuario || user;//si no hay usuario se devuelve el objeto user
+    const farmaciaId = usuario?.farmacia?.idFarmacia || usuario?.idFarmacia;//obtener el id de la farmacia
+    //si no hay id de farmacia se devuelve un array vacío
     if (!farmaciaId) {
       medicines.value = [];
       return;
     }
+    //llamada al servicio de farmacia para obtener todos los medicamentos de la farmacia
     medicines.value = await pharmacyService.getAllByFarmacia(farmaciaId);
   } catch (e) {
     console.error('Error al cargar medicamentos', e);
   }
 }
-
+//funcion para cerrar sesión
 const logout = () => {
   authService.logout("auth/logout");
   router.push('/login');
 }
-
+// Cargar datos al montar el componente
 onMounted(() => {
   loadUserInfo()
   loadMedicines()

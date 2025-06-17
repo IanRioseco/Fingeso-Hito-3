@@ -30,12 +30,14 @@
 </template>
 
 <script>
+//IMPORTACIONES
 import DoctorCalendar from '@/components/doctor/DoctorCalendar.vue';
 import PatientProfiles from '@/components/doctor/PatientProfiles.vue';
 import MedicalReports from '@/components/doctor/MedicalReports.vue';
 import DoctorSettings from '@/components/doctor/DoctorSettings.vue';
 import { authService } from '@/services/auth.service';
 
+//EXPORTACIONES
 export default {
   name: 'DoctorView',
   components: {
@@ -45,6 +47,7 @@ export default {
     DoctorSettings
   },
   data() {
+    //definicion de pestaña activa
     return {
       activeTab: 'calendar',
       tabs: [
@@ -53,10 +56,11 @@ export default {
         { id: 'reports', label: 'Reportes' },
         { id: 'settings', label: 'Configuración' }
       ],
-      doctorName: '', // Esto vendría del backend
-      specialty: '' // Esto vendría del backend
+      doctorName: '',
+      specialty: '' 
     }
   },
+  //carga de datos del usuario al iniciar el componente
   created() {
     const userData = authService.getCurrentUser();
     if (userData && userData.usuario) {
@@ -65,6 +69,7 @@ export default {
     }
   },
   methods: {
+    //funcion para cerrar sesión
     logout() {
       authService.logout("auth/logout");
       this.$router.push('/login');

@@ -14,19 +14,22 @@
 </template>
 
 <script setup>
+//IMPORTACIONES
 import { ref } from 'vue'
 import PharmacyService from '@/services/PharmacyService'
 import { authService } from '@/services/auth.service'
 
+//emición de eventos
 const emit = defineEmits(['medAdded'])
 
+//DATOS REACTIVOS PARA EL COMPONENTE
 const nombre = ref('')
 const tipo = ref('')
 const marca = ref('')
 const cantidad = ref(0)
 const fecha_vencimieto = ref('')
 const descripcion = ref('')
-
+// Función para agregar un medicamento
 const addMedicine = async () => {
   try {
     // 1. Crear el medicamento con todos los campos requeridos
@@ -38,23 +41,26 @@ const addMedicine = async () => {
       fecha_vencimieto: fecha_vencimieto.value,
       descripcion: descripcion.value
     })
-    // 2. Obtener el id del medicamento creado
+    //Obtener el id del medicamento creado
     const medicamentoId = medRes.data?.idmedicamento || medRes.idmedicamento
-    // 3. Obtener la farmacia del usuario autenticado
+    //Obtener la farmacia del usuario autenticado
     const user = authService.getCurrentUser()
     const usuario = user?.usuario || user
     const farmaciaId = usuario?.farmacia?.idFarmacia || usuario?.idFarmacia
-    console.log('farmaciaId', farmaciaId, 'medicamentoId', medicamentoId)
+    console.log('farmaciaId', farmaciaId, 'medicamentoId', medicamentoId)//debbug
+    //Asociar el medicamento a la farmacia
     if (farmaciaId && medicamentoId) {
       const res = await PharmacyService.addMedicamentoToFarmacia(farmaciaId, medicamentoId)
       console.log('Respuesta addMedicamentoToFarmacia:', res)
     } else {
       alert('No se pudo asociar el medicamento a la farmacia. Verifica los IDs.')
     }
+    //Emitir evento para actualizar la lista de medicamentos
     emit('medAdded')
     nombre.value = tipo.value = marca.value = descripcion.value = ''
     cantidad.value = 0
     fecha_vencimieto.value = ''
+    // atrapado de errores
   } catch (e) {
     alert('Error al guardar medicamento')
     console.error(e)

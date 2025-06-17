@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '@/store';
 
-// Ejemplo de rutas, ajusta según tus vistas/componentes
+// Importar las vistas
+//manejo de rutas con autenticación y roles
 const routes = [
   {
     path: '/',
@@ -62,7 +63,7 @@ const routes = [
     redirect: '/'
   }
 ];
-
+// Crear el router
 const router = createRouter({
   history: createWebHistory(),
   routes
@@ -70,12 +71,13 @@ const router = createRouter({
 
 // Navegación guard
 router.beforeEach((to, from, next) => {
+  // para debugging
   console.log('Navegando a:', to.path);
   console.log('Meta requiresAuth:', to.meta.requiresAuth);
   console.log('Meta role:', to.meta.role);
   
   if (to.meta.requiresAuth) {
-    console.log('Ruta requiere autenticación');
+    console.log('Ruta requiere autenticación');//debbugging
     next();
   } else {
     console.log('Ruta no requiere autenticación');
