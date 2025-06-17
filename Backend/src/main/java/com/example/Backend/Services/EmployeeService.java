@@ -22,6 +22,8 @@ public class EmployeeService {
     private rolRepository rolRepository;
     @Autowired
     private especialidadRepository especialidadRepository;
+    @Autowired
+    private farmaciaRepository farmaciaRepository;
 
     public Map<String, Object> getAllEmployees() {
         Map<String, Object> employees = new HashMap<>();
@@ -165,6 +167,16 @@ public class EmployeeService {
         farmaceutico.setTelefono((String) data.get("telefono"));
         farmaceutico.setPassword((String) data.get("password"));
         farmaceutico.setRol(rol);
+        // Asociar farmacia si viene farmaciaId
+        if (data.containsKey("farmaciaId") && data.get("farmaciaId") != null && !data.get("farmaciaId").toString().isEmpty()) {
+            try {
+                Long farmaciaId = Long.parseLong(data.get("farmaciaId").toString());
+                Optional<farmaciaEntity> farmaciaOpt = farmaciaRepository.findById(farmaciaId);
+                farmaciaOpt.ifPresent(farmaceutico::setFarmacia);
+            } catch (NumberFormatException e) {
+                // Si el id no es válido, no se asocia farmacia
+            }
+        }
         return farmaceuticoRepository.save(farmaceutico);
     }
 
@@ -243,6 +255,18 @@ public class EmployeeService {
         if (data.containsKey("correo")) farmaceutico.setCorreo((String) data.get("correo"));
         if (data.containsKey("telefono")) farmaceutico.setTelefono((String) data.get("telefono"));
         if (data.containsKey("password")) farmaceutico.setPassword((String) data.get("password"));
+        // Actualizar farmacia si viene farmaciaId
+        if (data.containsKey("farmaciaId") && data.get("farmaciaId") != null && !data.get("farmaciaId").toString().isEmpty()) {
+            try {
+                Long farmaciaId = Long.parseLong(data.get("farmaciaId").toString());
+                Optional<farmaciaEntity> farmaciaOpt = farmaciaRepository.findById(farmaciaId);
+                if (farmaciaOpt.isPresent()) {
+                    farmaceutico.setFarmacia(farmaciaOpt.get());
+                }
+            } catch (NumberFormatException e) {
+                // Si el id no es válido, no se actualiza la farmacia
+            }
+        }
         return farmaceuticoRepository.save(farmaceutico);
     }
 

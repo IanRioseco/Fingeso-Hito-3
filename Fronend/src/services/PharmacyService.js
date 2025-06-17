@@ -27,5 +27,9 @@ export default {
   async deleteFarmaciaMedicamento(id) {
     // Elimina la relación farmacia-medicamento por ID
     return await api.delete(`/api/farmacia-medicamento/${id}`)
+  },
+  async getAllFarmacias() {
+    const res = await api.get('/api/farmacia/');
+    return res.data;
   }
 }

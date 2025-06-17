@@ -92,6 +92,16 @@
             :required="isMedico"
           />
         </div>
+
+        <div class="form-group" v-if="selectedRol === 'FARMACEUTICO'">
+          <label for="farmacia">Farmacia:</label>
+          <select id="farmacia" v-model="formData.farmaciaId" required>
+            <option value="">Seleccione una farmacia</option>
+            <option v-for="farmacia in farmacias" :key="farmacia.idFarmacia" :value="farmacia.idFarmacia">
+              {{ farmacia.nombre }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <div class="form-actions">
@@ -103,8 +113,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import employeeService from '@/services/employee.service';
+import PharmacyService from '@/services/PharmacyService';
+
+const props = defineProps({
+  employee: {
+    type: Object,
+    default: null
+  }
+});
+
+const emit = defineEmits(['submit', 'cancel', 'error']);
 
 const rolMap = {
   'MEDICO': { id_rol: 2, nombre: 'Médico' },
@@ -122,12 +142,39 @@ const formData = ref({
   telefono: '',
   password: '',
   rol: null,
-  especialidad: ''
+  especialidad: '',
+  farmaciaId: ''
 });
 
-const emit = defineEmits(['submit', 'cancel', 'error']);
+const farmacias = ref([]);
 
 const isMedico = computed(() => selectedRol.value === 'MEDICO');
+
+watch(
+  () => props.employee,
+  (newVal) => {
+    if (newVal) {
+      formData.value = {
+        nombre: newVal.nombre || '',
+        apellido: newVal.apellido || '',
+        rut: newVal.rut || '',
+        correo: newVal.correo || '',
+        telefono: newVal.telefono || '',
+        password: '',
+        rol: newVal.rol || null,
+        especialidad: newVal.especialidad || '',
+        farmaciaId: newVal.farmacia?.idFarmacia || ''
+      };
+      selectedRol.value = Object.keys(rolMap).find(key => rolMap[key].nombre === (newVal.rol?.nombre || newVal.rol)) || '';
+    } else {
+      formData.value = {
+        nombre: '', apellido: '', rut: '', correo: '', telefono: '', password: '', rol: null, especialidad: '', farmaciaId: ''
+      };
+      selectedRol.value = '';
+    }
+  },
+  { immediate: true }
+);
 
 const handleRolChange = () => {
   if (selectedRol.value) {
@@ -139,7 +186,6 @@ const handleRolChange = () => {
 
 const formatRut = () => {
   let value = formData.value.rut.replace(/[^0-9kK]/g, '');
-  
   if (value.length > 1) {
     const dv = value.slice(-1);
     const rutBody = value.slice(0, -1);
@@ -151,43 +197,52 @@ const formatRut = () => {
 
 const handleSubmit = async () => {
   try {
-    // Validar que el rol esté seleccionado
     if (!formData.value.rol) {
       emit('error', 'Debe seleccionar un rol');
       return;
     }
-
-    // Crear el objeto base del empleado
+    // Limpiar RUT para el backend (sin puntos ni guion)
+    const cleanRut = formData.value.rut.replace(/\.|-/g, '');
     const employeeData = {
       rut: formData.value.rut,
       nombre: formData.value.nombre,
       apellido: formData.value.apellido,
       correo: formData.value.correo,
       telefono: formData.value.telefono,
-      password: formData.value.password, // <-- Agregar password
-      rol: formData.value.rol  // Ya es un objeto completo con id_rol y nombre
+      rol: formData.value.rol
     };
-
     if (formData.value.especialidad && isMedico.value) {
       employeeData.especialidad = formData.value.especialidad;
     }
-    
-    console.log('Objeto empleado a enviar:', JSON.stringify(employeeData, null, 2));
-    
-    const response = await employeeService.registerEmployee(employeeData);
+    if (selectedRol.value === 'FARMACEUTICO' && formData.value.farmaciaId) {
+      employeeData.farmaciaId = formData.value.farmaciaId;
+    }
+    // Solo agregar password si es registro o si el usuario la cambió
+    if (!props.employee || formData.value.password) {
+      employeeData.password = formData.value.password;
+    }
+    let response;
+    if (props.employee && props.employee.rut) {
+      // Actualizar (usar rut limpio)
+      response = await employeeService.updateEmployee(cleanRut, employeeData);
+    } else {
+      // Registrar
+      response = await employeeService.registerEmployee(employeeData);
+    }
     emit('submit', response);
   } catch (error) {
-    console.error('Error al registrar empleado:', error);
-    emit('error', error.message || 'Error al registrar el empleado');
+    emit('error', error.response?.data?.message || 'Error al registrar/actualizar empleado');
   }
 };
 
-const cancelar = () => {
-  emit('cancel');
-};
+const cancelar = () => emit('cancel');
 
-onMounted(() => {
-  handleRolChange();
+onMounted(async () => {
+  try {
+    farmacias.value = await PharmacyService.getAllFarmacias();
+  } catch (e) {
+    farmacias.value = [];
+  }
 });
 </script>
 

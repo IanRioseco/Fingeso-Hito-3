@@ -2,8 +2,10 @@ package com.example.Backend.Services;
 
 import com.example.Backend.Entity.farmaceuticoEntity;
 import com.example.Backend.Entity.rolEntity;
+import com.example.Backend.Entity.farmaciaEntity;
 import com.example.Backend.Repository.farmaceuticoRepository;
 import com.example.Backend.Repository.rolRepository;
+import com.example.Backend.Repository.farmaciaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +17,29 @@ public class farmaceuticoServices {
 
     private final farmaceuticoRepository farmaceuticoRepo;
     private final rolRepository rolRepo;
+    private final farmaciaRepository farmaciaRepo;
 
     @Autowired
-    public farmaceuticoServices(farmaceuticoRepository farmaceuticoRepo, rolRepository rolRepo) {
+    public farmaceuticoServices(farmaceuticoRepository farmaceuticoRepo, rolRepository rolRepo, farmaciaRepository farmaciaRepo) {
         this.farmaceuticoRepo = farmaceuticoRepo;
         this.rolRepo = rolRepo;
+        this.farmaciaRepo = farmaciaRepo;
     }
 
     public farmaceuticoEntity guardarFarmaceutico(farmaceuticoEntity farmaceutico) {
         // Verificar si el rol existe
         rolEntity rol = rolRepo.findById(farmaceutico.getRol().getId_rol()) // Uso getId_rol
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + farmaceutico.getRol().getId_rol()));
-
-        // Asignar el rol al farmaceutico
         farmaceutico.setRol(rol);
+
+        // Asociar farmacia si viene el id
+        if (farmaceutico.getFarmacia() != null && farmaceutico.getFarmacia().getIdFarmacia() != null) {
+            farmaciaEntity farmacia = farmaciaRepo.findById(farmaceutico.getFarmacia().getIdFarmacia())
+                    .orElseThrow(() -> new RuntimeException("Farmacia no encontrada con ID: " + farmaceutico.getFarmacia().getIdFarmacia()));
+            farmaceutico.setFarmacia(farmacia);
+        } else {
+            farmaceutico.setFarmacia(null);
+        }
 
         return farmaceuticoRepo.save(farmaceutico);
     }
@@ -42,6 +53,14 @@ public class farmaceuticoServices {
     }
 
     public farmaceuticoEntity actualizarFarmaceutico(farmaceuticoEntity farmaceutico) {
+        // Asociar farmacia si viene el id
+        if (farmaceutico.getFarmacia() != null && farmaceutico.getFarmacia().getIdFarmacia() != null) {
+            farmaciaEntity farmacia = farmaciaRepo.findById(farmaceutico.getFarmacia().getIdFarmacia())
+                    .orElseThrow(() -> new RuntimeException("Farmacia no encontrada con ID: " + farmaceutico.getFarmacia().getIdFarmacia()));
+            farmaceutico.setFarmacia(farmacia);
+        } else {
+            farmaceutico.setFarmacia(null);
+        }
         return farmaceuticoRepo.save(farmaceutico);
     }
 

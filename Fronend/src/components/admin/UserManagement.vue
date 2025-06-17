@@ -2,7 +2,7 @@
   <div class="user-management">
     <div class="header-actions">
       <h2>Gestión de Empleados</h2>
-      <button class="btn-add" @click="showModal = true">
+      <button class="btn-add" @click="addEmployee">
         <i class="fas fa-plus"></i> Nuevo Empleado
       </button>
     </div>
@@ -44,8 +44,9 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
         <UserFormModal
+          :employee="editingEmployee"
           @submit="handleSubmit"
-          @cancel="showModal = false"
+          @cancel="closeModal"
           @error="handleError"
         />
       </div>
@@ -72,6 +73,7 @@ export default {
     const employees = ref([]);
     const showModal = ref(false);
     const errorMessage = ref('');
+    const editingEmployee = ref(null);
 
     const loadEmployees = async () => {
       try {
@@ -87,19 +89,22 @@ export default {
         console.error('Error al cargar empleados:', error);
         errorMessage.value = 'Error al cargar la lista de empleados';
       }
-    };    const handleSubmit = async (response) => {
+    };
+
+    const handleSubmit = async (response) => {
       try {
         // response es la respuesta del backend emitida por el modal
         if (response.success) {
           showModal.value = false;
+          editingEmployee.value = null;
           await loadEmployees();
           errorMessage.value = '';
         } else {
-          errorMessage.value = response.message || 'Error al registrar el empleado';
+          errorMessage.value = response.message || 'Error al registrar/actualizar el empleado';
         }
       } catch (error) {
         console.error('Error al registrar empleado:', error);
-        errorMessage.value = error.response?.data?.message || 'Error al registrar el empleado';
+        errorMessage.value = error.response?.data?.message || 'Error al registrar/actualizar el empleado';
       }
     };
 
@@ -131,6 +136,21 @@ export default {
       return rut;
     };
 
+    const editEmployee = (employee) => {
+      editingEmployee.value = { ...employee };
+      showModal.value = true;
+    };
+
+    const closeModal = () => {
+      showModal.value = false;
+      editingEmployee.value = null;
+    };
+
+    const addEmployee = () => {
+      editingEmployee.value = null;
+      showModal.value = true;
+    };
+
     onMounted(() => {
       loadEmployees();
     });
@@ -142,7 +162,11 @@ export default {
       handleSubmit,
       handleError,
       deleteEmployee,
-      formatRut
+      formatRut,
+      editEmployee,
+      closeModal,
+      addEmployee,
+      editingEmployee
     };
   }
 };

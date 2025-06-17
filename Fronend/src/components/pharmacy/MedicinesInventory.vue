@@ -1,30 +1,60 @@
 <template>
   <div class="medicine-list">
     <h3>Lista de Medicamentos</h3>
-    <ul>
-      <li v-for="item in filteredMedicines" :key="item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID">
-        <strong>{{ item.medicamento?.nombre }}</strong>
-        ({{ item.medicamento?.cantidad }} unidades) - {{ item.medicamento?.descripcion }}
-        <span> | Tipo: {{ item.medicamento?.tipo }}</span>
-        <span v-if="item.medicamento?.marca"> | Marca: {{ item.medicamento?.marca }}</span>
-        <span> | Vence: {{ item.medicamento?.fecha_vencimieto }}</span>
-        <div v-if="item.medicamento?.cantidad <= 10" class="alert">⚠ Medicamento por agotarse</div>
-        <button @click="editMedicine(item)">Editar</button>
-        <button @click="deleteFarmaciaMedicamento(item)">Eliminar</button>
-        <div v-if="editingId === (item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID)">
-          <form @submit.prevent="saveEdit(item)">
-            <input v-model="editData.nombre" placeholder="Nombre" required />
-            <input v-model="editData.tipo" placeholder="Tipo" required />
-            <input v-model="editData.marca" placeholder="Marca" />
-            <input v-model.number="editData.cantidad" type="number" placeholder="Cantidad" min="0" required />
-            <input v-model="editData.fecha_vencimieto" type="date" placeholder="Fecha de Vencimiento" required />
-            <textarea v-model="editData.descripcion" placeholder="Descripción" required></textarea>
-            <button type="submit">Guardar</button>
-            <button type="button" @click="cancelEdit">Cancelar</button>
-          </form>
-        </div>
-      </li>
-    </ul>
+    <div class="medicine-scroll">
+      <ul>
+        <li v-for="item in uniqueFilteredMedicines" :key="getFarmaciaMedicamentoId(item)">
+          <strong>{{ item.medicamento?.nombre }}</strong>
+          ({{ item.medicamento?.cantidad }} unidades) - {{ item.medicamento?.descripcion }}
+          <span> | Tipo: {{ item.medicamento?.tipo }}</span>
+          <span v-if="item.medicamento?.marca"> | Marca: {{ item.medicamento?.marca }}</span>
+          <span> | Vence: {{ item.medicamento?.fecha_vencimieto }}</span>
+          <div v-if="item.medicamento?.cantidad <= 10" class="alert">⚠ Medicamento por agotarse</div>
+          <div class="button-row" v-if="editingId !== getFarmaciaMedicamentoId(item)">
+            <button 
+              @click="editMedicine(item)" 
+              :disabled="editingId !== null">
+              Editar
+            </button>
+            <button @click="deleteFarmaciaMedicamento(item)" :disabled="editingId !== null">Eliminar</button>
+          </div>
+          <transition name="fade">
+            <div v-if="editingId === getFarmaciaMedicamentoId(item)" class="edit-form-container">
+              <form @submit.prevent="saveEdit(item)" class="edit-form">
+                <div class="form-row">
+                  <label>Nombre:</label>
+                  <input v-model="editData.nombre" placeholder="Nombre" required />
+                </div>
+                <div class="form-row">
+                  <label>Tipo:</label>
+                  <input v-model="editData.tipo" placeholder="Tipo" required />
+                </div>
+                <div class="form-row">
+                  <label>Marca:</label>
+                  <input v-model="editData.marca" placeholder="Marca" />
+                </div>
+                <div class="form-row">
+                  <label>Cantidad:</label>
+                  <input v-model.number="editData.cantidad" type="number" placeholder="Cantidad" min="0" required />
+                </div>
+                <div class="form-row">
+                  <label>Fecha de Vencimiento:</label>
+                  <input v-model="editData.fecha_vencimieto" type="date" placeholder="Fecha de Vencimiento" required />
+                </div>
+                <div class="form-row">
+                  <label>Descripción:</label>
+                  <textarea v-model="editData.descripcion" placeholder="Descripción" required></textarea>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn-guardar">Guardar</button>
+                  <button type="button" class="btn-cancelar" @click="cancelEdit">Cancelar</button>
+                </div>
+              </form>
+            </div>
+          </transition>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -44,6 +74,16 @@ const emit = defineEmits(['reload'])
 const editingId = ref(null)
 const editData = ref({})
 
+const getFarmaciaMedicamentoId = (item) => {
+  return (
+    item.idFarmaciaMedicamento ||
+    item.Id_farmacia_medicamento ||
+    item.id_farmacia_medicamento ||
+    item.id ||
+    item.ID
+  );
+};
+
 const filteredMedicines = computed(() => {
   if (!props.search) return props.medicines;
   return props.medicines.filter(item =>
@@ -51,8 +91,19 @@ const filteredMedicines = computed(() => {
   );
 });
 
+// Elimina duplicados por idFarmaciaMedicamento o id
+const uniqueFilteredMedicines = computed(() => {
+  const seen = new Set();
+  return filteredMedicines.value.filter(item => {
+    const id = getFarmaciaMedicamentoId(item);
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+});
+
 const editMedicine = (item) => {
-  editingId.value = item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID
+  editingId.value = getFarmaciaMedicamentoId(item)
   editData.value = {
     nombre: item.medicamento?.nombre || '',
     tipo: item.medicamento?.tipo || '',
@@ -70,7 +121,6 @@ const cancelEdit = () => {
 
 const saveEdit = async (item) => {
   try {
-    // Actualiza el medicamento en el backend
     await PharmacyService.updateMedicine(item.medicamento.idmedicamento || item.medicamento.id, editData.value)
     editingId.value = null
     emit('reload')
@@ -79,17 +129,6 @@ const saveEdit = async (item) => {
     console.error(e)
   }
 }
-
-const getFarmaciaMedicamentoId = (item) => {
-  // Prueba todas las variantes posibles de ID
-  return (
-    item.idFarmaciaMedicamento ||
-    item.Id_farmacia_medicamento ||
-    item.id_farmacia_medicamento ||
-    item.id ||
-    item.ID
-  );
-};
 
 const deleteFarmaciaMedicamento = async (item) => {
   const id = getFarmaciaMedicamentoId(item);
@@ -121,6 +160,10 @@ const deleteFarmaciaMedicamento = async (item) => {
 .medicine-list h3 {
   color: #0875C1;
 }
+.medicine-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+}
 .medicine-list ul {
   list-style-type: none;
   padding: 0;
@@ -133,6 +176,13 @@ const deleteFarmaciaMedicamento = async (item) => {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 .medicine-list button {
   background-color: #e74c3c;
@@ -141,8 +191,74 @@ const deleteFarmaciaMedicamento = async (item) => {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  min-width: 90px;
+  transition: background 0.2s;
 }
-.medicine-list button:hover {
+.medicine-list button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.medicine-list button:hover:not(:disabled) {
   background-color: #c0392b;
+}
+.edit-form-container {
+  background: #f4f8fb;
+  border: 1px solid #b3d1e7;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 8px rgba(8,117,193,0.08);
+}
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.form-row label {
+  font-weight: 500;
+  color: #0875C1;
+  margin-bottom: 0.1rem;
+}
+.form-actions {
+  display: flex;
+  gap: 0.7rem;
+  justify-content: flex-end;
+}
+.btn-guardar {
+  background-color: #0875C1;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-guardar:hover {
+  background-color: #065a99;
+}
+.btn-cancelar {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-cancelar:hover {
+  background-color: #c0392b;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>

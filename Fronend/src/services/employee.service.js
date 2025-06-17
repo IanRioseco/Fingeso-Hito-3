@@ -38,6 +38,10 @@ export default {
             if (employeeData.especialidad) {
                 baseData.especialidad = employeeData.especialidad;
             }
+            // Si el empleado es farmacéutico y tiene farmaciaId, agregarlo
+            if (employeeData.farmaciaId) {
+                baseData.farmaciaId = employeeData.farmaciaId;
+            }
 
             console.log('Datos a enviar al servidor:', JSON.stringify(baseData, null, 2));
             

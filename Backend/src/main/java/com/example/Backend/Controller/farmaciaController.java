@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,6 +25,27 @@ public class farmaciaController {
         farmaciaEntity nuevaFarmacia = farmaciaServ.guardarFarmacia(farmacia);
         return new ResponseEntity<>(nuevaFarmacia, HttpStatus.CREATED);
     }
+
+    @PostMapping("/x")
+    public ResponseEntity<List<farmaciaEntity>> initializeFarmacias() {
+    // Primero limpia las farmacias existentes
+    farmaciaServ.eliminarTodasLasFarmacias();
+
+    List<farmaciaEntity> farmaciasCreadas = new ArrayList<>();
+
+    String[] nombres = {
+        "Farmacia Central",
+        "Farmacia Norte"
+    };
+
+    for (String nombre : nombres) {
+        farmaciaEntity farmacia = new farmaciaEntity();
+        farmacia.setNombre(nombre);
+        farmaciasCreadas.add(farmaciaServ.guardarFarmacia(farmacia));
+    }
+
+    return ResponseEntity.ok(farmaciasCreadas);
+}
 
     @GetMapping("/")
     public ResponseEntity<List<farmaciaEntity>> obtenerTodasFarmacias() {
