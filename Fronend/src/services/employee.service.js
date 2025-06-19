@@ -43,15 +43,11 @@ export default {
             if (employeeData.especialidad) {
                 baseData.especialidad = employeeData.especialidad;
             }
-<<<<<<< Updated upstream
             // Si el empleado es farmacéutico y tiene farmaciaId, agregarlo
             if (employeeData.farmaciaId) {
                 baseData.farmaciaId = employeeData.farmaciaId;
             }
 
-=======
-            //para debbugging
->>>>>>> Stashed changes
             console.log('Datos a enviar al servidor:', JSON.stringify(baseData, null, 2));
             
             //envio de solicitud post al servidor
@@ -62,15 +58,11 @@ export default {
         } catch (error) {
             console.error('Error en registerEmployee:', error);//para debugging
             if (error.response) {
-<<<<<<< Updated upstream
                 console.error('Detalles del error:', error.response.data);
                 // Mostrar el error del backend en un alert para depuración rápida
                 alert('Error backend: ' + JSON.stringify(error.response.data));
             } else {
                 alert('Error desconocido al registrar empleado');
-=======
-                console.error('Detalles del error:', error.response.data);//para debugging
->>>>>>> Stashed changes
             }
             throw error;
         }

@@ -111,7 +111,6 @@ export default {
           password: this.credentials.password,
           role: this.credentials.role
         });
-        
         //llamar al servicio de login
         const response = await authService.login(
           rutLimpio,

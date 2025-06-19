@@ -76,12 +76,8 @@ export default {
     const employees = ref([]);
     const showModal = ref(false);
     const errorMessage = ref('');
-<<<<<<< Updated upstream
     const editingEmployee = ref(null);
 
-=======
-    // Cargar empleados al montar el componente
->>>>>>> Stashed changes
     const loadEmployees = async () => {
       //try catch para capturar errores
       try {
@@ -98,7 +94,6 @@ export default {
         console.error('Error al cargar empleados:', error);//debbugging
         errorMessage.value = 'Error al cargar la lista de empleados';// Mostrar mensaje de error
       }
-<<<<<<< Updated upstream
     };
 
     const handleSubmit = async (response) => {
@@ -108,31 +103,14 @@ export default {
           showModal.value = false;
           editingEmployee.value = null;
           await loadEmployees();
-=======
-    };    const handleSubmit = async (employeeData) => {// Manejo del envío del formulario
-      //try catch para capturar errores
-      try {
-        //cosole.log para depuración
-        console.log('Datos enviados desde UserManagement:', JSON.stringify(employeeData, null, 2));
-        const response = await employeeService.registerEmployee(employeeData);// Llamada al servicio para registrar el empleado
-        //si la respuesta es exitosa, cerrar el modal y recargar empleados
-        if (response.success) {
-          showModal.value = false;
-          await loadEmployees();// Recargar empleados
->>>>>>> Stashed changes
           errorMessage.value = '';
         } else {
           errorMessage.value = response.message || 'Error al registrar/actualizar el empleado';
         }
         // atrapado de errores
       } catch (error) {
-<<<<<<< Updated upstream
         console.error('Error al registrar empleado:', error);
         errorMessage.value = error.response?.data?.message || 'Error al registrar/actualizar el empleado';
-=======
-        console.error('Error al registrar empleado:', error);//debbug
-        errorMessage.value = error.response?.data?.message || 'Error al registrar el empleado';
->>>>>>> Stashed changes
       }
     };
     //funcio para manejar el error del formulario
@@ -166,7 +144,6 @@ export default {
       }
       return rut;
     };
-<<<<<<< Updated upstream
 
     const editEmployee = (employee) => {
       editingEmployee.value = { ...employee };
@@ -183,9 +160,6 @@ export default {
       showModal.value = true;
     };
 
-=======
-    // Cargar empleados al montar el componente
->>>>>>> Stashed changes
     onMounted(() => {
       loadEmployees();
     });
@@ -217,7 +191,11 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  background-color: rgb(241, 241, 241);
+  padding: 10px;
+  border-radius: 8px;
 }
+
 
 .btn-add {
   background-color: #0875C1;
@@ -232,17 +210,24 @@ export default {
 }
 
 .btn-add:hover {
-  background-color: #065a94;
+  background-color: #C51A6F;
 }
 
 .table-container {
   overflow-x: auto;
+  border-radius: 12px;
+  background-color: #ededed;
+}
+.tr {
+  border-color: black;
+  border-top: black
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  
 }
 
 th, td {
@@ -254,6 +239,7 @@ th, td {
 th {
   background-color: #f5f5f5;
   font-weight: bold;
+  border-color: black;
 }
 
 .actions {
@@ -301,10 +287,11 @@ th {
 
 .modal-content {
   background: white;
-  border-radius: 8px;
-  max-width: 90%;
+  border-radius: 12px;
+  max-width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  width: 70%;
 }
 
 .error-message {

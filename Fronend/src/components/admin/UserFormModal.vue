@@ -113,12 +113,7 @@
 </template>
 
 <script setup>
-<<<<<<< Updated upstream
 import { ref, computed, watch, onMounted } from 'vue';
-=======
-//IMPORTACIONES
-import { ref, computed } from 'vue';
->>>>>>> Stashed changes
 import employeeService from '@/services/employee.service';
 import PharmacyService from '@/services/PharmacyService';
 
@@ -154,17 +149,11 @@ const formData = ref({
   farmaciaId: ''
 });
 
-<<<<<<< Updated upstream
 const farmacias = ref([]);
-=======
-// Emisión de eventos para el componente padre
-const emit = defineEmits(['submit', 'cancel', 'error']);
->>>>>>> Stashed changes
 
 // Computed para verificar si el rol seleccionado es Médico
 const isMedico = computed(() => selectedRol.value === 'MEDICO');
 
-<<<<<<< Updated upstream
 watch(
   () => props.employee,
   (newVal) => {
@@ -191,9 +180,6 @@ watch(
   { immediate: true }
 );
 
-=======
-// Función para manejar el cambio de rol
->>>>>>> Stashed changes
 const handleRolChange = () => {
   // Si el rol seleccionado es Médico, habilitar el campo de especialidad
   if (selectedRol.value) {
@@ -205,12 +191,7 @@ const handleRolChange = () => {
 
 // Formatear el RUT al ingresar
 const formatRut = () => {
-<<<<<<< Updated upstream
   let value = formData.value.rut.replace(/[^0-9kK]/g, '');
-=======
-  let value = formData.value.rut.replace(/[^0-9kK]/g, '');// Eliminar caracteres no numéricos y 'k' o 'K'
-  // Convertir a minúscula para manejar 'k' correctamente
->>>>>>> Stashed changes
   if (value.length > 1) {
     const dv = value.slice(-1);
     const rutBody = value.slice(0, -1);
@@ -236,7 +217,6 @@ const handleSubmit = async () => {
       telefono: formData.value.telefono,
       rol: formData.value.rol
     };
-<<<<<<< Updated upstream
     if (formData.value.especialidad && isMedico.value) {
       employeeData.especialidad = formData.value.especialidad;
     }
@@ -255,21 +235,9 @@ const handleSubmit = async () => {
       // Registrar
       response = await employeeService.registerEmployee(employeeData);
     }
-=======
-    // Si el rol es Médico, agregar la especialidad
-    if (formData.value.especialidad && isMedico.value) {
-      employeeData.especialidad = formData.value.especialidad;
-    }
-    //debugging
-    console.log('Objeto empleado a enviar:', JSON.stringify(employeeData, null, 2));
-    
-    // Llamar al servicio para registrar el empleado
-    const response = await employeeService.registerEmployee(employeeData);
->>>>>>> Stashed changes
     emit('submit', response);
     //atrapado de errores
   } catch (error) {
-<<<<<<< Updated upstream
     emit('error', error.response?.data?.message || 'Error al registrar/actualizar empleado');
   }
 };
@@ -283,16 +251,6 @@ onMounted(async () => {
     farmacias.value = [];
   }
 });
-=======
-    console.error('Error al registrar empleado:', error);//debbugging
-    emit('error', error.message || 'Error al registrar el empleado');//emision del erorr
-  }
-};
-// Manejo del cancelar el formulario
-const cancelar = () => {
-  emit('cancel');// Emitir el evento de cancelación
-};
->>>>>>> Stashed changes
 </script>
 
 <style scoped>

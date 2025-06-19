@@ -97,6 +97,14 @@ export default {
   margin: 0 auto;
 }
 
+.patient-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+  min-height: 500px;
+}
+
 .patient-header {
   display: flex;
   justify-content: space-between;
@@ -107,7 +115,7 @@ export default {
 }
 
 .patient-info h1 {
-  color: #009999;
+  color: black;
   margin: 0 0 0.5rem 0;
 }
 
@@ -124,7 +132,7 @@ export default {
 }
 
 .logout-btn {
-  background-color: #99cc00;
+  background-color: #0875C1;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -137,7 +145,7 @@ export default {
 }
 
 .logout-btn:hover {
-  background-color: #009999;
+  background-color: #C51A6F;
 }
 
 .patient-nav {
@@ -160,15 +168,8 @@ export default {
 }
 
 .patient-nav button.active {
-  background-color: #009999;
+  background-color: #C51A6F;
   color: white;
 }
 
-.patient-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  min-height: 500px;
-}
 </style>

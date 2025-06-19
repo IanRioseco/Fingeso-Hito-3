@@ -117,10 +117,10 @@
         
         <div v-if="selectedDate" class="time-selection">
           <h4>
-            <template v-if="availableTimeSlots.length > 0">
+            <template class="time-slots-header" v-if="availableTimeSlots.length > 0">
               Horarios disponibles para el {{ formatDateForDisplay(selectedDate) }}
             </template>
-            <template v-else>
+            <template class="time-slots-header" v-else>
               No hay horarios disponibles para el {{ formatDateForDisplay(selectedDate) }}
             </template>
           </h4>
@@ -472,7 +472,7 @@ export default {
         }
         // Construir el objeto cita para el backend con idPaciente correcto
         const appointmentData = {
-          estado: 'CitaAgendada',
+          estado: 'Cita Agendada',
           idMedico: this.selectedDoctor.id,
           idHorario: this.selectedTimeSlot.idHorario, // idHorario correcto
           idPaciente
@@ -599,12 +599,12 @@ export default {
 }
 
 .step.active .step-number {
-  background-color: #009999;
+  background-color: #C51A6F;
   color: white;
 }
 
 .step.completed .step-number {
-  background-color: #99cc00;
+  background-color: #0875C1;
   color: white;
 }
 
@@ -616,7 +616,7 @@ export default {
 .doctor-selection h3, 
 .datetime-selection h3,
 .confirmation-step h3 {
-  color: #009999;
+  color: #0875C1;
   margin-bottom: 1.5rem;
 }
 
@@ -636,12 +636,12 @@ export default {
 }
 
 .specialty-card:hover {
-  border-color: #009999;
+  border-color: #0875C1;
   box-shadow: 0 0 10px rgba(0, 153, 153, 0.1);
 }
 
 .specialty-card.selected {
-  border-color: #009999;
+  border-color: #0875C1;
   background-color: #f0f9f9;
 }
 
@@ -748,7 +748,7 @@ export default {
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #009999;
+  color: #C51A6F;
   padding: 0.5rem;
 }
 
@@ -767,7 +767,7 @@ export default {
   text-align: center;
   font-weight: 600;
   padding: 0.5rem;
-  color: #009999;
+  color: #0875C1;
 }
 
 .calendar-day {
@@ -791,20 +791,21 @@ export default {
 }
 
 .calendar-day.today {
-  border-color: #009999;
+  border-color: #0875C1;
 }
 
 .calendar-day.available {
   cursor: pointer;
-  border-color: #99cc00;
+  border-color: #0875C1;
 }
 
 .calendar-day.available:hover {
   background-color: #f8fff8;
+  color: black;
 }
 
 .calendar-day.selected {
-  background-color: #99cc00;
+  background-color: #0875C1;
   color: white;
 }
 
@@ -817,19 +818,22 @@ export default {
   background-color: #e8f5e9;
   padding: 0.1rem 0.3rem;
   border-radius: 4px;
-  color: #2e7d32;
+  color: #023e69;
+  text-align: center;
 }
 
+
 .calendar-day.selected .day-slots {
-  background-color: #2e7d32;
+  background-color: #023e69;
   color: white;
 }
 
 .time-selection h4 {
-  color: #009999;
+  color: #0875C1;
   margin-bottom: 1rem;
   text-align: center;
 }
+
 
 .time-slots {
   display: grid;
@@ -847,13 +851,13 @@ export default {
 }
 
 .time-slot:hover {
-  border-color: #009999;
+  border-color: #C51A6F;
 }
 
 .time-slot.selected {
-  background-color: #009999;
+  background-color: #0875C1;
   color: white;
-  border-color: #009999;
+  border-color: #C51A6F;
 }
 
 .appointment-summary {
@@ -871,7 +875,7 @@ export default {
 .summary-label {
   font-weight: 600;
   width: 120px;
-  color: #009999;
+  color: #0875C1;
 }
 
 .summary-value {
@@ -891,18 +895,25 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #0875C1;
 }
 
 .btn-back {
-  background-color: #f5f5f5;
-  color: #747473;
+  background-color: #0875C1;
+  color: white;
   border: none;
+}
+.btn-back:hover { 
+  background-color: #C51A6F;
 }
 
 .btn-confirm {
-  background-color: #99cc00;
+  background-color: #0875C1;
   color: white;
   border: none;
+}
+.btn-confirm:hover {
+  background-color: #C51A6F;
 }
 
 .step-actions {
@@ -922,13 +933,17 @@ export default {
 }
 
 .btn-prev {
-  background-color: #f5f5f5;
-  color: #747473;
+  background-color: #0875C1;
+  color: white;
   border: none;
 }
 
+.btn-prev:hover {
+  background-color: #C51A6F;
+}
+
 .btn-next {
-  background-color: #009999;
+  background-color: #0875C1;
   color: white;
   border: none;
 }
@@ -936,6 +951,9 @@ export default {
 .btn-next:disabled {
   background-color: #ddd;
   cursor: not-allowed;
+}
+.btn-next:hover:not(:disabled) {
+  background-color: #C51A6F;
 }
 
 .alert {

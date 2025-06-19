@@ -1,21 +1,26 @@
+<!--CONTENIDO DE CITA AGENDADA-->
 <template>
-  <div>
+  <div class="appointments-container">
     <h2>Mis Citas</h2>
-    <ul v-if="appointments.length">
-      <li v-for="cita in appointments" :key="cita.id_citamedica">
-        <strong>Fecha: {{ formatFecha(cita.horario?.fecha) }}</strong><br />
-        <span>Hora: {{ formatHora(cita.horario?.horainicio) }}</span><br />
-        Médico: {{ cita.medico?.nombre }} {{ cita.medico?.apellido }}<br />
-        Especialidad: {{ cita.medico?.especialidad?.nombre }}<br />
-        Estado: {{ cita.estado }}
-        <button @click="cancelarCita(cita.id_citamedica)">Cancelar cita</button>
+    <!--solo se muestra si hay citas-->
+    <ul class="appointment-list" v-if="appointments.length">
+      <!--por cada cita en el array se muestra un elemento del array, se identifica con la key ID-->
+      <li class="appointment-item" v-for="cita in appointments" :key="cita.id_citamedica">
+        <!--contenido dentro de cada elemento del array-->
+        <p><strong>📅 Fecha:</strong> {{ formatFecha(cita.horario?.fecha) }}</p>
+        <p><strong>⏰ Hora:</strong> {{ formatHora(cita.horario?.horainicio) }}</p>
+        <p><strong>👨‍⚕️ Médico:</strong> {{ cita.medico?.nombre }} {{ cita.medico?.apellido }}</p>
+        <p><strong>🩺 Especialidad:</strong> {{ cita.medico?.especialidad?.nombre }}</p>
+        <p><strong>📌 Estado:</strong> {{ cita.estado }}</p>
+        <button class="btn-cancel" @click="cancelarCita(cita.id_citamedica)">Cancelar</button>
       </li>
     </ul>
-    <div v-else>
+    <div class="no-appointments" v-else>
       No tienes citas agendadas.
     </div>
   </div>
 </template>
+
 
 <script setup>
 //IMPORTACIONES
@@ -78,3 +83,72 @@ const cancelarCita = async (id) => {
 
 onMounted(cargarCitas)
 </script>
+
+<style scoped>
+.appointments-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.appointments-container h2 { 
+  color: black;
+  padding-bottom: 2px;
+}
+
+.appointment-list {
+  list-style: none;
+  padding: 0;
+}
+
+.appointment-item {
+  background: #f5f5f5;
+  border-left: 5px solid #3498db;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.appointment-item p {
+  margin: 0.3rem 0;
+}
+
+.no-appointments {
+  text-align: center;
+  color: #888;
+  margin-top: 2rem;
+  font-style: italic;
+}
+
+.appointments-container ul {
+  list-style-type: none;
+  padding: 0;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+}
+
+.appointments-container button {
+  background-color: #C51A6F;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 90px;
+  transition: background 0.2s;
+}
+.appointments-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.appointments-container button:hover:not(:disabled) {
+  background-color: #0875C1;
+}
+.no-appointments {
+  text-align: center;
+  color: #747473;
+}
+
+
+</style>

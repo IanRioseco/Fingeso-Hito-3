@@ -59,12 +59,7 @@
 </template>
 
 <script setup>
-<<<<<<< Updated upstream
 import { defineProps, defineEmits, ref, computed } from 'vue'
-=======
-//IMPORTACIONES
-import { defineProps, defineEmits, ref } from 'vue'
->>>>>>> Stashed changes
 import PharmacyService from '@/services/PharmacyService'
 //DATOS REACTIVOS PARA EL COMPONENTE
 const props = defineProps({
@@ -79,7 +74,6 @@ const emit = defineEmits(['reload'])
 //DATOS REACTIVOS PARA EL FORMULARIO
 const editingId = ref(null)
 const editData = ref({})
-<<<<<<< Updated upstream
 
 const getFarmaciaMedicamentoId = (item) => {
   return (
@@ -111,13 +105,6 @@ const uniqueFilteredMedicines = computed(() => {
 
 const editMedicine = (item) => {
   editingId.value = getFarmaciaMedicamentoId(item)
-=======
-//FUNCIONES PARA MANEJAR EL FORMULARIO
-const editMedicine = (item) => {
-  // Si el ID del medicamento es valido, establece el valor en el formulario
-  editingId.value = item.idFarmaciaMedicamento || item.Id_farmacia_medicamento || item.id || item.ID
-  // Crea un objeto vacío para guardar los datos del formulario
->>>>>>> Stashed changes
   editData.value = {
     // Obtiene los datos del medicamento
     nombre: item.medicamento?.nombre || '',
@@ -145,22 +132,6 @@ const saveEdit = async (item) => {
     console.error(e)
   }
 }
-<<<<<<< Updated upstream
-
-=======
-// Función para obtener el ID del medicamento
-const getFarmaciaMedicamentoId = (item) => {
-  // Prueba todas las variantes posibles de ID
-  return (
-    item.idFarmaciaMedicamento ||
-    item.Id_farmacia_medicamento ||
-    item.id_farmacia_medicamento ||
-    item.id ||
-    item.ID
-  );
-};
-// Función para eliminar un medicamento de la farmacia
->>>>>>> Stashed changes
 const deleteFarmaciaMedicamento = async (item) => {
   // Obtiene el ID del medicamento
   const id = getFarmaciaMedicamentoId(item);

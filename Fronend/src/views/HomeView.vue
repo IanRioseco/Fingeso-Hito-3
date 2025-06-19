@@ -77,8 +77,6 @@
 
 <script setup >
 import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpecialties.vue';
-
-
 </script>
 
 <style scoped>
@@ -147,7 +145,7 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
   border-radius: 10px;
   box-shadow: 0 2px 8px #0001;
   min-height: 500px;
-  max-width: 1200px;   /* Limita el ancho máximo */
+  max-width: 1200px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -177,7 +175,6 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
   max-width: 100%;
   width: 100%;
   margin: 0;
-  /* Elimina cualquier width fija mayor al contenedor */
 }
 
 .aside-container {
@@ -214,13 +211,15 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
 .servicios {
   display: flex;
   gap: 2rem;
-  justify-content: center;
+  justify-content: space-around;
   margin: 2rem 0;
   flex-wrap: wrap;
   background: #fff;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   padding: 2rem;
+  max-width: 1200px;
+  width: 100%;
 }
 .servicio-card {
   background: #fff;
@@ -238,7 +237,8 @@ import CarouselEspecialties from '@/components/specialtiescarousel/CarouselSpeci
 .noticias {
   margin: 2rem 0;
   width: 100%;
-  max-width: 700px;
+  max-width: 1200px;
+  
 }
 .noticia {
   background: #e8f5e9;

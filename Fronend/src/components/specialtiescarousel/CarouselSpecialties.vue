@@ -60,13 +60,6 @@ function agruparEnFilas(array, porFila) {
 }
 // Agrupa las especialidades en pares para simular 2 filas
 const especialidadesAgrupadas = agruparEnFilas(especialidades, 2)
-// Configuración del carousel
-const config = {
-  height: 250,
-  itemsToShow: 4, // Cuántas tarjetas mostrar a la vez
-  gap: 16,
-  wrapAround: false,
-}
 </script>
 
 <style scoped>
