@@ -16,6 +16,7 @@
             <th>Nombre</th>
             <th>Apellido</th>
             <th>Rol</th>
+            <th>Especialidad</th>
             <th>Correo</th>
             <th>Acciones</th>
           </tr>
@@ -25,8 +26,9 @@
             <td>{{ formatRut(employee.rut) }}</td>
             <td>{{ employee.nombre }}</td>
             <td>{{ employee.apellido }}</td>
-            <td>{{ employee.rol?.nombre }}</td>
-            <td>{{ employee.correo }}</td>
+            <td><span>{{ employee.rol.nombre }}</span></td>
+            <td>{{employee.especial8idad}}</td>
+            <td>{{employee.correo }}</td>
             <td class="actions">
               <button class="btn-edit" @click="editEmployee(employee)">
                 <i class="fas fa-edit"></i>
@@ -64,6 +66,8 @@
 import { ref, onMounted } from 'vue';
 import UserFormModal from './UserFormModal.vue';
 import employeeService from '@/services/employee.service';
+import specialtyService from '@/services/specialtyService';
+
 
 // DEFINICIÓN DEL COMPONENTE
 export default {
@@ -95,6 +99,9 @@ export default {
         errorMessage.value = 'Error al cargar la lista de empleados';// Mostrar mensaje de error
       }
     };
+
+    
+
 
     const handleSubmit = async (response) => {
       try {
@@ -133,6 +140,8 @@ export default {
         }
       }
     };
+
+
     // Función para formatear el RUT
     const formatRut = (rut) => {
       if (!rut) return '';
@@ -159,6 +168,8 @@ export default {
       editingEmployee.value = null;
       showModal.value = true;
     };
+
+
 
     onMounted(() => {
       loadEmployees();

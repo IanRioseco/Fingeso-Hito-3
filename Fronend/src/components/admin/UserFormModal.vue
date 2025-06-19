@@ -12,6 +12,7 @@
             id="nombre" 
             v-model="formData.nombre" 
             required
+            @input="formData.nombre = formData.nombre.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]/g,'')"
           />
         </div>
 
@@ -22,6 +23,7 @@
             id="apellido" 
             v-model="formData.apellido" 
             required
+            @input="formData.apellido = formData.apellido.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]/g,'')"
           />
         </div>
 
@@ -54,7 +56,10 @@
             id="telefono" 
             v-model="formData.telefono"
             placeholder="+56 9 XXXX XXXX"
+            @input="formData.telefono = formData.telefono.replace(/[^0-9+]/g, '').replace(/^(?!\+569)/, '+569')"
+            required
           />
+          <small>Debe comenzar con +569 y tener 8 dígitos después (ej: +56912345678)</small>
         </div>
 
         <div class="form-group">
@@ -83,14 +88,15 @@
         </div>
 
         <div class="form-group">
-          <label for="especialidad">Especialidad:</label>
-          <input 
-            type="text" 
-            id="especialidad" 
-            v-model="formData.especialidad"
-            :disabled="!isMedico"
-            :required="isMedico"
-          />
+          <div class = "form-group-medic" v-if="selectedRol === 'MEDICO'">
+            <label for="especial8idad">Especialidad:</label>
+                <select id ="especialidad" v-model="formData.especialidad" required>
+                  <option value="">Seleccione una especialidad</option>
+                  <option v-for ="especialidad in especialidades" :key="especialidad.id_especialidad" :value="especialidad.nombre">
+                    {{ especialidad.nombre }}
+                  </option>
+                </select>
+          </div>
         </div>
 
         <div class="form-group" v-if="selectedRol === 'FARMACEUTICO'">
@@ -104,6 +110,9 @@
         </div>
       </div>
 
+      
+                    
+
       <div class="form-actions">
         <button type="button" class="btn-cancelar" @click="cancelar">Cancelar</button>
         <button type="submit" class="btn-guardar">Guardar</button>
@@ -116,6 +125,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import employeeService from '@/services/employee.service';
 import PharmacyService from '@/services/PharmacyService';
+import specialtyService from '@/services/specialtyService';
 
 const props = defineProps({
   employee: {
@@ -147,9 +157,11 @@ const formData = ref({
   rol: null,
   especialidad: '',
   farmaciaId: ''
+
 });
 
 const farmacias = ref([]);
+const especialidades = ref([])
 
 // Computed para verificar si el rol seleccionado es Médico
 const isMedico = computed(() => selectedRol.value === 'MEDICO');
@@ -250,10 +262,29 @@ onMounted(async () => {
   } catch (e) {
     farmacias.value = [];
   }
+
+  try {
+    // Corrección: usar el import correcto y el método correcto
+    const res = await specialtyService.getAllEspecialidad();
+    // Si la respuesta es un objeto con .data, usarlo
+    especialidades.value = res.data ? res.data : res;
+  } catch (e) {
+    especialidades.value = [];
+  }
+
 });
+
+const validarTelefono = () => {
+  const regex = /^\+569\d{8}$/;
+  if (!regex.test(formData.value.telefono)) {
+    alert('El teléfono debe tener el formato +569XXXXXXXX');
+    formData.value.telefono = '';
+  }
+};
 </script>
 
 <style scoped>
+
 .modal-form {
   max-width: 600px;
   margin: 0 auto;
