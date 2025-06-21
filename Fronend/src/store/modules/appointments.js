@@ -68,7 +68,7 @@ export default {
       console.log('Paciente autenticado:', usuario);//debbugging
       // Construir el payload exactamente como espera el backend
       const citaPayload = {
-        estado: 'CitaAgendada',
+        estado: 'Cita Agendada',
         idMedico: cita.medicoId || cita.idMedico || cita.medico?.id || cita.doctorId,
         idPaciente: usuario?.id_paciente || usuario?.idPaciente || usuario?.id || usuario?.rutPa,
         idHorario: cita.idHorario // Debe venir del slot seleccionado

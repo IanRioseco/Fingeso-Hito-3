@@ -19,7 +19,14 @@ public class fichamedicaServices {
     }
 
     public fichamedicaEntity guardarFichaMedica(fichamedicaEntity fichamedica) {
-        return fichamedicaRepo.save(fichamedica);
+        try {
+            System.out.println("Guardando ficha médica: " + fichamedica);
+            return fichamedicaRepo.save(fichamedica);
+        } catch (Exception e) {
+            System.err.println("Error al guardar ficha médica: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public List<fichamedicaEntity> obtenerTodasLasFichasMedicas() {
@@ -38,7 +45,20 @@ public class fichamedicaServices {
         fichamedicaRepo.deleteById(id);
     }
 
-    public fichamedicaEntity obtenerFichaMedicaPorPacienteId(Long id){
-        return fichamedicaRepo.findByPaciente_RutPa(id);
+    public fichamedicaEntity obtenerFichaMedicaPorPacienteId(Long id) {
+        try {
+            System.out.println("Buscando ficha médica para paciente ID: " + id);
+            fichamedicaEntity ficha = fichamedicaRepo.findByPaciente_RutPa(id);
+            if (ficha != null) {
+                System.out.println("Ficha médica encontrada con ID: " + ficha.getId_fichamedica());
+            } else {
+                System.out.println("No se encontró ficha médica para el paciente ID: " + id);
+            }
+            return ficha;
+        } catch (Exception e) {
+            System.err.println("Error al buscar ficha médica por ID de paciente: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 }

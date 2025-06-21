@@ -7,32 +7,44 @@
       </button>
     </div>
 
-    <!-- Tabla de empleados -->
+    <!-- Tabla que muestra la lista de todos los empleados -->
     <div class="table-container">
       <table>
+        <!-- Encabezados de la tabla -->
         <thead>
           <tr>
             <th>RUT</th>
             <th>Nombre</th>
             <th>Apellido</th>
             <th>Rol</th>
-            <th>Especialidad</th>
+            <th>Especialidad</th> <!-- Solo se mostrará para médicos -->
             <th>Correo</th>
             <th>Acciones</th>
           </tr>
         </thead>
+        <!-- Cuerpo de la tabla con la lista de empleados -->
         <tbody>
+          <!-- Iteración sobre cada empleado en la lista -->
           <tr v-for="employee in employees" :key="employee.rut">
+            <!-- RUT formateado con puntos y guión -->
             <td>{{ formatRut(employee.rut) }}</td>
+            <!-- Nombre del empleado -->
             <td>{{ employee.nombre }}</td>
+            <!-- Apellido del empleado -->
             <td>{{ employee.apellido }}</td>
+            <!-- Rol del empleado -->
             <td><span>{{ employee.rol.nombre }}</span></td>
-            <td>{{employee.especial8idad}}</td>
+            <!-- Especialidad (solo visible para médicos) -->
+            <td>{{ employee.rol.nombre === 'Medico' ? (employee.especialidad ? employee.especialidad.nombre : '-') : '-' }}</td>
+            <!-- Correo electrónico -->
             <td>{{employee.correo }}</td>
+            <!-- Botones de acción (editar y eliminar) -->
             <td class="actions">
+              <!-- Botón para editar empleado -->
               <button class="btn-edit" @click="editEmployee(employee)">
                 <i class="fas fa-edit"></i>
               </button>
+              <!-- Botón para eliminar empleado -->
               <button class="btn-delete" @click="deleteEmployee(employee.rut)">
                 <i class="fas fa-trash"></i>
               </button>
@@ -66,7 +78,6 @@
 import { ref, onMounted } from 'vue';
 import UserFormModal from './UserFormModal.vue';
 import employeeService from '@/services/employee.service';
-import specialtyService from '@/services/specialtyService';
 
 
 // DEFINICIÓN DEL COMPONENTE
@@ -82,21 +93,63 @@ export default {
     const errorMessage = ref('');
     const editingEmployee = ref(null);
 
+    // funcion para cargar todos los empleados del sistema
     const loadEmployees = async () => {
-      //try catch para capturar errores
       try {
-        const response = await employeeService.getAllEmployees();// Llamada al servicio para obtener todos los empleados
-        // Convertir el objeto de empleados en un array
+        // obtener los empleados del backend a través del servicio
+        const response = await employeeService.getAllEmployees();
+        // Log para verificar la estructura de datos recibida
+        console.log('Respuesta del servidor:', response);
+        
+        // inicializar array que contendra todos los empleados procesados
         const employeeArray = [];
-        if (response.medicos) employeeArray.push(...response.medicos);// Agregar los médicos
-        if (response.tecnicos) employeeArray.push(...response.tecnicos);// Agregar los técnicos
-        if (response.recepcionistas) employeeArray.push(...response.recepcionistas);// Agregar los recepcionistas
-        if (response.farmaceuticos) employeeArray.push(...response.farmaceuticos);// Agregar los farmacéuticos
+        
+        // procesar medicos si existen en la respuesta
+        if (response.medicos) {
+          // mapear cada medico agregando su rol y manteniendo su especialidad
+          employeeArray.push(...response.medicos.map(medico => ({
+            ...medico, // Mantener todos los datos originales del médico
+            rol: { nombre: 'Medico' }, // Agregar el rol específico
+            especialidad: medico.especialidad // Mantener la especialidad existente
+          })));
+        }
+        
+        // procesar tecnicos si existen en la respuesta
+        if (response.tecnicos) {
+          // mapear cada tecnico agregando su rol
+          employeeArray.push(...response.tecnicos.map(tecnico => ({
+            ...tecnico, // Mantener todos los datos originales del técnico
+            rol: { nombre: 'Técnico' } // Agregar el rol específico
+          })));
+        }
+        
+        // procesar recepcionistas si existen en la respuesta
+        if (response.recepcionistas) {
+          // mapear cada recepcionista agregando su rol
+          employeeArray.push(...response.recepcionistas.map(recepcionista => ({
+            ...recepcionista, // Mantener todos los datos originales del recepcionista
+            rol: { nombre: 'Recepcionista' } // Agregar el rol específico
+          })));
+        }
+        
+        // procesar farmacéuticos si existen en la respuesta
+        if (response.farmaceuticos) {
+          // mapear cada farmacéutico agregando su rol
+          employeeArray.push(...response.farmaceuticos.map(farmaceutico => ({
+            ...farmaceutico, // Mantener todos los datos originales del farmacéutico
+            rol: { nombre: 'Farmacéutico' } // Agregar el rol específico
+          })));
+        }
+        
+        // log para verificar el array final procesado
+        console.log('Array de empleados procesado:', employeeArray);
+        // actualizar el estado reactivo con los empleados procesados
         employees.value = employeeArray;
-        // atrapado de errores
       } catch (error) {
-        console.error('Error al cargar empleados:', error);//debbugging
-        errorMessage.value = 'Error al cargar la lista de empleados';// Mostrar mensaje de error
+        // manejar cualquier error que ocurra durante la carga
+        console.error('Error al cargar empleados:', error);
+        // mostrar mensaje de error al usuario
+        errorMessage.value = 'Error al cargar la lista de empleados';
       }
     };
 
@@ -105,7 +158,7 @@ export default {
 
     const handleSubmit = async (response) => {
       try {
-        // response es la respuesta del backend emitida por el modal
+        // response es la respuesta del backend emitida por el modal de registro/edición
         if (response.success) {
           showModal.value = false;
           editingEmployee.value = null;
@@ -113,8 +166,7 @@ export default {
           errorMessage.value = '';
         } else {
           errorMessage.value = response.message || 'Error al registrar/actualizar el empleado';
-        }
-        // atrapado de errores
+        } 
       } catch (error) {
         console.error('Error al registrar empleado:', error);
         errorMessage.value = error.response?.data?.message || 'Error al registrar/actualizar el empleado';

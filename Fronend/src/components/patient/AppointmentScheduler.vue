@@ -206,7 +206,7 @@
 
 <script>
 // Importaciones necesarias
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, addMonths, subMonths, parseISO } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, parseISO } from 'date-fns';
 import { es, id } from 'date-fns/locale';
 import medicalrecordServices from '@/services/medicalrecordService'; // Importa el servicio de ficha médica
 
@@ -464,40 +464,46 @@ async confirmAppointment() {
       return;
     }
 
-    const fichaResponse = await medicalrecordServices.obtenerPorIdPaciente(idPaciente);
-    console.log('Ficha médica asociada:', fichaResponse.data);
-        console.log('Paciente bruto JSON:', JSON.stringify(pacienteRaw, null, 2));
-        console.log('Ficha médica asociada:', pacienteRaw.fichamedica || paciente.fichamedica);
+    try {
+      console.log('Intentando obtener ficha médica para paciente:', idPaciente);
+      const fichaResponse = await medicalrecordServices.obtenerPorIdPaciente(idPaciente);
+      console.log('Respuesta de ficha médica:', fichaResponse);
 
-    // Validar que el horario seleccionado sea válido
-    if (!this.selectedTimeSlot || !this.selectedTimeSlot.idHorario) {
-      this.appointmentError = 'Debes seleccionar un horario válido para agendar la cita.';
-      return;
-    }
-    // Construir el objeto cita para el backend con idPaciente correcto
-    const appointmentData = {
-      estado: 'Cita Agendada',
-      idMedico: this.selectedDoctor.id,
-      idHorario: this.selectedTimeSlot.idHorario,
-      idPaciente,
-      idFichaMedica: fichaResponse.data ? fichaResponse.data.id : null // Asignar null o el id de ficha médica si se tiene
-   // Asignar null o el id de ficha médica si se tiene
-    };
-    // Debug
-    console.log('appointmentData', appointmentData, 'selectedTimeSlot', this.selectedTimeSlot, 'selectedDoctor', this.selectedDoctor);
-    // Llama a la acción del store para crear la cita
-    const result = await this.$store.dispatch('appointments/createAppointment', appointmentData);
-    // Maneja la respuesta del backend
-    if (result.success) {
-      this.appointmentSuccess = '¡Cita agendada exitosamente!';
-      setTimeout(() => {
-        this.$router.push('/patient/appointments');
-      }, 1200);
-    } else {
-      this.appointmentError = result.error || 'No se pudo agendar la cita.';
+      // Validar que el horario seleccionado sea válido
+      if (!this.selectedTimeSlot || !this.selectedTimeSlot.idHorario) {
+        this.appointmentError = 'Debes seleccionar un horario válido para agendar la cita.';
+        return;
+      }
+
+      // Construir el objeto cita para el backend
+      const appointmentData = {
+        estado: 'Cita Agendada',
+        idMedico: this.selectedDoctor.id,
+        idHorario: this.selectedTimeSlot.idHorario,
+        idPaciente: idPaciente,
+        idFichaMedica: fichaResponse.data?.id_fichamedica
+      };
+
+      console.log('Datos de la cita a crear:', appointmentData);
+
+      // Llama a la acción del store para crear la cita
+      const result = await this.$store.dispatch('appointments/createAppointment', appointmentData);
+
+      if (result.success) {
+        this.appointmentSuccess = '¡Cita agendada exitosamente!';
+        setTimeout(() => {
+          this.$router.push('/patient/appointments');
+        }, 1200);
+      } else {
+        this.appointmentError = result.error || 'No se pudo agendar la cita.';
+      }
+    } catch (error) {
+      console.error('Error al procesar la cita:', error);
+      this.appointmentError = 'Error al procesar la cita. Por favor, intenta nuevamente.';
     }
   } catch (error) {
-    this.appointmentError = error.message || 'Error inesperado al agendar la cita.';
+    console.error('Error general:', error);
+    this.appointmentError = 'Error inesperado al agendar la cita.';
   }
 },
     // Genera las fechas disponibles para el mes actual

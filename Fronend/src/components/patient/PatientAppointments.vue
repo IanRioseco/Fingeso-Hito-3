@@ -33,29 +33,49 @@ const appointments = ref([])
 const store = useStore()
 //funciones para formatear la fecha y la hora
 function formatFecha(fecha) {
-  // Verifica si la fecha es una fecha valida
-  if (!fecha) return ''
-  // Verifica si la fecha es una fecha valida
-  const d = new Date(fecha)
-  // Si es una fecha válida, devuelve la fecha en formato DD/MM/AAAA
-  if (!isNaN(d)) {
-    // Devuelve la fecha en formato DD/MM/AAAA
-    return d.toLocaleDateString('es-CL')
+  if (!fecha) return 'Fecha no disponible';
+  try {
+    // Si es una fecha en formato ISO (YYYY-MM-DD)
+    if (typeof fecha === 'string' && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      // Crear la fecha usando la zona horaria local
+      const [year, month, day] = fecha.split('-');
+      const d = new Date(year, month - 1, day);
+      // Ajustar la fecha para la zona horaria local
+      d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+      return d.toLocaleDateString('es-CL', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    }
+    // Si es un objeto Date
+    const d = new Date(fecha);
+    if (!isNaN(d)) {
+      // Ajustar la fecha para la zona horaria local
+      d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+      return d.toLocaleDateString('es-CL', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    }
+  } catch (error) {
+    console.error('Error al formatear fecha:', error);
   }
-  // Si la fecha no es una fecha válida, devuelve la fecha como string
-  if (typeof fecha === 'string' && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
-    const [y, m, d] = fecha.split('-')
-    return `${d}/${m}/${y}`
-  }
-  return fecha
+  return 'Formato de fecha inválido';
 }
 
 function formatHora(hora) {
-  if (!hora) return ''
-  if (typeof hora === 'string' && hora.match(/^\d{2}:\d{2}/)) {
-    return hora.substring(0,5)
+  if (!hora) return 'Hora no disponible';
+  try {
+    // Si es una hora en formato HH:mm o HH:mm:ss
+    if (typeof hora === 'string' && hora.match(/^\d{2}:\d{2}(:\d{2})?/)) {
+      return hora.substring(0, 5); // Devuelve solo HH:mm
+    }
+  } catch (error) {
+    console.error('Error al formatear hora:', error);
   }
-  return hora
+  return 'Formato de hora inválido';
 }
 
 const cargarCitas = async () => {
