@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,7 +70,7 @@ public class horarioServices {
     public List<horarioEntity> obtenerHorariosPorMedico(Long idMedico) {
         return horarioRepo.findByMedico_Idmedico(idMedico);
     }
-
+    
     // NUEVO: Método para registrar múltiples bloques desde DTOs
     public void registrarMultiplesHorarios(List<HorarioDTO> bloques) {
         for (HorarioDTO dto : bloques) {
@@ -83,4 +85,9 @@ public class horarioServices {
             registrarHorarioValidado(horario);
         }
     }
+
+    public List<horarioEntity> obtenerHorariosDisponiblesPorMedico(Long idMedico) {
+        return horarioRepo.findByMedico_IdmedicoAndCitamedicaIsNull(idMedico);
+    }
+
 }

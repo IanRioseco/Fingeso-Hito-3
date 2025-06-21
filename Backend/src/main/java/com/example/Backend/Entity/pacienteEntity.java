@@ -46,9 +46,17 @@ public class pacienteEntity {
     @Column(name = "rut", length = 20, nullable = false, unique = true)
     private String rut;
 
-
     @ManyToOne
     @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")
     private rolEntity rol;
 
+    @Transient
+    private fichamedicaEntity fichamedica;
+
+    public fichamedicaEntity getFichamedica() {
+        return fichamedica;
+    }
+    public void setFichamedica(fichamedicaEntity fichamedica) {
+        this.fichamedica = fichamedica;
+    }
 }

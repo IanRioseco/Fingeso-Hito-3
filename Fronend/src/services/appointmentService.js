@@ -36,5 +36,7 @@ export default {
 
   obtenerCitaConHorarioPorMedico(idMedico) {
     return api.get(`/api/citamedica/medico/${idMedico}`);
-  }
+  },
+
+
 }

@@ -27,5 +27,9 @@ export default {
     //obtener horarios por médico
     Obtenerdisponibilidadpormédico(idmedico) {
         return api.get(`/api/horario/horario/medico/${idmedico}`);
-    }
+    },
+
+    fetchAvailableHorariosByMedico(doctorId) {
+    return api.get(`/api/horario/disponibles/medico/${doctorId}`);
+  },
 };

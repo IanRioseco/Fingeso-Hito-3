@@ -5,7 +5,7 @@ public class CrearCitaRequest {
     private Long idMedico;
     private Long idPaciente;
     private Long idHorario;
-    private Long idFichamedica;
+    private Long id_fichamedica;
 
     // Getters y setters
     public String getEstado() { return estado; }
@@ -16,4 +16,6 @@ public class CrearCitaRequest {
     public void setIdPaciente(Long idPaciente) { this.idPaciente = idPaciente; }
     public Long getIdHorario() { return idHorario; }
     public void setIdHorario(Long idHorario) { this.idHorario = idHorario; }
+    public Long getId_fichamedica() { return id_fichamedica; }
+    public void setId_fichamedica(Long id_fichamedica) { this.id_fichamedica = id_fichamedica; }
 }

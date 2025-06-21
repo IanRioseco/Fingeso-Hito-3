@@ -1,12 +1,9 @@
 <!--CONTENIDO DE CITA AGENDADA-->
 <template>
   <div class="appointments-container">
-    <h2>Mis Citas</h2>
-    <!--solo se muestra si hay citas-->
-    <ul class="appointment-list" v-if="appointments.length">
-      <!--por cada cita en el array se muestra un elemento del array, se identifica con la key ID-->
+    <h2 class="titulo-citas">Mis Citas</h2>
+    <div class="appointment-list" v-if="appointments.length">
       <li class="appointment-item" v-for="cita in appointments" :key="cita.id_citamedica">
-        <!--contenido dentro de cada elemento del array-->
         <p><strong>📅 Fecha:</strong> {{ formatFecha(cita.horario?.fecha) }}</p>
         <p><strong>⏰ Hora:</strong> {{ formatHora(cita.horario?.horainicio) }}</p>
         <p><strong>👨‍⚕️ Médico:</strong> {{ cita.medico?.nombre }} {{ cita.medico?.apellido }}</p>
@@ -14,7 +11,7 @@
         <p><strong>📌 Estado:</strong> {{ cita.estado }}</p>
         <button class="btn-cancel" @click="cancelarCita(cita.id_citamedica)">Cancelar</button>
       </li>
-    </ul>
+    </div>
     <div class="no-appointments" v-else>
       No tienes citas agendadas.
     </div>
@@ -115,10 +112,12 @@ onMounted(cargarCitas)
 </script>
 
 <style scoped>
-.appointments-container {
+.appointments-container h2.titulo-citas {
+  text-align: left;
+  margin-bottom: 0.5rem;
   max-width: 700px;
-  margin: 2rem auto;
-  padding: 1rem;
+  margin-top: 0;
+  padding-left: 0;
   font-family: 'Segoe UI', sans-serif;
 }
 
@@ -179,6 +178,38 @@ onMounted(cargarCitas)
   text-align: center;
   color: #747473;
 }
+
+.appointments-container .btn-cancel {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.appointments-container .btn-cancel:hover {
+  background-color: #C51A6F;
+}
+
+.appointments-container .btn-cancel:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.appointments-container .btn-cancel:disabled:hover {
+  background-color: #ccc;
+}
+
+.appointments-container .btn-cancel:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.appointments-container .btn-cancel:hover:not(:disabled) {
+  background-color: #0875C1;
+}
+
 
 
 </style>

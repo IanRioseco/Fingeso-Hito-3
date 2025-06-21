@@ -62,31 +62,11 @@ public class fichamedicaController {
 
     @GetMapping("/paciente/{id}")
     public ResponseEntity<fichamedicaEntity> obtenerFichaMedicaPorPacienteId(@PathVariable Long id) {
-        try {
-            System.out.println("Buscando ficha médica para paciente ID: " + id);
-            fichamedicaEntity ficha = fichamedicaSer.obtenerFichaMedicaPorPacienteId(id);
-            if (ficha != null) {
-                System.out.println("Ficha médica encontrada: " + ficha.getId_fichamedica());
-                return new ResponseEntity<>(ficha, HttpStatus.OK);
-            } else {
-                System.out.println("No se encontró ficha médica para el paciente ID: " + id);
-                // Si no existe la ficha, creamos una nueva
-                fichamedicaEntity nuevaFicha = new fichamedicaEntity();
-                // Establecer valores por defecto
-                nuevaFicha.setEdad(0);
-                nuevaFicha.setSexo("");
-                nuevaFicha.setSintomas("");
-                nuevaFicha.setEnfermedades("");
-                nuevaFicha.setPeso(0.0);
-                nuevaFicha.setAltura(0.0);
-                // Guardar la nueva ficha
-                fichamedicaEntity fichaGuardada = fichamedicaSer.guardarFichaMedica(nuevaFicha);
-                return new ResponseEntity<>(fichaGuardada, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            System.err.println("Error al buscar ficha médica: " + e.getMessage());
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        fichamedicaEntity ficha = fichamedicaSer.obtenerFichaMedicaPorPacienteId(id);
+        if (ficha != null) {
+            return new ResponseEntity<>(ficha, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

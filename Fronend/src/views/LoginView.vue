@@ -4,6 +4,7 @@
       <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo">
       <h2>Iniciar Sesión</h2>
       <form @submit.prevent="handleLogin">
+        <!-- ...campos del formulario... -->
         <div class="form-group">
           <label for="rut">RUT</label>
           <input 
@@ -45,6 +46,9 @@
         </button>
         <p v-if="error" class="error-message">{{ error }}</p>
       </form>
+      <button class="btn-home" @click="$router.push('/')">
+        Volver al inicio
+      </button>
       <p class="register-link">
         ¿Eres paciente y no tienes cuenta? 
         <router-link to="/register">Regístrate aquí</router-link>
@@ -194,6 +198,24 @@ export default {
 </script>
 
 <style scoped>
+
+.btn-home {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #0875C1;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  transition: background 0.2s;
+}
+.btn-home:hover {
+  background-color: #C51A6F;
+}
+
 .login-container {
   display: flex;
   justify-content: center;

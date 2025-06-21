@@ -209,6 +209,7 @@
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, parseISO } from 'date-fns';
 import { es, id } from 'date-fns/locale';
 import medicalrecordServices from '@/services/medicalrecordService'; // Importa el servicio de ficha médica
+import appointmentService from '@/services/appointmentService';
 
 // Definición de variables y funciones
 export default {
@@ -409,31 +410,107 @@ export default {
     },
     // Carga las fechas disponibles para el médico seleccionado
         async fetchAvailableDates() {
+  try {
+    if (!this.selectedDoctor) return;
+    // Llama al store que ahora usa el nuevo endpoint
+    const horarios = await this.$store.dispatch('appointments/fetchAvailability', {
+      doctorId: this.selectedDoctor.id,
+    });
+    console.log('Horarios disponibles recibidos:', horarios);
+    // Agrupa los horarios por fecha
+    const grouped = {};
+    horarios.forEach(horario => {
+      const fecha = horario.fecha;
+      if (!grouped[fecha]) grouped[fecha] = [];
+      grouped[fecha].push({
+        time: horario.horainicio.substring(0, 5),
+        idHorario: horario.id
+      });
+    });
+    this.availableDates = Object.keys(grouped).map(date => ({
+      date,
+      slots: grouped[date].length,
+      available: grouped[date].length > 0,
+      slotTimes: grouped[date]
+    }));
+  } catch (error) {
+    console.error('Error al cargar fechas disponibles:', error);
+  }
+},
+    // Maneja la confirmación de la cita
+async confirmAppointment() {
+      this.appointmentError = null;
+      this.appointmentSuccess = null;
       try {
-        if (!this.selectedDoctor) return;
-        const horarios = await this.$store.dispatch('appointments/fetchAvailability', {
-          doctorId: this.selectedDoctor.id,
-        
+        // Verifica autenticación
+        const pacienteRaw = this.$store.getters['auth/currentUser'];
+        if (!pacienteRaw) {
+          this.appointmentError = 'Debes iniciar sesión para agendar una cita.';
+          this.$router.push('/login');
+          return;
+        }
+        const paciente = pacienteRaw?.usuario || pacienteRaw;
+        // Log detallado de la estructura del paciente
+        console.log('Paciente autenticado para cita:', paciente, {
+          id_paciente: paciente?.id_paciente,
+          idPaciente: paciente?.idPaciente,
+          id: paciente?.id,
+          rutPa: paciente?.rutPa
         });
-        console.log('Horarios recibidos:', horarios);
-        const horariosDisponibles = horarios.filter(h => !h.citamedica);
-        const grouped = {};
-        horariosDisponibles.forEach(horario => {
-          const fecha = horario.fecha;
-          if (!grouped[fecha]) grouped[fecha] = [];
-          grouped[fecha].push({
-            time: horario.horainicio.substring(0, 5),
-            idHorario: horario.id
+        // Validar idPaciente
+        const idPaciente = paciente?.idPaciente || paciente?.id_paciente || paciente?.id || paciente?.rutPa;
+        if (!idPaciente) {
+          this.appointmentError = 'No se encontró un paciente autenticado válido. Por favor, inicia sesión nuevamente.';
+          this.$router.push('/login');
+          return;
+        }
+
+        const fichaResponse = await medicalrecordServices.obtenerPorIdPaciente(idPaciente);
+        console.log('Respuesta cruda de ficha médica:', fichaResponse);
+        const fichaMedica = fichaResponse.data;
+        console.log('Ficha médica asociada (data):', fichaMedica);
+        // Depuración: mostrar todas las keys y valores
+        if (fichaMedica && typeof fichaMedica === 'object') {
+          Object.entries(fichaMedica).forEach(([key, value]) => {
+            console.log(`fichaMedica[${key}] =`, value);
           });
-        });
-        this.availableDates = Object.keys(grouped).map(date => ({
-          date,
-          slots: grouped[date].length,
-          available: grouped[date].length > 0,
-          slotTimes: grouped[date]
-        }));
+        }
+
+        // Validar que el horario seleccionado sea válido
+        if (!this.selectedTimeSlot || !this.selectedTimeSlot.idHorario) {
+          this.appointmentError = 'Debes seleccionar un horario válido para agendar la cita.';
+          return;
+        }
+        // Validar que el id de ficha médica sea válido
+        const idFichaMedica = fichaMedica.id_fichamedica || fichaMedica.idFichaMedica || fichaMedica.id || fichaMedica.Id_fichamedica;
+        if (!idFichaMedica) {
+          this.appointmentError = 'No se encontró una ficha médica válida para este paciente. No se puede agendar la cita.';
+          return;
+        }
+        // Construir el objeto cita para el backend con idPaciente correcto
+        const appointmentData = {
+          estado: 'Cita Agendada',
+          idMedico: this.selectedDoctor.id,
+          idHorario: this.selectedTimeSlot.idHorario,
+          idPaciente,
+          id_fichamedica: idFichaMedica // Usar el nombre exacto esperado por el backend
+        };
+        // Debug: mostrar el objeto que realmente se enviará
+        console.log('appointmentData FINAL', JSON.stringify(appointmentData));
+        // Llama a la acción del store para crear la cita
+        const result = await this.$store.dispatch('appointments/createAppointment', appointmentData);
+        // Maneja la respuesta del backend
+        if (result.success) {
+          this.appointmentSuccess = '¡Cita agendada exitosamente!';
+          await this.fetchAvailableDates();
+          setTimeout(() => {
+            this.$router.push('/patient/appointments');
+          }, 1200);
+        } else {
+          this.appointmentError = result.error || 'No se pudo agendar la cita.';
+        }
       } catch (error) {
-        console.error('Error al cargar fechas disponibles:', error);
+        this.appointmentError = error.message || 'Error inesperado al agendar la cita.';
       }
     },
     // Maneja la confirmación de la cita
@@ -492,7 +569,7 @@ async confirmAppointment() {
       if (result.success) {
         this.appointmentSuccess = '¡Cita agendada exitosamente!';
         setTimeout(() => {
-          this.$router.push('/patient/appointments');
+          this.$router.push('/patient');
         }, 1200);
       } else {
         this.appointmentError = result.error || 'No se pudo agendar la cita.';
@@ -554,7 +631,30 @@ async confirmAppointment() {
       });
       return availableDates;
     }
-  }
+  },
+  // Al cargar el componente, obtener y depurar la ficha médica del paciente
+    async mounted() {
+      const pacienteRaw = this.$store.getters['auth/currentUser'];
+      const paciente = pacienteRaw?.usuario || pacienteRaw;
+      const idPaciente = paciente?.idPaciente || paciente?.id_paciente || paciente?.id || paciente?.rutPa;
+      if (idPaciente) {
+        try {
+          const fichaResponse = await medicalrecordServices.obtenerPorIdPaciente(idPaciente);
+          console.log('MOUNTED - Respuesta cruda de ficha médica:', fichaResponse);
+          const fichaMedica = fichaResponse.data;
+          console.log('MOUNTED - Ficha médica asociada (data):', fichaMedica);
+          if (fichaMedica && typeof fichaMedica === 'object') {
+            Object.entries(fichaMedica).forEach(([key, value]) => {
+              console.log(`MOUNTED - fichaMedica[${key}] =`, value);
+            });
+          }
+        } catch (error) {
+          console.error('MOUNTED - Error al obtener ficha médica:', error);
+        }
+      } else {
+        console.warn('MOUNTED - No se encontró idPaciente para obtener ficha médica');
+      }
+    },
 }
 </script>
 

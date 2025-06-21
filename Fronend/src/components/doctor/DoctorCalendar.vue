@@ -108,9 +108,9 @@ export default {
     }
   },
   computed: {
-    weekDays() {
+      weekDays() {
       const startDate = startOfWeek(this.currentDate, { weekStartsOn: 1 });
-      return Array.from({ length: 5 }, (_, i) => {
+      return Array.from({ length: 7 }, (_, i) => {
         const date = addDays(startDate, i);
         return {
           date: format(date, 'yyyy-MM-dd'),
@@ -121,7 +121,7 @@ export default {
     },
     weekRange() {
       const start = startOfWeek(this.currentDate, { weekStartsOn: 1 });
-      const end = addDays(start, 4);
+      const end = addDays(start, 6);
       return `${format(start, 'd MMM', { locale: es })} - ${format(end, 'd MMM yyyy', { locale: es })}`;
     },
     timeSlots() {
@@ -253,14 +253,22 @@ export default {
 .doctor-calendar {
   padding: 1rem;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1600px;
+  margin: 0 auto;           /* Centra horizontalmente */
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* Centra el contenido */
 }
-
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+}
+
+.day-column.today .day-header {
+  background-color: #C51A6F;
+  color: #fff;
 }
 
 .calendar-header h2 {
@@ -313,11 +321,15 @@ export default {
   display: flex;
   border: 1px solid #ddd;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
+  margin: 0 auto;
+  background: #fff;
+  width: 100%;           /* Ocupa todo el ancho disponible */
+  min-width: 1200px;     /* Asegura que el grid no se vea apretado */
 }
 
 .time-column {
-  width: 80px;
+  width: 100px;          /* Más ancho para la columna de horas */
   flex-shrink: 0;
   text-align: center;
 }
@@ -354,7 +366,7 @@ export default {
 
 .day-column {
   flex: 1;
-  min-width: 0;
+  min-width: 160px;      /* Más ancho para cada día */
 }
 
 .day-column.today .day-header {

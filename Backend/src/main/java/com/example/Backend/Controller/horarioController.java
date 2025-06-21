@@ -77,4 +77,10 @@ public class horarioController {
         horarioServ.registrarMultiplesHorarios(bloques);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/disponibles/medico/{idMedico}")
+    public ResponseEntity<List<horarioEntity>> obtenerHorariosDisponiblesPorMedico(@PathVariable Long idMedico) {
+        List<horarioEntity> horarios = horarioServ.obtenerHorariosDisponiblesPorMedico(idMedico);
+        return new ResponseEntity<>(horarios, HttpStatus.OK);
+    }
 }

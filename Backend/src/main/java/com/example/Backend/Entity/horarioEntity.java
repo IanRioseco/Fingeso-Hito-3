@@ -19,8 +19,7 @@ public class horarioEntity {
     private Long idHorario;
 
     @Column(name = "fecha", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date fecha;
+    private LocalDate fecha;
 
     @Column(name = "horainicio", nullable = false)
     private LocalTime horainicio;
@@ -38,20 +37,4 @@ public class horarioEntity {
     @JoinColumn(name = "Id_citamedica", referencedColumnName = "Id_citamedica")
     private citamedicaEntity citamedica;
 
-    // Método para convertir la fecha a LocalDate si es necesario
-    public LocalDate getFechaAsLocalDate() {
-        if (fecha != null) {
-            return fecha.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-        }
-        return null;
-    }
-
-    // Método para establecer la fecha desde LocalDate
-    public void setFechaFromLocalDate(LocalDate localDate) {
-        if (localDate != null) {
-            this.fecha = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        }
-    }
 }

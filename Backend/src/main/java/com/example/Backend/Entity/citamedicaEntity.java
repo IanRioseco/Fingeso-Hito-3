@@ -38,7 +38,6 @@ public class citamedicaEntity {
 
     /*Citamedica->FichaMedica*/
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
     private fichamedicaEntity fichamedica;
 

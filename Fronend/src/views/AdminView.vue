@@ -1,7 +1,10 @@
 <template>
   <div class="admin-dashboard">
     <header class="admin-header">
-      <h1>Panel de Administración de {{ adminName }}</h1>
+      <div class="header-logo-title">
+        <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo" />
+        <h1>Panel de Administración de {{ adminName }}</h1>
+      </div>
       <nav class="admin-nav">
         <button @click="activeTab = 'users'" :class="{ active: activeTab === 'users' }">
           Gestión de Usuarios
@@ -117,5 +120,57 @@ export default {
   cursor: pointer;
   font-size: 1rem;
   color: white;
+}
+
+.logout-btn:hover {
+  background-color: #0875C1;
+}
+
+.admin-nav button:hover {
+  background-color: #C51A6F;
+  color: white;
+}
+
+.admin-nav button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
+}
+
+.admin-nav button:active {
+  background-color: #0875C1;
+  color: white;
+}
+
+.admin-nav button:disabled {
+  background-color: #ddd;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.admin-nav button:disabled:hover {
+  background-color: #ddd;
+  color: #aaa;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1rem;
+}
+.header-logo-title {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1rem;
+}
+.logo {
+  height: 48px;
+  width: auto;
+  display: block;
+}
+.admin-header h1 {
+  color: #0875C1;
+  margin: 0;
+  font-size: 1.7rem;
 }
 </style>

@@ -47,7 +47,7 @@ export default {
     },
     //funcion asincrona para obtener la disponibilidad de un medico
     async fetchAvailability({ commit }, { doctorId }) {
-      const response = await horarioService.Obtenerdisponibilidadpormédico(doctorId);// Llama al servicio para obtener la disponibilidad del médico
+      const response = await horarioService.fetchAvailableHorariosByMedico(doctorId);// Llama al servicio para obtener la disponibilidad del médico
       // Devuelve los objetos tal cual, con fecha, horainicio y horafin
       return response.data.map(horario => ({
         id: horario.idHorario,
@@ -68,14 +68,15 @@ export default {
       console.log('Paciente autenticado:', usuario);//debbugging
       // Construir el payload exactamente como espera el backend
       const citaPayload = {
-        estado: 'Cita Agendada',
+        estado: cita.estado || 'CitaAgendada',
         idMedico: cita.medicoId || cita.idMedico || cita.medico?.id || cita.doctorId,
         idPaciente: usuario?.id_paciente || usuario?.idPaciente || usuario?.id || usuario?.rutPa,
-        idHorario: cita.idHorario // Debe venir del slot seleccionado
+        idHorario: cita.idHorario, // Debe venir del slot seleccionado
+        id_fichamedica: cita.id_fichamedica || cita.idFichaMedica || cita.idFichamedica || cita.IdFichamedica// Asegura que se incluya el campo correcto si viene del frontend
       };
-      console.log('citaPayload', citaPayload);//debbugging
+      console.log('citaPayload FINAL', citaPayload);//debugging
       // Validar que todos los campos requeridos estén presentes
-      if (!citaPayload.estado || !citaPayload.idMedico || !citaPayload.idPaciente || !citaPayload.idHorario) {
+      if (!citaPayload.estado || !citaPayload.idMedico || !citaPayload.idPaciente || !citaPayload.idHorario || !citaPayload.id_fichamedica) {
         return { success: false, error: 'Faltan datos requeridos para crear la cita.' };
       }
       //try catch para capturar errores

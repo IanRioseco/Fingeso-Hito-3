@@ -20,4 +20,6 @@ public interface horarioRepository extends JpaRepository<horarioEntity, Long> {
     @Transactional
     @Query("DELETE FROM horarioEntity h WHERE h.citamedica.Id_citamedica = :idCita")
     void deleteByCitamedicaId(@Param("idCita") Long idCita);
+
+    List<horarioEntity> findByMedico_IdmedicoAndCitamedicaIsNull(Long idMedico);
 }

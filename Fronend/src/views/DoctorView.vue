@@ -1,10 +1,20 @@
 <template>
   <div class="doctor-dashboard">
     <header class="doctor-header">
-      <h1>Panel Médico</h1>
+      <div class="header-logo-title">
+        <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo" />
+        <h1>Panel Médico</h1>
+      </div>
       <div class="doctor-info">
-        <span>Dr. {{ doctorName }}</span>
-        <span>{{ specialty.nombre }}</span>
+        <img
+          class="doctor-photo"
+          :src="doctorPhotoUrl"
+          alt="Foto del doctor"
+        />
+        <div class="doctor-meta">
+          <span>Dr. {{ doctorName }}</span>
+          <span>{{ specialty.nombre }}</span>
+        </div>
         <button class="logout-btn" @click="logout">Cerrar sesión</button>
       </div>
     </header>
@@ -47,7 +57,6 @@ export default {
     DoctorSettings
   },
   data() {
-    //definicion de pestaña activa
     return {
       activeTab: 'calendar',
       tabs: [
@@ -57,19 +66,21 @@ export default {
         { id: 'settings', label: 'Configuración' }
       ],
       doctorName: '',
-      specialty: '' 
+      specialty: { nombre: '' },
+      doctorPhotoUrl: ''
     }
   },
-  //carga de datos del usuario al iniciar el componente
   created() {
     const userData = authService.getCurrentUser();
     if (userData && userData.usuario) {
       this.doctorName = `${userData.usuario.nombre} ${userData.usuario.apellido}`;
       this.specialty = userData.usuario.especialidad || {nombre: 'Especialidad no definida' };
+      this.doctorPhotoUrl =
+        userData.usuario.fotoPerfil ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(this.doctorName)}&background=0875C1&color=fff`;
     }
   },
   methods: {
-    //funcion para cerrar sesión
     logout() {
       authService.logout("auth/logout");
       this.$router.push('/login');
@@ -94,6 +105,16 @@ export default {
   padding-bottom: 1rem;
   border-bottom: 1px solid #ddd;
 }
+.header-logo-title {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.logo {
+  height: 48px;
+  width: auto;
+  display: block;
+}
 
 .doctor-header h1 {
   color: #0875C1;
@@ -102,15 +123,45 @@ export default {
 
 .doctor-info {
   display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.doctor-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #C51A6F;
+  background: #f5f5f5;
+}
+
+.doctor-meta {
+  display: flex;
   flex-direction: column;
   align-items: flex-end;
   font-size: 1.1rem;
   color: #747473;
 }
 
-.doctor-info span:first-child {
+.doctor-meta span:first-child {
   font-weight: 600;
   color: #0875C1;
+}
+
+.logout-btn {
+  background: #C51A6F;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.logout-btn:hover {
+  background: #0875C1;
 }
 
 .doctor-nav {
@@ -142,14 +193,37 @@ export default {
   min-height: 500px;
 }
 
-.logout-btn {
-  background: #C51A6F;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  margin-left: 1rem;
-  font-weight: bold;
-  cursor: pointer;
+.doctor-nav button:hover {
+  background-color: #C51A6F;
+  color: white;
+}
+
+.doctor-nav button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
+}
+
+.doctor-nav button:active {
+  background-color: #0875C1;
+  color: white;
+}
+
+.doctor-nav button:disabled {
+  background-color: #ddd;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.doctor-nav button:disabled:hover {
+  background-color: #ddd;
+  color: #aaa;
+}
+
+.doctor-nav button:disabled:focus {
+  box-shadow: none;
+}
+.doctor-nav button:disabled:active {
+  background-color: #ddd;
+  color: #aaa;
 }
 </style>

@@ -20,8 +20,14 @@ public class pacienteController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<pacienteEntity> crearPaciente(@RequestBody pacienteEntity paciente) {
-        return new ResponseEntity<>(pacienteServ.guardarpaciente(paciente), HttpStatus.CREATED);
+    public ResponseEntity<?> registrarPaciente(@RequestBody pacienteEntity paciente) {
+        try {
+            pacienteEntity nuevo = pacienteServ.registrarPaciente(paciente);
+            return ResponseEntity.ok(nuevo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping("/")

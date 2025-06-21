@@ -1,10 +1,13 @@
 <template>
   <div class="patient-dashboard">
     <header class="patient-header">
-      <div class="patient-info">
-        <h1>Bienvenido, {{ patientName }}</h1>
-        <div class="patient-meta">
-          <span>RUT: {{ patientRut }}</span>
+      <div class="header-logo-title">
+        <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo" />
+        <div class="patient-info">
+          <h1>Bienvenido, {{ patientName }}</h1>
+          <div class="patient-meta">
+            <span>RUT: {{ formatRut(patientRut) }}</span>
+          </div>
         </div>
       </div>
       <div class="patient-actions">
@@ -85,12 +88,44 @@ export default {
     logout() {
       authService.logout("auth/logout");
       this.$router.push('/login');
-    }
+    },
+
+    formatRut(rut) {
+    if (!rut) return '';
+    // Elimina puntos y guion si existen
+    rut = rut.replace(/\./g, '').replace('-', '');
+    // Extrae dígito verificador
+    let dv = rut.slice(-1);
+    let cuerpo = rut.slice(0, -1);
+    // Agrega puntos cada 3 dígitos
+    cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `${cuerpo}-${dv}`;
+  }
   }
 }
 </script>
 
 <style scoped>
+
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+.header-logo-title {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.logo {
+  height: 48px;
+  width: auto;
+  display: block;
+}
+
 .patient-dashboard {
   padding: 2rem;
   max-width: 1200px;
@@ -103,15 +138,6 @@ export default {
   padding: 2rem;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
   min-height: 500px;
-}
-
-.patient-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
 }
 
 .patient-info h1 {
@@ -170,6 +196,28 @@ export default {
 .patient-nav button.active {
   background-color: #C51A6F;
   color: white;
+}
+
+.patient-nav button:hover {
+  background-color: #0875C1;
+  color: white;
+}
+
+.patient-nav button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
+}
+.patient-nav button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.patient-nav button:disabled:hover {
+  background-color: #ccc;
+}
+
+.patient-nav button:disabled:focus {
+  box-shadow: none;
 }
 
 </style>
