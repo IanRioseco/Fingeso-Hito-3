@@ -22,6 +22,7 @@ export default {
   },
   //funcion para eliminar una cita medica por su id
   eliminarCita(id) {
+    console.log('ID recibido en appointmentService.eliminarCita:', id); // <-- agrega este log aquí
     return api.delete(`/api/citamedica/${id}`);
   },
   //funcion para obtener citas medicas por paciente
@@ -30,6 +31,10 @@ export default {
   },
   //funcion para obtener citas con horario por paciente
   obtenerCitasConHorarioPorPaciente(idPaciente) {
-    return api.get(`/api/citamedica/paciente/${idPaciente}/con-horario`);
+    return api.get(`/api/citamedica/paciente/${idPaciente}`);
+  },
+
+  obtenerCitaConHorarioPorMedico(idMedico) {
+    return api.get(`/api/citamedica/medico/${idMedico}`);
   }
-};
+}

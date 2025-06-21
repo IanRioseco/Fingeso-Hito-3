@@ -5,6 +5,7 @@ public class CrearCitaRequest {
     private Long idMedico;
     private Long idPaciente;
     private Long idHorario;
+    private Long idFichamedica;
 
     // Getters y setters
     public String getEstado() { return estado; }

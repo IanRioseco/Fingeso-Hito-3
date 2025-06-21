@@ -2,6 +2,7 @@
 import axios from 'axios'; // Descomenta cuando tengas la API
 import horarioService from '@/services/horarioService';
 import { startOfWeek, addDays, format } from 'date-fns';
+import medicoService from '@/services/medicoService';
 
 // Genera bloques de tiempo de 30 minutos entre dos horas dadas
 function generateTimeBlocks(start, end, blockDuration = 30) {
@@ -83,8 +84,9 @@ export default {
     },
 
     //función para obtener los médicos por especialidad
-    async saveAvailability({ dispatch }, newAvailability) {
-      await dispatch('fetchAvailability');
+    async saveAvailability({ dispatch }, bloques) {
+      await medicoService.saveAvailability(bloques); // <-- Esto guarda en el backend
+      await dispatch('fetchAvailability'); // Refresca la disponibilidad después de guardar
     },
 
     //función para eliminar la disponibilidad de un médico

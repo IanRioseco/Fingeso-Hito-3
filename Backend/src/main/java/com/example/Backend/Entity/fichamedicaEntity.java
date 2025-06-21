@@ -34,10 +34,8 @@ public class fichamedicaEntity {
     @Column(name = "altura")
     private Double altura;
 
-    /*FichaMedica -> PersonalTecnico*/
+
     @OneToOne
-    @JoinColumn(name = "Id_pertec", referencedColumnName = "Id_pertec")
-    private personaltecnicoEntity personaltecnico;
-
-
+    @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
+    private pacienteEntity paciente;
 }

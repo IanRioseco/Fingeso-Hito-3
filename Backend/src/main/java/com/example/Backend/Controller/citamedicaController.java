@@ -76,14 +76,10 @@ public class citamedicaController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<citamedicaEntity> eliminarCitamedica(@PathVariable Long id) {
-        return citamedicaServ.obtenerCitamedicaPorId(id)
-                .map(cita -> {
-                    citamedicaServ.eliminarCitamedica(id);
-                    return new ResponseEntity<>(cita, HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @DeleteMapping("/{idCita}")
+    public ResponseEntity<Void> eliminarCitamedica(@PathVariable Long idCita) {
+        citamedicaServ.eliminarCitamedica(idCita);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/paciente/{idPaciente}")
@@ -91,5 +87,13 @@ public class citamedicaController {
         List<citamedicaEntity> citas = citamedicaServ.obtenerCitasPorPaciente(idPaciente);
         return new ResponseEntity<>(citas, HttpStatus.OK);
     }
+
+    @GetMapping("/medico/{idMedico}")
+    public ResponseEntity<List<citamedicaEntity>> obtenerCitasPorMedico(@PathVariable Long idMedico) {
+        List<citamedicaEntity> citas = citamedicaServ.obtenerCitasPorMedico(idMedico);
+        return new ResponseEntity<>(citas, HttpStatus.OK);
+    }
+
+
 }
 

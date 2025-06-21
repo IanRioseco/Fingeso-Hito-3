@@ -1,14 +1,25 @@
 import { authService } from '@/services/auth.service.js'
 
-// Módulo de autenticación para Vuex
+// Obtiene el usuario de localStorage de forma segura
+function getUserFromStorage() {
+  const userRaw = localStorage.getItem('user');
+  if (userRaw && userRaw !== 'undefined') {
+    try {
+      return JSON.parse(userRaw);
+    } catch (e) {
+      console.error('Error al parsear el usuario desde localStorage:', e);
+      return null;
+    }
+  }
+  return null;
+}
 
-// Este modulo gestiona el estado de autenticación del usuario, incluyendo el token y los datos del usuario.
-// Utiliza localStorage para persistir el estado entre recargas de página.
 const state = {
-  user: JSON.parse(localStorage.getItem('user')) || null,
+  user: getUserFromStorage(),
   token: localStorage.getItem('token') || null,
   isAuthenticated: false
 }
+
 //getters para acceder a los datos del estado
 const getters = {
   isAuthenticated: state => !!state.token,
@@ -22,53 +33,52 @@ const getters = {
     return state.user;
   }
 }
+
 // Mutations y acciones para gestionar el estado de autenticación
 const mutations = {
   SET_USER(state, user) {
-    // Si el usuario es nulo, limpia el localStorage
     state.user = user;
-    localStorage.setItem('user', JSON.stringify(user));
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
   },
-  // Establece el token de autenticación y lo guarda en localStorage
   SET_TOKEN(state, token) {
-    // Si el token es nulo, limpia el localStorage
     state.token = token;
-    localStorage.setItem('token', token);
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      localStorage.removeItem('token');
+    }
   },
-  // Limpia el estado de autenticación y elimina los datos del localStorage
   loginSuccess(state, payload) {
-    // Establece el usuario y el token en el estado
     state.user = payload.user;
     state.token = payload.token;
     state.isAuthenticated = true;
-    // Guarda los datos del usuario y el token en localStorage
     localStorage.setItem('user', JSON.stringify(payload.user));
     localStorage.setItem('token', payload.token);
   }
 }
+
 // Acciones para manejar la lógica de negocio y llamadas a servicios externos
 const actions = {
   async login({ commit }, userData) {
-    //limpia el estado de autenticación antes de iniciar sesión
     commit('SET_USER', userData.user);
     commit('SET_TOKEN', userData.token);
   },
-  // Accion para registrar un nuevo usuario
   logout({ commit }) {
-    // Limpia el estado de autenticación
     commit('SET_USER', null);
     commit('SET_TOKEN', null);
-    // Limpia el localStorage al cerrar sesión
     localStorage.removeItem('user');
     localStorage.removeItem('token');
   },
-  // Accion para iniciar sesión con un usuario existente
   async loginOld({ commit }, credentials) {
-    // Llama al servicio de autenticación para iniciar sesión
     const response = await authService.login(credentials.rut, credentials.password, credentials.role)
     commit('loginSuccess', response)
   }
 }
+
 // Exporta el módulo de autenticación para ser utilizado en la tienda Vuex
 export default {
   namespaced: true,

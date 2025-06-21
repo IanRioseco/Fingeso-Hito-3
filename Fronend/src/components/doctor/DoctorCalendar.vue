@@ -19,31 +19,32 @@
     <div class="calendar-grid">
       <div class="time-column">
         <div class="time-header">Hora</div>
-        <div v-for="timeSlot in timeSlots" :key="timeSlot" class="time-slot">
-          {{ timeSlot }}
+        <div v-for="timeSlot in timeSlots" :key="timeSlot" class="time-slot time-slot-hour">
+          <span v-if="timeSlot.endsWith(':00')" class="main-hour">{{ timeSlot }}</span>
+          <span v-else class="half-hour">{{ timeSlot }}</span>
         </div>
       </div>
-      
-      <div 
-        v-for="day in weekDays" 
-        :key="day.date" 
+
+      <div
+        v-for="day in weekDays"
+        :key="day.date"
         class="day-column"
-        :class="{ 'today': day.isToday }"
+        :class="{ today: day.isToday }"
       >
         <div class="day-header">
           <div class="day-name">{{ day.name }}</div>
           <div class="day-date">{{ day.date }}</div>
         </div>
-        
-        <div 
-          v-for="timeSlot in timeSlots" 
+
+        <div
+          v-for="timeSlot in timeSlots"
           :key="`${day.date}-${timeSlot}`"
           class="time-slot"
           @click="handleSlotClick(day.date, timeSlot)"
           :class="{
-            'available': isSlotAvailable(day.date, timeSlot),
-            'booked': isSlotBooked(day.date, timeSlot),
-            'unavailable': !isSlotAvailable(day.date, timeSlot) && !isSlotBooked(day.date, timeSlot)
+            available: isSlotAvailable(day.date, timeSlot),
+            booked: isSlotBooked(day.date, timeSlot),
+            unavailable: !isSlotAvailable(day.date, timeSlot) && !isSlotBooked(day.date, timeSlot)
           }"
         >
           <div v-if="isSlotBooked(day.date, timeSlot)" class="appointment-info">
@@ -52,7 +53,10 @@
           </div>
           <div v-else-if="isSlotAvailable(day.date, timeSlot)" class="slot-status">
             Disponible
-            <button @click.stop="eliminarDisponibilidad(day.date, timeSlot)" style="margin-left:8px; color:#C51A6F; background:none; border:none; cursor:pointer;">🗑️</button>
+            <button
+              @click.stop="eliminarDisponibilidad(day.date, timeSlot)"
+              style="margin-left:8px; color:#C51A6F; background:none; border:none; cursor:pointer;"
+            >🗑️</button>
           </div>
           <div v-else class="slot-status">
             No disponible
@@ -62,14 +66,14 @@
     </div>
 
     <!-- Modal para configurar disponibilidad -->
-    <AvailabilityModal 
-      v-if="showAvailabilityModal" 
+    <AvailabilityModal
+      v-if="showAvailabilityModal"
       @close="showAvailabilityModal = false"
       @save="saveAvailability"
     />
 
     <!-- Modal para ver detalles de cita -->
-    <AppointmentModal 
+    <AppointmentModal
       v-if="selectedAppointment"
       :appointment="selectedAppointment"
       @close="selectedAppointment = null"
@@ -93,29 +97,21 @@ export default {
     AvailabilityModal,
     AppointmentModal
   },
-  //DATOS REACTIVOS PARA EL COMPONENTE
   data() {
     return {
       currentDate: new Date(),
       showAvailabilityModal: false,
       selectedAppointment: null,
-      timeSlots: this.generateTimeSlots(),// Generar bloques de tiempo de 30 minutos
       availability: [],
-      appointments: [], 
-      blockDuration: 30 // Duración de cada bloque en minutos
+      appointments: [],
+      blockDuration: 30
     }
   },
-  // Computed properties para calcular días de la semana y rango de fechas
   computed: {
-    // Función para obtener los días de la semana
     weekDays() {
-      // Obtener el inicio de la semana (lunes)
       const startDate = startOfWeek(this.currentDate, { weekStartsOn: 1 });
-      // Crear un array de 5 días de la semana
-      return Array.from({ length: 5 }, (_, i) => { // Solo días de semana (L-V)
-        // Sumar i días al inicio de la semana
+      return Array.from({ length: 5 }, (_, i) => {
         const date = addDays(startDate, i);
-        // Formatear la fecha y el nombre del día
         return {
           date: format(date, 'yyyy-MM-dd'),
           name: format(date, 'EEEE', { locale: es }),
@@ -123,66 +119,48 @@ export default {
         };
       });
     },
-    // Función para obtener el rango de fechas de la semana actual
     weekRange() {
-      // Obtener el inicio de la semana (lunes) y sumar 4 días para obtener el rango
       const start = startOfWeek(this.currentDate, { weekStartsOn: 1 });
-      // Formatear el rango de fechas
-      const end = addDays(start, 4); // Solo días de semana
-      // Formatear el rango de fechas
+      const end = addDays(start, 4);
       return `${format(start, 'd MMM', { locale: es })} - ${format(end, 'd MMM yyyy', { locale: es })}`;
-    }
-  },
-  // Métodos para manejar la lógica del calendario
-  methods: {
-    // Generar bloques de tiempo de 30 minutos
-    generateTimeSlots() {
+    },
+    timeSlots() {
       const slots = [];
-      const startHour = 8; // 8 AM
-      const endHour = 20; // 8 PM
-      // Iterar entre los horarios de inicio y fin
+      const startHour = 8;
+      const endHour = 20;
       for (let hour = startHour; hour < endHour; hour++) {
-        // Iterar entre los minutos de cada hora
         for (let minutes = 0; minutes < 60; minutes += this.blockDuration) {
-          // Formatear la hora y los minutos
           const time = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-          // Agregar el bloque de tiempo al array
           slots.push(time);
         }
       }
-      // Devolver el array de bloques de tiempo
       return slots;
-    },
-    // Navegar a la semana anterior o siguiente
+    }
+  },
+  methods: {
     prevWeek() {
       this.currentDate = addDays(this.currentDate, -7);
       this.fetchData();
     },
-    // Navegar a la semana siguiente
     nextWeek() {
       this.currentDate = addDays(this.currentDate, 7);
       this.fetchData();
     },
-    // Verificar si un bloque de tiempo está disponible o reservado
     isSlotAvailable(date, time) {
-      // Verificar si el bloque de tiempo está en la disponibilidad
-      return this.availability.some(slot => 
+      return this.availability.some(slot =>
         slot.date === date && slot.time === time && slot.available
       );
     },
-    // Verificar si un bloque de tiempo está reservado
     isSlotBooked(date, time) {
-      return this.appointments.some(appt => 
+      return this.appointments.some(appt =>
         appt.date === date && appt.time === time
       );
     },
-    // Obtener la cita correspondiente a un bloque de tiempo
     getAppointment(date, time) {
-      return this.appointments.find(appt => 
+      return this.appointments.find(appt =>
         appt.date === date && appt.time === time
       ) || {};
     },
-    // Manejar el clic en un bloque de tiempo
     handleSlotClick(date, time) {
       if (this.isSlotBooked(date, time)) {
         this.selectedAppointment = this.getAppointment(date, time);
@@ -190,76 +168,81 @@ export default {
         // Podría abrir un modal para crear una cita manualmente
       }
     },
-    // Funciones para manejar la disponibilidad y citas
     async fetchData() {
       try {
-        // Obtener año y mes visibles
         const year = this.currentDate.getFullYear();
-        const month = this.currentDate.getMonth(); // 0-indexed
-        // Obtener disponibilidad y citas para el mes visible
+        const month = this.currentDate.getMonth() + 1;
         await this.$store.dispatch('doctor/fetchAvailability', { year, month });
-
-        // Calcular el inicio y fin de la semana actual
-        const weekStart = format(startOfWeek(this.currentDate, { weekStartsOn: 1 }), 'yyyy-MM-dd');
-        // Sumar 4 días para obtener el fin de semana (viernes)
-        const weekEnd = format(addDays(startOfWeek(this.currentDate, { weekStartsOn: 1 }), 4), 'yyyy-MM-dd');
-
-        // Llamada al store para obtener citas de la semana
-        await this.$store.dispatch('doctor/fetchAppointments', { start: weekStart, end: weekEnd });
-        this.availability = this.$store.state.doctor.availability;// Obtener la disponibilidad
-        this.appointments = this.$store.state.doctor.appointments;// Obtener las citas
+        this.availability = this.$store.state.doctor.availability;
+        this.appointments = this.$store.state.doctor.appointments;
       } catch (error) {
         console.error('Error al cargar datos del calendario:', error);
       }
     },
-    // Funciones para manejar la disponibilidad y citas
     async saveAvailability(newAvailability) {
       try {
-        // Llamada al store para guardar la nueva disponibilidad
-        await this.$store.dispatch('doctor/saveAvailability', newAvailability);
+        const user = JSON.parse(localStorage.getItem('user'));
+        const idMedico = user?.idmedico || user?.usuario?.idmedico;
+        if (!idMedico) {
+          alert('No se encontró el ID del médico autenticado');
+          return;
+        }
+        const bloques = [];
+        newAvailability.forEach(rango => {
+          const { date, startTime, endTime } = rango;
+          let [startHour, startMin] = startTime.split(':').map(Number);
+          let [endHour, endMin] = endTime.split(':').map(Number);
+          let current = startHour * 60 + startMin;
+          const end = endHour * 60 + endMin;
+          while (current < end) {
+            const blockStartHour = Math.floor(current / 60).toString().padStart(2, '0');
+            const blockStartMin = (current % 60).toString().padStart(2, '0');
+            const blockEnd = current + this.blockDuration;
+            const blockEndHour = Math.floor(blockEnd / 60).toString().padStart(2, '0');
+            const blockEndMin = (blockEnd % 60).toString().padStart(2, '0');
+            bloques.push({
+              fecha: date,
+              horainicio: `${blockStartHour}:${blockStartMin}`,
+              horafin: `${blockEndHour}:${blockEndMin}`,
+              idMedico: idMedico
+            });
+            current += this.blockDuration;
+          }
+        });
+        await this.$store.dispatch('doctor/saveAvailability', bloques);
         this.fetchData();
       } catch (error) {
         console.error('Error al guardar disponibilidad:', error);
       }
     },
-    // Funciones para manejar citas
     async updateAppointment(updatedAppointment) {
       try {
-        // Llamada al store para actualizar la cita
         await this.$store.dispatch('doctor/updateAppointment', updatedAppointment);
-        // Refrescar los datos del calendario
         this.fetchData();
         this.selectedAppointment = null;
       } catch (error) {
         console.error('Error al actualizar cita:', error);
       }
     },
-    // Función para cancelar una cita
     async cancelAppointment(appointmentId) {
       try {
-        // Llamada al store para cancelar la cita
         await this.$store.dispatch('doctor/cancelAppointment', appointmentId);
-        // Refrescar los datos del calendario
         this.fetchData();
         this.selectedAppointment = null;
-        // atrapado de errores
       } catch (error) {
-        console.error('Error al cancelar cita:', error);///debbug
+        console.error('Error al cancelar cita:', error);
       }
     },
-    // Función para eliminar una disponibilidad
     async eliminarDisponibilidad(date, time) {
-      // Buscar el ID del horario correspondiente
       const slot = this.availability.find(a => a.date === date && a.time === time && a.available);
       if (!slot || !slot.id) {
         alert('No se encontró el ID del horario para eliminar.');
         return;
       }
-      await this.$store.dispatch('doctor/eliminarDisponibilidad', slot.id);// Llamada al store para eliminar la disponibilidad
+      await this.$store.dispatch('doctor/eliminarDisponibilidad', slot.id);
       this.fetchData();
     }
   },
-  // Ciclo de vida del componente para cargar datos al montarse
   created() {
     this.fetchData();
   }
@@ -388,6 +371,13 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.8em;
+  color: #999;
+}
+
+.time-label span {
+  font-size: 0.8em;
+  color: #999;
 }
 
 .time-slot:hover {

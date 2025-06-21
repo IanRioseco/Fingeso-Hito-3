@@ -1,5 +1,6 @@
 package com.example.Backend.Controller;
 
+import com.example.Backend.DTO.HorarioDTO;
 import com.example.Backend.Entity.horarioEntity;
 import com.example.Backend.Services.horarioServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,11 @@ public class horarioController {
     @GetMapping("/horario/medico/{idMedico}")
     public ResponseEntity<List<horarioEntity>> listarPorMedico(@PathVariable Long idMedico) {
         return new ResponseEntity<>(horarioServ.obtenerHorariosPorMedico(idMedico), HttpStatus.OK);
+    }
+
+    @PostMapping("/crear-multiples")
+    public ResponseEntity<?> crearMultiplesHorarios(@RequestBody List<HorarioDTO> bloques) {
+        horarioServ.registrarMultiplesHorarios(bloques);
+        return ResponseEntity.ok().build();
     }
 }

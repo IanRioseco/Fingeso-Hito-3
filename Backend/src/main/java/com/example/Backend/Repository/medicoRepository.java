@@ -1,5 +1,6 @@
 package com.example.Backend.Repository;
 
+import com.example.Backend.Entity.citamedicaEntity;
 import com.example.Backend.Entity.medicoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,5 @@ public interface medicoRepository extends JpaRepository<medicoEntity, Long> {
 
     @Query("SELECT m FROM medicoEntity m WHERE m.especialidad.id_especialidad = :idEspecialidad")
     List<medicoEntity> findByEspecialidadId(@Param("idEspecialidad") Long idEspecialidad);
+
 }

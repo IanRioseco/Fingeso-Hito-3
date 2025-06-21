@@ -1,11 +1,13 @@
 package com.example.Backend.Controller;
 import com.example.Backend.Entity.especialidadEntity;
+import com.example.Backend.Entity.rolEntity;
 import com.example.Backend.Services.especialidadServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,6 +26,30 @@ public class especialidadController {
         return new ResponseEntity<>(nuevaEspecialidad, HttpStatus.CREATED);
     }
 
+    @PostMapping("/initialize")
+    public ResponseEntity<List<especialidadEntity>> initializeEspecialidades() {
+        // Primero limpiamos los roles existentes
+        especialidadServ.eliminarTodasLasespecialidades();
+
+        List<especialidadEntity> especialidadesCreadas = new ArrayList<>();
+
+        String[] especialidades = {
+                "Cardiología",     // ID 1
+                "Dermatología",       // ID 2
+                "Pediatría",      // ID 3
+                "Neurología", // ID 4
+                "Oftalmología", // ID 5
+                "Ortopedia",
+                "Ginecología"
+                ,"Urología"// ID 6
+        };
+        for (String especialidadesNombre : especialidades) {
+            especialidadEntity nuevaEsp = new especialidadEntity();
+            nuevaEsp.setNombre(especialidadesNombre);
+            especialidadesCreadas.add(especialidadServ.guardarEspecialidad(nuevaEsp));
+        }
+        return ResponseEntity.ok(especialidadesCreadas);
+    }
     @GetMapping("/")
     public ResponseEntity<List<especialidadEntity>> obtenerTodasEspecialidades() {
         List<especialidadEntity> especialidades = especialidadServ.obtenerTodasLasEspecialidades();

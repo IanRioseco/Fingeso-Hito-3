@@ -26,6 +26,11 @@ export default {
     //eliminar un médico por su id
     eliminar(id) {
         return api.delete(`/medicos/${id}`);
-    }
+    },
+
+    saveAvailability(bloques) {
+        // Suponiendo que usas axios
+    return api.post('/api/horario/crear-multiples', bloques);
+}
 
 };

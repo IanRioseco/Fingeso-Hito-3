@@ -37,10 +37,6 @@ public class citamedicaServices {
         return citamedicaRepo.save(citamedica);
     }
 
-    public void eliminarCitamedica(Long id) {
-        citamedicaRepo.deleteById(id);
-    }
-
     public List<citamedicaEntity> obtenerCitasPorPaciente(Long idPaciente) {
         List<citamedicaEntity> citas = citamedicaRepo.findByPacienteId(idPaciente);
         // Para cada cita, buscar y asociar el horario correspondiente (si existe)
@@ -53,5 +49,26 @@ public class citamedicaServices {
             }
         }
         return citas;
+    }
+
+    public List<citamedicaEntity> obtenerCitasPorMedico(Long idMedico) {
+        List<citamedicaEntity> citas = citamedicaRepo.findAllCitasMedicas(idMedico);
+
+        for (citamedicaEntity cita : citas) {
+            List<horarioEntity> horarios = horarioRepo.findByCitamedicaId(cita.getId_citamedica());
+            if (!horarios.isEmpty()){
+                horarioEntity horario = horarios.get(0);
+                horario.setCitamedica(null); // Rompe la referencia cíclica para evitar bucles infinitos
+                cita.setHorario(horario);
+            }
+        }
+        return citas;
+    }
+
+    public void eliminarCitamedica(Long idCita) {
+        // Elimina primero los horarios médicos asociados a la cita
+        horarioRepo.deleteByCitamedicaId(idCita); // Debes tener este método en tu horarioRepository
+        // Ahora elimina la cita médica
+        citamedicaRepo.deleteById(idCita);
     }
 }

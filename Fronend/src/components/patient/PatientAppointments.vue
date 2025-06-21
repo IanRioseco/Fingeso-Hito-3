@@ -65,13 +65,23 @@ const cargarCitas = async () => {
   if (!idPaciente) return
   try {
     const res = await appointmentService.obtenerCitasPorPaciente(idPaciente)
-    appointments.value = res.data
+    // Filtra duplicados por id_citamedica
+    const unicas = res.data.filter(
+      (cita, index, self) =>
+        index === self.findIndex(c => c.id_citamedica === cita.id_citamedica)
+    )
+    appointments.value = unicas
+    console.log('Citas recibidas (sin duplicados):', appointments.value)
+    appointments.value.forEach((cita, idx) => {
+      console.log(`Cita #${idx + 1}:`, cita)
+    })
   } catch (e) {
     appointments.value = []
   }
 }
 
 const cancelarCita = async (id) => {
+  console.log('ID a cancelar:', id)
   if (!confirm('¿Estás seguro de cancelar esta cita?')) return
   try {
     await appointmentService.eliminarCita(id)

@@ -36,4 +36,8 @@ public class especialidadServices {
     public void eliminarEspecialidad(Long id) {
         especialidadRepo.deleteById(id);
     }
+
+    public void eliminarTodasLasespecialidades(){
+        especialidadRepo.deleteAll();
+    }
 }

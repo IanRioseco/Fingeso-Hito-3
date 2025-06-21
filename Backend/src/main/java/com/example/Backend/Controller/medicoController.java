@@ -1,4 +1,5 @@
 package com.example.Backend.Controller;
+import com.example.Backend.Entity.citamedicaEntity;
 import com.example.Backend.Entity.medicoEntity;
 import com.example.Backend.Services.medicoServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,4 +61,7 @@ public class medicoController {
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-}
+
+    }
+
+

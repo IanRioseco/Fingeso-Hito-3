@@ -23,6 +23,8 @@ export const authService = {
             nombrePa: userData.nombrePa,
             apellidoPa: userData.apellidoPa,
             rut: userData.rut,
+            fechanacimiento: userData.fechanacimiento,
+            sexo: userData.sexo,
             correo: userData.correo,
             telefono: userData.telefono ? userData.telefono.toString() : '',
             direccion: userData.direccion,
@@ -30,6 +32,14 @@ export const authService = {
             rol: {
                 id_rol: 6, // ID del rol "Paciente"
                 nombre: "Paciente"
+            },
+            fichamedica: {
+                edad: this.obtenerEdad(userData.fechanacimiento),
+                sexo: userData.sexo,
+                sintomas: '',
+                enfermedades: '',
+                peso:null,
+                altura: null
             }
         };
         // Log para depuración
@@ -55,5 +65,16 @@ export const authService = {
     //metodo para obtener el usuario actual
     getCurrentUser() {
         return JSON.parse(localStorage.getItem('user'));
+    },
+
+    obtenerEdad(fechaNacimiento) {
+        const fechaActual = new Date();
+        const fechaNac = new Date(fechaNacimiento);
+        let edad = fechaActual.getFullYear() - fechaNac.getFullYear();
+        const mes = fechaActual.getMonth() - fechaNac.getMonth();
+        if (mes < 0 || (mes === 0 && fechaActual.getDate() < fechaNac.getDate())) {
+            edad--;
+        }
+        return edad;
     }
 };

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,12 @@ public class pacienteEntity {
     @Column(name = "apellido_paciente", length = 80, nullable = false)
     private String apellidoPa;
 
+    @Column(name = "fechanacimiento")
+    private LocalDate fechanacimiento;
+
+    @Column(name = "sexo")
+    private String sexo;
+
     @Column(name = "telefono")
     private String telefono;
 
@@ -39,10 +46,6 @@ public class pacienteEntity {
     @Column(name = "rut", length = 20, nullable = false, unique = true)
     private String rut;
 
-    /*Paciente->Fichamedica*/
-    @OneToOne
-    @JoinColumn(name = "Id_fichamedica", referencedColumnName = "Id_fichamedica")
-    private fichamedicaEntity fichamedica;
 
     @ManyToOne
     @JoinColumn(name = "Id_rol", referencedColumnName = "Id_rol")

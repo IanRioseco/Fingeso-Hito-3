@@ -26,7 +26,7 @@ public class farmaciaController {
         return new ResponseEntity<>(nuevaFarmacia, HttpStatus.CREATED);
     }
 
-    @PostMapping("/x")
+    @PostMapping("/initialize")
     public ResponseEntity<List<farmaciaEntity>> initializeFarmacias() {
     // Primero limpia las farmacias existentes
     farmaciaServ.eliminarTodasLasFarmacias();

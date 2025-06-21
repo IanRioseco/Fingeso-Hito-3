@@ -1,5 +1,6 @@
 package com.example.Backend.Services;
 
+import com.example.Backend.Entity.citamedicaEntity;
 import com.example.Backend.Entity.medicoEntity;
 import com.example.Backend.Repository.medicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,7 @@ public class medicoServices {
         return medicoRepo.findByEspecialidadId(Id_especialidad);
     }
 
+    }
 
-}
+
+

@@ -56,6 +56,12 @@ public class AuthController {
                 case "apellido":
                     response.put("message", "El apellido es requerido");
                     break;
+                case "fechaNacimiento":
+                    response.put("message", "La fecha de nacimiento es requerida");
+                    break;
+                case "sexo":
+                    response.put("message", "El sexo es requerido");
+                    break;
                 case "rut":
                     response.put("message", "El RUT ya está registrado");
                     break;

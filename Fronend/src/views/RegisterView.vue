@@ -22,6 +22,7 @@
             v-model="userData.nombrePa" 
             type="text" 
             required
+            @input="userData.nombrePa = userData.nombrePa.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]/g,'')"
           >
         </div>
         <div class="form-group">
@@ -31,7 +32,26 @@
             v-model="userData.apellidoPa" 
             type="text" 
             required
+            @input="userData.apellidoPa = userData.apellidoPa.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]/g,'')"
           >
+        </div>
+        <div class="form-group">
+          <label for="fechanacimiento">Fecha de nacimiento</label>
+          <input 
+            id="fechanacimiento"
+            v-model="userData.fechanacimiento"
+            type="date"
+            required
+          >
+        </div>
+        <div class="form-group">
+          <label for="sexo">Sexo</label>
+          <select id="sexo" v-model="userData.sexo" required>
+            <option value="" disabled>Seleccione sexo</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Otro">Otro</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="correo">Correo Electrónico</label>
@@ -48,6 +68,8 @@
             id="telefono" 
             v-model="userData.telefono" 
             type="tel" 
+            placeholder="+56 9 XXXX XXXX"
+            @input="userData.telefono = userData.telefono.replace(/[^0-9+]/g, '').replace(/^(?!\+569)/, '+569')"
             required
           >
         </div>
@@ -99,6 +121,8 @@ export default {
         rut: '',
         nombrePa: '',
         apellidoPa: '',
+        fechanacimiento: '',
+        sexo: '',
         correo: '',
         telefono: '',
         direccion: '',
@@ -266,5 +290,31 @@ input {
 .login-link a {
   color: #009999;
   text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+.register-box form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-box form input,
+.register-box form select {
+  margin-bottom: 1rem;
+}
+
+.register-box form input[type="date"] {
+  padding: 0.75rem;
+}
+
+
+.register-box form select {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 </style>

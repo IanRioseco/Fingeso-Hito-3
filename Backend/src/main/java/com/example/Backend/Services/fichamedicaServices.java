@@ -37,4 +37,8 @@ public class fichamedicaServices {
     public void eliminarFichaMedica(Long id) {
         fichamedicaRepo.deleteById(id);
     }
+
+    public fichamedicaEntity obtenerFichaMedicaPorPacienteId(Long id){
+        return fichamedicaRepo.findByPaciente_RutPa(id);
+    }
 }

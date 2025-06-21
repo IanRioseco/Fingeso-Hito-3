@@ -52,7 +52,7 @@ export default {
       activeTab: 'calendar',
       tabs: [
         { id: 'calendar', label: 'Calendario' },
-        { id: 'patients', label: 'Pacientes' },
+        { id: 'patients', label: 'Citas' },
         { id: 'reports', label: 'Reportes' },
         { id: 'settings', label: 'Configuración' }
       ],
