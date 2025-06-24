@@ -1,5 +1,6 @@
 package com.example.Backend.Controller;
 
+import com.example.Backend.DTO.ValidarRecetaRequest;
 import com.example.Backend.Entity.medicamentoEntity;
 import com.example.Backend.Entity.recetaEntity;
 import com.example.Backend.Entity.receta_medicamentoEntity;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/recetas-medicamentos")
+@RequestMapping("/api/recetas-medicamentos")
 public class receta_medicamentoController {
 
     private final receta_medicamentoServices recetaServ;
@@ -68,6 +69,16 @@ public class receta_medicamentoController {
     public ResponseEntity<List<recetaEntity>> getRecetasPorFarmacia(@PathVariable Long farmaciaId) {
         List<recetaEntity> recetas = recetaServ.obtenerRecetasPorFarmacia(farmaciaId);
         return new ResponseEntity<>(recetas, HttpStatus.OK);
+    }
+
+    @PostMapping("/validar")
+    public ResponseEntity<?> validarReceta(@RequestBody ValidarRecetaRequest request) {
+        try {
+            recetaServ.validarRecetaYDescontarStock(request);
+            return ResponseEntity.ok().body("Receta validada y stock descontado correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }
 
