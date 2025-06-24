@@ -3,6 +3,7 @@
     <header class="patient-header">
       <div class="header-logo-title">
         <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo" />
+        <img :src="patientPhoto" alt="Foto de perfil" class="profile-header-photo" />
         <div class="patient-info">
           <h1>Bienvenido, {{ patientName }}</h1>
           <div class="patient-meta">
@@ -73,7 +74,8 @@ export default {
         { id: 'settings', label: 'Configuración' },
       ],
       patientName: '',
-      patientRut: '', 
+      patientRut: '',
+      patientPhoto: '', 
     }
   },
   //metodo para obtener datos del usuario
@@ -82,6 +84,9 @@ export default {
     if (userData && userData.usuario) {
       this.patientName = `${userData.usuario.nombrePa} ${userData.usuario.apellidoPa}`;
       this.patientRut = userData.usuario.rut;
+      this.patientPhoto =
+      userData.usuario.fotoPerfil ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(this.patientName)}&background=0875C1&color=fff`;
     }
   },
   methods: {
@@ -106,6 +111,14 @@ export default {
 </script>
 
 <style scoped>
+.patient-dashboard {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--color-fondo);
+  border-radius: 16px;
+  box-shadow: 0 2px 16px var(--color-shadow);
+}
 
 .patient-header {
   display: flex;
@@ -113,42 +126,41 @@ export default {
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-borde);
+  background: var(--color-fondo);
+  border-radius: 12px 12px 0 0;
 }
+
 .header-logo-title {
   display: flex;
   align-items: center;
   gap: 1.2rem;
 }
+
 .logo {
   height: 48px;
   width: auto;
   display: block;
 }
 
-.patient-dashboard {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.patient-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
-  min-height: 500px;
+.profile-header-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-secundario);
+  margin-right: 1rem;
 }
 
 .patient-info h1 {
-  color: black;
+  color: var(--color-principal);
   margin: 0 0 0.5rem 0;
 }
 
 .patient-meta {
   display: flex;
   gap: 1rem;
-  color: #747473;
+  color: var(--color-texto);
   font-size: 0.9rem;
 }
 
@@ -158,7 +170,7 @@ export default {
 }
 
 .logout-btn {
-  background-color: #0875C1;
+  background-color: var(--color-secundario);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -168,10 +180,14 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-weight: bold;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px var(--color-shadow);
 }
 
 .logout-btn:hover {
-  background-color: #C51A6F;
+  background-color: var(--color-principal);
+  box-shadow: 0 4px 16px var(--color-shadow);
 }
 
 .patient-nav {
@@ -189,35 +205,35 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
-  color: #747473;
+  color: var(--color-texto);
   white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
 }
 
-.patient-nav button.active {
-  background-color: #C51A6F;
-  color: white;
-}
-
+.patient-nav button.active,
 .patient-nav button:hover {
-  background-color: #0875C1;
+  background-color: var(--color-secundario);
   color: white;
 }
 
 .patient-nav button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
-}
-.patient-nav button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  box-shadow: 0 0 0 2px var(--color-secundario);
 }
 
+.patient-nav button:disabled,
 .patient-nav button:disabled:hover {
   background-color: #ccc;
-}
-
-.patient-nav button:disabled:focus {
+  color: #aaa;
+  cursor: not-allowed;
   box-shadow: none;
 }
 
+.patient-content {
+  background-color: var(--color-fondo);
+  border-radius: 0 0 12px 12px;
+  padding: 2rem;
+  box-shadow: 0 0 10px var(--color-shadow);
+  min-height: 500px;
+}
 </style>

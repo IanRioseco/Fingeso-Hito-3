@@ -1,10 +1,9 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo">
+      <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo" />
       <h2>Iniciar Sesión</h2>
       <form @submit.prevent="handleLogin">
-        <!-- ...campos del formulario... -->
         <div class="form-group">
           <label for="rut">RUT</label>
           <input 
@@ -14,16 +13,33 @@
             placeholder="12345678-9" 
             required
             @input="formatRut"
-          >
+          />
         </div>
         <div class="form-group">
           <label for="password">Contraseña</label>
-          <input 
-            id="password" 
-            v-model="credentials.password" 
-            type="password" 
-            required
-          >
+          <div class="password-wrapper">
+            <input 
+              id="password" 
+              :type="showPassword ? 'text' : 'password'"
+              v-model="credentials.password" 
+              required
+            />
+            <button 
+                type="button" 
+                class="toggle-password" 
+                @click="showPassword = !showPassword"
+                :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              >
+                <span v-if="showPassword">
+                  <!-- Ojo abierto SVG -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="#C51A6F" stroke-width="2" d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/><circle cx="12" cy="12" r="3" stroke="#C51A6F" stroke-width="2"/></svg>
+                </span>
+                <span v-else>
+                  <!-- Ojo cerrado SVG -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="#C51A6F" stroke-width="2" d="M3 3l18 18M1 12s4-7 11-7c2.21 0 4.21.57 6 1.53M23 12s-4 7-11 7c-2.21 0-4.21-.57-6-1.53"/><path stroke="#C51A6F" stroke-width="2" d="M9.53 9.53A3 3 0 0012 15a3 3 0 002.47-5.47"/></svg>
+                </span>
+              </button>
+          </div>
         </div>
         <div class="form-group">
           <label for="role">Rol</label>
@@ -37,18 +53,22 @@
             <option value="pharmacy">Farmacia</option>
           </select>
         </div>
-        <button 
-          type="submit" 
-          class="btn-login" 
-          :disabled="isLoading"
-        >
-          {{ isLoading ? 'Iniciando sesión...' : 'Ingresar' }}
-        </button>
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn-login" 
+            :disabled="isLoading"
+          >
+            {{ isLoading ? 'Iniciando sesión...' : 'Ingresar' }}
+          </button>
+        </div>
         <p v-if="error" class="error-message">{{ error }}</p>
       </form>
-      <button class="btn-home" @click="$router.push('/')">
-        Volver al inicio
-      </button>
+      <div class="form-actions">
+        <button class="btn-home" @click="$router.push('/')">
+          Volver al inicio
+        </button>
+      </div>
       <p class="register-link">
         ¿Eres paciente y no tienes cuenta? 
         <router-link to="/register">Regístrate aquí</router-link>
@@ -56,6 +76,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import { authService } from '@/services/auth.service';
@@ -82,21 +103,17 @@ export default {
         role: ''
       },
       error: '',
-      isLoading: false
+      isLoading: false,
+      showPassword: false
     }
   },
   methods: {
     //método para formatear el rut
     formatRut() {
-      // Eliminar cualquier carácter que no sea número o 'k'
       let value = this.credentials.rut.replace(/[^0-9kK]/g, '');
-      
       if (value.length > 1) {
-        // Separar el dígito verificador
         const dv = value.slice(-1);
         const rutBody = value.slice(0, -1);
-        
-        // Formatear con puntos y guión
         this.credentials.rut = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
       } else {
         this.credentials.rut = value;
@@ -216,6 +233,33 @@ export default {
   background-color: #C51A6F;
 }
 
+.toggle-password:focus {
+  outline: none;
+}
+
+.toggle-password {
+  background: none;
+  border: none;
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #C51A6F;
+  padding: 0 0.5rem;
+}
+
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  flex: 1;
+}
+
 .login-container {
   display: flex;
   justify-content: center;
@@ -283,6 +327,10 @@ input, select {
 .btn-login:hover {
   background-color: #099;
   color: #fff;
+}
+
+.btn-home:hover {
+  background-color: #C51A6F;
 }
 
 .error-message {

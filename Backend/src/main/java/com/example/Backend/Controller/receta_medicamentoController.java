@@ -1,5 +1,7 @@
 package com.example.Backend.Controller;
 
+import com.example.Backend.Entity.medicamentoEntity;
+import com.example.Backend.Entity.recetaEntity;
 import com.example.Backend.Entity.receta_medicamentoEntity;
 import com.example.Backend.Services.receta_medicamentoServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,18 @@ public class receta_medicamentoController {
                     return new ResponseEntity<>(HttpStatus.OK);
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/medicamentos-por-receta/{idReceta}")
+    public ResponseEntity<List<medicamentoEntity>> obtenerMedicamentosPorReceta(@PathVariable Long idReceta) {
+        List<medicamentoEntity> medicamentos = recetaServ.obtenerMedicamentosPorRecetaId(idReceta);
+        return new ResponseEntity<>(medicamentos, HttpStatus.OK);
+    }
+
+    @GetMapping("/alertas/farmacia/{farmaciaId}")
+    public ResponseEntity<List<recetaEntity>> getRecetasPorFarmacia(@PathVariable Long farmaciaId) {
+        List<recetaEntity> recetas = recetaServ.obtenerRecetasPorFarmacia(farmaciaId);
+        return new ResponseEntity<>(recetas, HttpStatus.OK);
     }
 }
 

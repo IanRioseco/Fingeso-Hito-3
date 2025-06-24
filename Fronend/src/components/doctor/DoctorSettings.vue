@@ -11,24 +11,16 @@
       <h2>Configuración del Doctor</h2>
       <form class="profile-form" @submit.prevent="saveSettings">
         <div class="form-group">
-          <label>Nombre</label>
-          <input type="text"
-              v-model="user.nombre"
-              @input="user.nombre = user.nombre.replace(/[0-9]/g, '')" />
-        </div>
-        <div class="form-group">
-          <label>Apellido</label>
-          <input type="text"
-            v-model="user.apellido"
-            @input="user.apellido = user.apellido.replace(/[0-9]/g, '')" />     
-        </div>
-        <div class="form-group">
           <label>Correo electrónico</label>
           <input type="email" v-model="user.email" />
         </div>
         <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" v-model="user.telefono" @input="user.telefono = user.telefono.replace(/[^0-9]/g, '')" placeholder="+56 9 XXXX XXXX" />
+        </div>
+        <div class="form-group">
           <label>Nueva contraseña</label>
-          <input type="password" v-model="user.nuevaPassword" placeholder="Dejar en blanco para no cambiar" />
+          <input type="password" v-model="user.password" placeholder="Dejar en blanco para no cambiar" />
         </div>
         <div class="form-actions">
           <button class="settings-btn" type="submit">Guardar cambios</button>
@@ -39,15 +31,63 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, toRaw } from 'vue'
+import medicoService from '@/services/medicoService';
 
 // Obtener usuario desde localStorage y crear objeto reactivo
 const userRaw = JSON.parse(localStorage.getItem('user')) || {};
+console.log("userRaw desde localStorage:", userRaw);
+
+const usuario = userRaw.usuario || {};
+console.log("usuario extraído de userRaw:", usuario);
+
 const user = reactive({
-  nombre: userRaw.nombre || userRaw.usuario?.nombre || '',
-  apellido: userRaw.apellido || userRaw.usuario?.apellido || '',
-  email: userRaw.email || userRaw.usuario?.email || '',
-  nuevaPassword: ''
+  nombre: usuario.nombre || '',
+  apellido: usuario.apellido || '',
+  correo: usuario.correo || '',
+  password: '',
+  telefono: usuario.telefono || '',
+  idmedico: usuario.idmedico || '',
+  rut: usuario.rut || '',
+  rol: usuario.rol,
+  especialidad: usuario.especialidad
+});
+console.log("user reactivo inicial:", toRaw(user));
+
+const medico = ref(null);
+
+onMounted(async () => {
+  console.log("ID de médico en user:", user.idmedico);
+
+  if (user.idmedico) {
+    try {
+      const respuesta = await medicoService.obtenerPorId(user.idmedico);
+      medico.value = respuesta.data
+      console.log("Respuesta de medicoService.obtenerPorId:", toRaw(medico.value));
+
+      if (medico.value) {
+        // Antes de actualizar user
+        console.log("user antes de completar con datos de médico:", toRaw(user));
+
+        user.nombre = medico.value.nombre || user.nombre;
+        user.apellido = medico.value.apellido || user.apellido;
+        user.rut = medico.value.rut || user.rut;
+        user.rol = medico.value.rol
+        user.telefono = medico.value.telefono || user.telefono;
+        user.password = medico.value.password || user.password;
+        user.especialidad = medico.value.especialidad || user.especialidad;
+
+        // Después de actualizar user
+        console.log("user después de completar con datos de médico:", toRaw(user));
+      } else {
+        console.warn("No se encontró médico con ese ID.");
+      }
+    } catch (error) {
+      console.error("Error al obtener médico por ID:", error);
+    }
+  } else {
+    console.warn("No hay idmedico en user.");
+  }
 });
 
 const profilePhotoUrl = ref(
@@ -62,7 +102,6 @@ function triggerPhotoInput() {
 function onPhotoChange(e) {
   const file = e.target.files[0];
   if (file) {
-    // Solo para previsualización local, no guarda en backend
     const reader = new FileReader();
     reader.onload = (ev) => {
       profilePhotoUrl.value = ev.target.result;
@@ -72,9 +111,31 @@ function onPhotoChange(e) {
 }
 
 function saveSettings() {
-  // Aquí iría la lógica para guardar los cambios en el backend
-  // Puedes enviar user.nombre, user.apellido, user.email, user.nuevaPassword y profilePhotoUrl.value
-  alert('Cambios guardados (simulado)');
+  const updatedUser = {
+    nombre: user.nombre,
+    apellido: user.apellido,
+    correo: user.correo,
+    telefono: user.telefono,
+    password: user.password || '',
+    rut: user.rut,
+    rol: user.rol,
+    especialidad: user.especialidad
+    // agrega otros campos si tu backend los requiere
+  };
+
+  console.log('user antes de guardar:', toRaw(user));
+  console.log('updatedUser que se enviará:', updatedUser);
+
+  medicoService.actualizar(user.idmedico, updatedUser)
+    .then(response => {
+      console.log('Configuración actualizada:', response);
+      localStorage.setItem('user', JSON.stringify({ ...userRaw, usuario: { ...user } }));
+      alert('Cambios guardados');
+    })
+    .catch(error => {
+      console.error('Error al guardar cambios:', error);
+      alert('Error al guardar cambios');
+    });
 }
 </script>
 

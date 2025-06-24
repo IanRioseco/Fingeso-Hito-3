@@ -27,6 +27,11 @@
               <i class="fas fa-pills"></i> Inventario
             </button>
           </li>
+          <li>
+            <button :class="{active: vistaActual === 'Recetas medicas'}" @click="vistaActual = 'Recetas medicas'">
+              <i class="fas fa-notes-medical"></i> Recetas Médicas
+            </button>
+          </li>
         </ul>
       </aside>
 
@@ -43,6 +48,7 @@
           <Inventory :medicines="medicines" :search="searchMedicine" @reload="loadMedicines" />
         </div>
         <MedicineForm v-else-if="vistaActual === 'formulario'" @medAdded="loadMedicines" />
+        <MedicalAlerts v-else-if="vistaActual === 'Recetas medicas'" />
       </main>
     </div>
   </div>
@@ -53,6 +59,7 @@
 import { ref, computed, onMounted } from 'vue'
 import MedicineForm from '@/components/pharmacy/MedicineForm.vue'
 import Inventory from '@/components/pharmacy/MedicinesInventory.vue'
+import MedicalAlerts from '@/components/pharmacy/MedicalAlerts.vue'
 import pharmacyService from '@/services/PharmacyService'
 import { authService } from '@/services/auth.service'
 import { useRouter } from 'vue-router'
@@ -69,7 +76,11 @@ const router = useRouter()
 const titulo = computed(() =>
   vistaActual.value === 'inventario'
     ? 'Inventario de Medicamentos'
-    : 'Ingreso de Medicamentos'
+    : vistaActual.value === 'formulario'
+      ? 'Ingreso de Medicamentos'
+      : vistaActual.value === 'Recetas medicas'
+        ? 'Alertas de Recetas Médicas'
+        : ''
 )
 
 //FUNCIONES PARA CARGAR DATOS DEL USUARIO
@@ -139,7 +150,7 @@ onMounted(() => {
 
 .pharmacy-dashboard {
   min-height: 100vh;
-  background: linear-gradient(120deg, #f4f6fa 60%, #e3eafc 100%);
+  background: var(--color-fondo);
   font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
 }
 
@@ -148,8 +159,8 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 2rem 3rem 1.5rem 3rem;
-  background: #fff;
-  box-shadow: 0 2px 12px rgba(8,117,193,0.07);
+  background: var(--color-fondo);
+  box-shadow: 0 2px 12px var(--color-shadow);
   border-bottom-left-radius: 24px;
   border-bottom-right-radius: 24px;
 }
@@ -158,23 +169,23 @@ onMounted(() => {
   margin: 0;
   font-size: 2rem;
   font-weight: bold;
-  color: #0875C1;
+  color: var(--color-principal);
   letter-spacing: 1px;
 }
 
 .farmacia-name {
-  color: #0875C1;
+  color: var(--color-principal);
   font-weight: bold;
 }
 
 .farmaceutico-name {
-  color: #C51A6F;
+  color: var(--color-secundario);
   font-weight: bold;
   margin-left: 0.7rem;
 }
 
 .logout-btn {
-  background-color: #C51A6F;
+  background-color: var(--color-secundario);
   color: white;
   border: none;
   padding: 0.6rem 1.4rem;
@@ -182,11 +193,12 @@ onMounted(() => {
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
-  transition: background 0.2s;
-  box-shadow: 0 2px 8px rgba(197,26,111,0.07);
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px var(--color-shadow);
 }
 .logout-btn:hover {
-  background-color: #0875C1;
+  background-color: var(--color-principal);
+  box-shadow: 0 4px 16px var(--color-shadow);
 }
 
 .layout {
@@ -201,7 +213,7 @@ onMounted(() => {
   background: #f8fafd;
   padding: 2rem 1.5rem 1.5rem 1.5rem;
   border-radius: 18px;
-  box-shadow: 2px 0 16px rgba(8,117,193,0.04);
+  box-shadow: 2px 0 16px var(--color-shadow);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -212,7 +224,7 @@ onMounted(() => {
   font-size: 1.3rem;
   margin-bottom: 1.5rem;
   font-weight: bold;
-  color: #0875C1;
+  color: var(--color-principal);
 }
 
 .sidebar ul {
@@ -236,7 +248,7 @@ onMounted(() => {
   border-radius: 7px;
   font-size: 1.08rem;
   font-family: inherit;
-  color: #0875C1;
+  color: var(--color-principal);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -246,15 +258,15 @@ onMounted(() => {
 .sidebar button.active,
 .sidebar button:hover {
   background: #e3eafc;
-  color: #C51A6F;
+  color: var(--color-secundario);
 }
 
 .main-content {
   flex: 1;
-  background: #fff;
+  background: var(--color-fondo);
   border-radius: 18px;
   padding: 2.5rem 3rem;
-  box-shadow: 0 0 16px rgba(8,117,193,0.07);
+  box-shadow: 0 0 16px var(--color-shadow);
   min-height: 500px;
   display: flex;
   flex-direction: column;
@@ -263,7 +275,7 @@ onMounted(() => {
 .main-content h2 {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: #0875C1;
+  color: var(--color-principal);
   font-family: inherit;
 }
 
@@ -272,14 +284,14 @@ onMounted(() => {
   max-width: 350px;
   padding: 10px 14px;
   margin-bottom: 18px;
-  border: 1.5px solid #C51A6F;
+  border: 1.5px solid var(--color-secundario);
   border-radius: 6px;
   font-size: 1.08rem;
   transition: border 0.2s;
 }
 .search-bar:focus {
   outline: none;
-  border-color: #0875C1;
+  border-color: var(--color-principal);
 }
 
 @media (max-width: 1100px) {

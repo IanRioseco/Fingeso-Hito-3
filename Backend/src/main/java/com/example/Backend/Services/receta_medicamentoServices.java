@@ -1,5 +1,7 @@
 package com.example.Backend.Services;
 
+import com.example.Backend.Entity.medicamentoEntity;
+import com.example.Backend.Entity.recetaEntity;
 import com.example.Backend.Entity.receta_medicamentoEntity;
 import com.example.Backend.Repository.receta_medicamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +38,15 @@ public class receta_medicamentoServices {
 
     public void eliminarRecetaMedicamento(Long id) {
         recetaMedicamentoRepo.deleteById(id);
+    }
+
+    public List<medicamentoEntity> obtenerMedicamentosPorRecetaId(Long idReceta) {
+        return recetaMedicamentoRepo.findMedicamentosByRecetaId(idReceta);
+
+
+    }
+
+    public List<recetaEntity> obtenerRecetasPorFarmacia(Long farmaciaId) {
+        return recetaMedicamentoRepo.findRecetasByFarmaciaId(farmaciaId);
     }
 }

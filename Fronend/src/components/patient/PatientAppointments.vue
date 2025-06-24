@@ -2,8 +2,8 @@
 <template>
   <div class="appointments-container">
     <h2 class="titulo-citas">Mis Citas</h2>
-    <div class="appointment-list" v-if="appointments.length">
-      <li class="appointment-item" v-for="cita in appointments" :key="cita.id_citamedica">
+    <div class="appointment-list" v-if="agendadas.length">
+      <li class="appointment-item" v-for="cita in agendadas" :key="cita.id_citamedica">
         <p><strong>📅 Fecha:</strong> {{ formatFecha(cita.horario?.fecha) }}</p>
         <p><strong>⏰ Hora:</strong> {{ formatHora(cita.horario?.horainicio) }}</p>
         <p><strong>👨‍⚕️ Médico:</strong> {{ cita.medico?.nombre }} {{ cita.medico?.apellido }}</p>
@@ -18,16 +18,21 @@
   </div>
 </template>
 
-
 <script setup>
 //IMPORTACIONES
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import appointmentService from '@/services/appointmentService'
 import { useStore } from 'vuex'
 
 //DATOS REACTIVOS PARA EL COMPONENTE
 const appointments = ref([])
 const store = useStore()
+
+// Computed para solo mostrar citas agendadas
+const agendadas = computed(() =>
+  appointments.value.filter(cita => cita.estado === 'Cita Agendada')
+)
+
 //funciones para formatear la fecha y la hora
 function formatFecha(fecha) {
   if (!fecha) return 'Fecha no disponible';
@@ -209,7 +214,4 @@ onMounted(cargarCitas)
 .appointments-container .btn-cancel:hover:not(:disabled) {
   background-color: #0875C1;
 }
-
-
-
 </style>

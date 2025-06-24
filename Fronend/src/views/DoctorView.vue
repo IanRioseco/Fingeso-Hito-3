@@ -95,6 +95,9 @@ export default {
   max-width: 100%;
   margin: 0 auto;
   width: 100%;
+  background: var(--color-fondo);
+  border-radius: 16px;
+  box-shadow: 0 2px 16px var(--color-shadow);
 }
 
 .doctor-header {
@@ -103,13 +106,17 @@ export default {
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-borde);
+  background: var(--color-fondo);
+  border-radius: 12px 12px 0 0;
 }
+
 .header-logo-title {
   display: flex;
   align-items: center;
   gap: 1.2rem;
 }
+
 .logo {
   height: 48px;
   width: auto;
@@ -117,7 +124,7 @@ export default {
 }
 
 .doctor-header h1 {
-  color: #0875C1;
+  color: var(--color-principal);
   margin: 0;
 }
 
@@ -132,7 +139,7 @@ export default {
   height: 56px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #C51A6F;
+  border: 2px solid var(--color-secundario);
   background: #f5f5f5;
 }
 
@@ -141,16 +148,16 @@ export default {
   flex-direction: column;
   align-items: flex-end;
   font-size: 1.1rem;
-  color: #747473;
+  color: var(--color-texto);
 }
 
 .doctor-meta span:first-child {
   font-weight: 600;
-  color: #0875C1;
+  color: var(--color-principal);
 }
 
 .logout-btn {
-  background: #C51A6F;
+  background: var(--color-secundario);
   color: #fff;
   border: none;
   padding: 0.5rem 1rem;
@@ -158,10 +165,13 @@ export default {
   font-weight: bold;
   cursor: pointer;
   margin-left: 1rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px var(--color-shadow);
 }
 
 .logout-btn:hover {
-  background: #0875C1;
+  background: var(--color-principal);
+  box-shadow: 0 4px 16px var(--color-shadow);
 }
 
 .doctor-nav {
@@ -177,53 +187,39 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
-  color: #747473;
+  color: var(--color-texto);
+  transition: background 0.2s, color 0.2s;
 }
 
-.doctor-nav button.active {
-  background-color: #C51A6F;
-  color: white;
-}
-
-.doctor-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  min-height: 500px;
-}
-
+.doctor-nav button.active,
 .doctor-nav button:hover {
-  background-color: #C51A6F;
+  background-color: var(--color-secundario);
   color: white;
 }
 
 .doctor-nav button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
+  box-shadow: 0 0 0 2px var(--color-secundario);
 }
 
 .doctor-nav button:active {
-  background-color: #0875C1;
+  background-color: var(--color-principal);
   color: white;
 }
 
-.doctor-nav button:disabled {
-  background-color: #ddd;
-  color: #aaa;
-  cursor: not-allowed;
-}
-
+.doctor-nav button:disabled,
 .doctor-nav button:disabled:hover {
   background-color: #ddd;
   color: #aaa;
-}
-
-.doctor-nav button:disabled:focus {
+  cursor: not-allowed;
   box-shadow: none;
 }
-.doctor-nav button:disabled:active {
-  background-color: #ddd;
-  color: #aaa;
+
+.doctor-content {
+  background-color: var(--color-fondo);
+  border-radius: 0 0 12px 12px;
+  padding: 2rem;
+  box-shadow: 0 0 10px var(--color-shadow);
+  min-height: 500px;
 }
 </style>

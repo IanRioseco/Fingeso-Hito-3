@@ -40,5 +40,11 @@ export default {
   async getAllFarmacias() {
     const res = await api.get('/api/farmacia/');
     return res.data;
+  },
+  // Obtener recetas médicas con medicamentos asociados a una farmacia
+  async getMedicalAlertsByFarmacia(farmaciaId) {
+    // Ajusta el endpoint según tu backend
+    const res = await api.get(`/api/recetas/alertas/farmacia/${farmaciaId}`)
+    return res.data
   }
 }

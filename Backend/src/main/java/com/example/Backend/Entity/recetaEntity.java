@@ -20,6 +20,9 @@ public class recetaEntity {
     @Column(name = "fecha", length = 10, nullable = false)
     private LocalDate fecha;
 
+    @Column(name = "descripcion", length = 256)
+    private String descripcion;
+
     /*Receta->Medico*/
     @ManyToOne
     @JoinColumn(name = "Id_medico", referencedColumnName = "Id_medico")
@@ -29,6 +32,10 @@ public class recetaEntity {
     @ManyToOne
     @JoinColumn(name = "Id_paciente", referencedColumnName = "Id_paciente")
     private pacienteEntity paciente;
+
+    @ManyToOne
+    @JoinColumn(name = "Id_citamedica", referencedColumnName = "Id_citamedica")
+    private citamedicaEntity citamedica;
 
 
 }

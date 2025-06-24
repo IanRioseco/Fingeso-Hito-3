@@ -9,7 +9,7 @@ export default {
     },
     //obtener un médico por su id
     obtenerPorId(id) {
-        return api.get(`/medicos/id/${id}`);
+        return api.get(`api/medicos/id/${id}`);
     },
     //obtener médicos por especialidad
     obtenerPorEspecialidad(idEspecialidad) {
@@ -21,7 +21,7 @@ export default {
     },
     //actualizar un médico por su id
     actualizar(id, medico) {
-        return api.put(`/medicos/${id}`, medico);
+        return api.put(`api/medicos/${id}`, medico);
     },
     //eliminar un médico por su id
     eliminar(id) {
