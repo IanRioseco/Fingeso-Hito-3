@@ -244,7 +244,11 @@ export default {
         { id: 5, name: 'Oftalmología', icon: 'fas fa-eye' },
         { id: 6, name: 'Ortopedia', icon: 'fas fa-bone' },
         { id: 7, name: 'Ginecología', icon: 'fas fa-female' },
-        { id: 8, name: 'Urología', icon: 'fas fa-male' }
+        { id: 8, name: 'Urología', icon: 'fas fa-male' },
+        { id: 9, name: 'Laboratorio', icon: 'fas fa-microscope' },
+        { id: 10, name: 'Kinesiología', icon: 'fas fa-dumbbell' },
+        { id: 11, name: 'Examenes', icon: 'fas fa-file-medical' },
+        { id: 12, name: 'Radiología', icon: 'fas fa-x-ray' },
       ],
       // Lista de médicos, citas, horarios y fechas disponibles
       doctors: [], 

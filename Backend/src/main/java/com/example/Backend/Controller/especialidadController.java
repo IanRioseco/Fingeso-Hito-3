@@ -28,8 +28,10 @@ public class especialidadController {
 
     @PostMapping("/initialize")
     public ResponseEntity<List<especialidadEntity>> initializeEspecialidades() {
-        // Primero limpiamos los roles existentes
+        // Primero limpiamos las especialidades existentes
         especialidadServ.eliminarTodasLasespecialidades();
+        // Reiniciamos el autoincremento/secuencia para que los IDs comiencen desde 1 (solo PostgreSQL)
+        especialidadServ.reiniciarAutoIncrement();
 
         List<especialidadEntity> especialidadesCreadas = new ArrayList<>();
 
@@ -40,8 +42,12 @@ public class especialidadController {
                 "Neurología", // ID 4
                 "Oftalmología", // ID 5
                 "Ortopedia",
-                "Ginecología"
-                ,"Urología"// ID 6
+                "Ginecología",
+                "Urología",
+                "Laboratorio",
+                "Kinesiología",
+                "Examenes",
+                "Radiología"
         };
         for (String especialidadesNombre : especialidades) {
             especialidadEntity nuevaEsp = new especialidadEntity();

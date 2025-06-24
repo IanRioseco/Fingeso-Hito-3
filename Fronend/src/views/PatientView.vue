@@ -3,15 +3,13 @@
     <header class="patient-header">
       <div class="header-logo-title">
         <img src="@/assets/img/logoUH.png" alt="RedSalud Logo" class="logo" />
-        <img :src="patientPhoto" alt="Foto de perfil" class="profile-header-photo" />
-        <div class="patient-info">
-          <h1>Bienvenido, {{ patientName }}</h1>
-          <div class="patient-meta">
-            <span>RUT: {{ formatRut(patientRut) }}</span>
-          </div>
-        </div>
       </div>
       <div class="patient-actions">
+        <img :src="patientPhoto" alt="Foto de perfil" class="profile-header-photo" />
+        <div class="patient-info">
+          <span class="patient-name">{{ patientName }}</span>
+          <span class="patient-detail">RUT: {{ formatRut(patientRut) }}</span>
+        </div>
         <button class="logout-btn" @click="logout">
           <i class="fas fa-sign-out"></i> Cerrar Sesión
         </button>
@@ -152,21 +150,29 @@ export default {
   margin-right: 1rem;
 }
 
-.patient-info h1 {
-  color: var(--color-principal);
-  margin: 0 0 0.5rem 0;
+.patient-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 1.1rem;
+  color: var(--color-texto);
 }
 
-.patient-meta {
-  display: flex;
-  gap: 1rem;
-  color: var(--color-texto);
-  font-size: 0.9rem;
+.patient-name {
+  font-weight: 600;
+  color: var(--color-principal);
+  font-size: 1.2rem;
+}
+
+.patient-detail {
+  color: #757575;
+  font-size: 1rem;
 }
 
 .patient-actions {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.2rem;
 }
 
 .logout-btn {

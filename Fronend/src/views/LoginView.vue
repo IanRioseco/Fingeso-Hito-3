@@ -289,7 +289,7 @@ export default {
 }
 
 h2 {
-  color: #009999;
+  color: #0875C1;
   margin-bottom: 1.5rem;
   text-align: center;
 }
@@ -325,7 +325,7 @@ input, select {
 }
 
 .btn-login:hover {
-  background-color: #099;
+  background-color: #0875C1;
   color: #fff;
 }
 
@@ -346,7 +346,7 @@ input, select {
 }
 
 .register-link a {
-  color: #009999;
+  color: #0875C1;
   text-decoration: none;
 }
 </style>
