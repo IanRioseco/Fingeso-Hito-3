@@ -101,3 +101,4 @@ Puedes hacer esta petición usando Postman o cualquier cliente HTTP.
 - Asegúrate de tener Node.js y npm instalados para el frontend.
 - El backend debe estar corriendo en `http://localhost:8080` para que el frontend pueda comunicarse correctamente.
 - Si tienes una colección de Postman, impórtala para facilitar las pruebas de los endpoints.
+- Al agendar una cita, es necesario refrescar la página manualmente debido a problemas actuales de autenticación. Esto asegura que la sesión y los datos se actualicen correctamente.
