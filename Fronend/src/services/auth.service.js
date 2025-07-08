@@ -10,8 +10,24 @@ export const authService = {
             password,
             role
         }).then(response => {
+            console.log('AUTH SERVICE - Respuesta completa del login:', response.data);
+            console.log('AUTH SERVICE - Estructura del usuario:', {
+                keys: response.data ? Object.keys(response.data) : 'No hay datos',
+                id: response.data?.id,
+                idPaciente: response.data?.idPaciente,
+                id_paciente: response.data?.id_paciente,
+                rut: response.data?.rut,
+                rutPa: response.data?.rutPa,
+                usuario: response.data?.usuario ? Object.keys(response.data.usuario) : 'No hay usuario anidado'
+            });
+            
             if (response.data) {
+                console.log('AUTH SERVICE - Guardando usuario en localStorage:', JSON.stringify(response.data, null, 2));
                 localStorage.setItem('user', JSON.stringify(response.data));
+                
+                // Debug adicional: verificar qué se guardó realmente
+                const savedUser = localStorage.getItem('user');
+                console.log('AUTH SERVICE - Usuario guardado verificado:', savedUser);
             }
             return response.data;
         });

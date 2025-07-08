@@ -79,8 +79,12 @@ axios.defaults.baseURL = 'http://localhost:5432/api' // Cambia la URL según tu 
 axios.defaults.headers.common['content-type'] = 'application/json'
 
 // aplicacion vue
-createApp(App)
+const app = createApp(App)
   .use(router)
   .use(store)
-  .use(vuetify) // Asegúrate de que store esté importado correctamente
-  .mount('#app')
+  .use(vuetify)
+
+app.mount('#app')
+
+// Inicializar autenticación después de montar la aplicación
+store.dispatch('auth/initializeAuth');

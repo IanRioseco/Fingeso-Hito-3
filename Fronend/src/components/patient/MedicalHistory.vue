@@ -43,14 +43,14 @@
               </div>
               <div class="receta-body">
                 <p><strong>Paciente:</strong> {{ receta.paciente?.nombrePa }} {{ receta.paciente?.apellidoPa }}</p>
-                <p v-if="receta.medicamentos && receta.medicamentos.length">
-                  <strong>Medicamentos:</strong>
+                <div v-if="receta.medicamentos && receta.medicamentos.length">
+                  <p><strong>Medicamentos:</strong></p>
                   <ul>
                     <li v-for="med in receta.medicamentos" :key="med.id_medicamento">
                       {{ med.nombre }}
                     </li>
                   </ul>
-                </p>
+                </div>
                 <p v-if="receta.descripcion"><strong>Descripcion:</strong> {{ receta.descripcion }}</p>
               </div>
             </div>

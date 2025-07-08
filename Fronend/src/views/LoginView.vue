@@ -145,6 +145,14 @@ export default {
         if (response) {
           console.log('Login exitoso, rol:', this.credentials.role);
           
+          // Sincronizar el store de Vuex con los datos del login
+          await this.$store.dispatch('auth/login', {
+            user: response,
+            token: response.token || 'authenticated'
+          });
+          
+          console.log('Usuario sincronizado en store:', this.$store.getters['auth/currentUser']);
+          
           try {
             //redireccionar según el rol
             switch(this.credentials.role) {

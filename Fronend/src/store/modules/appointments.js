@@ -63,20 +63,85 @@ export default {
     //funcion asincrona para crear una cita médica
     async createAppointment({ commit, rootGetters }, cita) {
       const appointmentService = (await import('@/services/appointmentService')).default;// Importa el servicio de citas
-      const paciente = rootGetters['auth/currentUser'];// Obtiene el usuario autenticado
-      const usuario = paciente?.usuario || paciente;// Obtiene el usuario autenticado
-      console.log('Paciente autenticado:', usuario);//debbugging
+      const pacienteRaw = rootGetters['auth/currentUser'];// Obtiene el usuario autenticado
+      console.log('APPOINTMENTS - Paciente raw autenticado:', pacienteRaw);//debugging
+      
+      if (!pacienteRaw) {
+        console.error('APPOINTMENTS - No hay usuario autenticado');
+        return { success: false, error: 'Usuario no autenticado.' };
+      }
+      
+      // Usar la misma lógica robusta de extracción que en AppointmentScheduler
+      let idPaciente = null;
+      
+      // Primero intentar con el objeto principal (ya procesado por el getter)
+      idPaciente = pacienteRaw?.id_paciente || 
+                  pacienteRaw?.idPaciente || 
+                  pacienteRaw?.id || 
+                  pacienteRaw?.rutPa || 
+                  pacienteRaw?.rut;
+      
+      // Si no se encontró, intentar con el objeto usuario anidado
+      if (!idPaciente && pacienteRaw?.usuario) {
+        console.log('APPOINTMENTS - Intentando extraer ID del objeto usuario anidado');
+        idPaciente = pacienteRaw.usuario.id_paciente || 
+                    pacienteRaw.usuario.idPaciente || 
+                    pacienteRaw.usuario.id || 
+                    pacienteRaw.usuario.rutPa || 
+                    pacienteRaw.usuario.rut;
+      }
+      
+      // Intentos adicionales con más variaciones
+      if (!idPaciente) {
+        idPaciente = pacienteRaw?.pacienteId ||
+                    pacienteRaw?.idpaciente ||
+                    pacienteRaw?.ID ||
+                    pacienteRaw?.Id;
+      }
+      
+      console.log('APPOINTMENTS - Proceso de búsqueda de ID:', {
+        desde_pacienteRaw: {
+          id_paciente: pacienteRaw?.id_paciente,
+          idPaciente: pacienteRaw?.idPaciente,
+          id: pacienteRaw?.id,
+          rutPa: pacienteRaw?.rutPa,
+          rut: pacienteRaw?.rut
+        },
+        desde_usuario_anidado: pacienteRaw?.usuario ? {
+          id_paciente: pacienteRaw.usuario.id_paciente,
+          idPaciente: pacienteRaw.usuario.idPaciente,
+          id: pacienteRaw.usuario.id,
+          rutPa: pacienteRaw.usuario.rutPa,
+          rut: pacienteRaw.usuario.rut
+        } : 'No hay usuario anidado',
+        idPaciente_final: idPaciente
+      });
+      
+      console.log('APPOINTMENTS - ID del paciente encontrado para cita:', idPaciente);
+      
+      if (!idPaciente) {
+        console.error('APPOINTMENTS - No se pudo extraer ID del paciente de:', pacienteRaw);
+        return { success: false, error: 'No se encontró un ID de paciente válido.' };
+      }
+      
       // Construir el payload exactamente como espera el backend
       const citaPayload = {
         estado: cita.estado || 'CitaAgendada',
         idMedico: cita.medicoId || cita.idMedico || cita.medico?.id || cita.doctorId,
-        idPaciente: usuario?.id_paciente || usuario?.idPaciente || usuario?.id || usuario?.rutPa,
+        idPaciente: idPaciente,
         idHorario: cita.idHorario, // Debe venir del slot seleccionado
         id_fichamedica: cita.id_fichamedica || cita.idFichaMedica || cita.idFichamedica || cita.IdFichamedica// Asegura que se incluya el campo correcto si viene del frontend
       };
-      console.log('citaPayload FINAL', citaPayload);//debugging
+      console.log('APPOINTMENTS - citaPayload FINAL', citaPayload);//debugging
       // Validar que todos los campos requeridos estén presentes
       if (!citaPayload.estado || !citaPayload.idMedico || !citaPayload.idPaciente || !citaPayload.idHorario || !citaPayload.id_fichamedica) {
+        console.error('Faltan datos requeridos:', {
+          estado: citaPayload.estado,
+          idMedico: citaPayload.idMedico,
+          idPaciente: citaPayload.idPaciente,
+          idHorario: citaPayload.idHorario,
+          id_fichamedica: citaPayload.id_fichamedica
+        });
         return { success: false, error: 'Faltan datos requeridos para crear la cita.' };
       }
       //try catch para capturar errores

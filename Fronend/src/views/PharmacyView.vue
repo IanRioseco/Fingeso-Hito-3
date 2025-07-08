@@ -56,7 +56,7 @@
 
 <script setup>
 //IMPORTACIONES
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import MedicineForm from '@/components/pharmacy/MedicineForm.vue'
 import Inventory from '@/components/pharmacy/MedicinesInventory.vue'
 import MedicalAlerts from '@/components/pharmacy/MedicalAlerts.vue'
@@ -127,6 +127,15 @@ const logout = () => {
   authService.logout("auth/logout");
   router.push('/login');
 }
+
+// Watcher para recargar medicamentos cuando se cambie a la pestaña de inventario
+watch(vistaActual, (newVista) => {
+  if (newVista === 'inventario') {
+    console.log('Cambiando a vista inventario, recargando medicamentos...');
+    loadMedicines();
+  }
+});
+
 // Cargar datos al montar el componente
 onMounted(() => {
   loadUserInfo()

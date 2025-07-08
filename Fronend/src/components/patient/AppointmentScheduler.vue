@@ -638,11 +638,123 @@ async confirmAppointment() {
   },
   // Al cargar el componente, obtener y depurar la ficha médica del paciente
     async mounted() {
-      const pacienteRaw = this.$store.getters['auth/currentUser'];
+      console.log('MOUNTED - Iniciando verificación de usuario...');
+      
+      // Esperar un poco para que el store se inicialice completamente
+      await this.$nextTick();
+      
+      let pacienteRaw = this.$store.getters['auth/currentUser'];
+      let isAuthenticated = this.$store.getters['auth/isAuthenticated'];
+      
+      console.log('MOUNTED - Estado inicial:', { isAuthenticated, pacienteRaw });
+      
+      // Si no hay usuario autenticado, intentar reinicializar
+      if (!pacienteRaw || !isAuthenticated) {
+        console.log('MOUNTED - No hay usuario, intentando reinicializar auth...');
+        await this.$store.dispatch('auth/initializeAuth');
+        
+        // Volver a obtener los datos después de la reinicialización
+        pacienteRaw = this.$store.getters['auth/currentUser'];
+        isAuthenticated = this.$store.getters['auth/isAuthenticated'];
+        
+        console.log('MOUNTED - Estado después de reinicialización:', { isAuthenticated, pacienteRaw });
+      }
+      
+      if (!isAuthenticated) {
+        console.warn('MOUNTED - Usuario no autenticado después de reinicialización, redirigiendo al login');
+        this.$router.push('/login');
+        return;
+      }
+      
+      if (!pacienteRaw) {
+        console.warn('MOUNTED - No hay usuario autenticado después de reinicialización');
+        // Intentar obtener directamente desde localStorage como último recurso
+        const userFromStorage = localStorage.getItem('user');
+        if (userFromStorage && userFromStorage !== 'undefined') {
+          try {
+            const parsedUser = JSON.parse(userFromStorage);
+            console.log('MOUNTED - Usuario encontrado en localStorage:', parsedUser);
+            // Sincronizar con el store
+            await this.$store.dispatch('auth/login', {
+              user: parsedUser,
+              token: localStorage.getItem('token') || 'authenticated'
+            });
+            pacienteRaw = this.$store.getters['auth/currentUser'];
+          } catch (e) {
+            console.error('MOUNTED - Error al parsear usuario desde localStorage:', e);
+          }
+        }
+        
+        if (!pacienteRaw) {
+          console.warn('MOUNTED - No se pudo recuperar el usuario, redirigiendo al login');
+          this.$router.push('/login');
+          return;
+        }
+      }
+      
+      // El getter ya maneja la lógica de compatibilidad
       const paciente = pacienteRaw?.usuario || pacienteRaw;
-      const idPaciente = paciente?.idPaciente || paciente?.id_paciente || paciente?.id || paciente?.rutPa;
+      console.log('MOUNTED - Datos del paciente procesado:', paciente);
+      console.log('MOUNTED - Campos disponibles en paciente:', paciente ? Object.keys(paciente) : 'Paciente es null/undefined');
+      
+      // Usar la misma lógica de extracción que el getter del store
+      let idPaciente = null;
+      
+      // Primero intentar con el objeto principal
+      idPaciente = pacienteRaw?.id_paciente || 
+                  pacienteRaw?.idPaciente || 
+                  pacienteRaw?.id || 
+                  pacienteRaw?.rutPa || 
+                  pacienteRaw?.rut;
+      
+      // Si no se encontró, intentar con el objeto usuario anidado
+      if (!idPaciente && pacienteRaw?.usuario) {
+        idPaciente = pacienteRaw.usuario.id_paciente || 
+                    pacienteRaw.usuario.idPaciente || 
+                    pacienteRaw.usuario.id || 
+                    pacienteRaw.usuario.rutPa || 
+                    pacienteRaw.usuario.rut;
+      }
+      
+      // Si aún no se encontró, intentar con el objeto paciente procesado
+      if (!idPaciente && paciente) {
+        idPaciente = paciente.id_paciente || 
+                    paciente.idPaciente || 
+                    paciente.id || 
+                    paciente.rutPa || 
+                    paciente.rut ||
+                    paciente.pacienteId ||
+                    paciente.idpaciente;
+      }
+      
+      console.log('MOUNTED - ID del paciente encontrado:', idPaciente);
+      console.log('MOUNTED - Proceso de búsqueda de ID:', {
+        desde_pacienteRaw: {
+          id_paciente: pacienteRaw?.id_paciente,
+          idPaciente: pacienteRaw?.idPaciente,
+          id: pacienteRaw?.id,
+          rutPa: pacienteRaw?.rutPa,
+          rut: pacienteRaw?.rut
+        },
+        desde_usuario_anidado: pacienteRaw?.usuario ? {
+          id_paciente: pacienteRaw.usuario.id_paciente,
+          idPaciente: pacienteRaw.usuario.idPaciente,
+          id: pacienteRaw.usuario.id,
+          rutPa: pacienteRaw.usuario.rutPa,
+          rut: pacienteRaw.usuario.rut
+        } : 'No hay usuario anidado',
+        desde_paciente_procesado: paciente ? {
+          id_paciente: paciente.id_paciente,
+          idPaciente: paciente.idPaciente,
+          id: paciente.id,
+          rutPa: paciente.rutPa,
+          rut: paciente.rut
+        } : 'No hay paciente procesado'
+      });
+      
       if (idPaciente) {
         try {
+          console.log('MOUNTED - Intentando obtener ficha médica para paciente:', idPaciente);
           const fichaResponse = await medicalrecordServices.obtenerPorIdPaciente(idPaciente);
           console.log('MOUNTED - Respuesta cruda de ficha médica:', fichaResponse);
           const fichaMedica = fichaResponse.data;
@@ -654,9 +766,15 @@ async confirmAppointment() {
           }
         } catch (error) {
           console.error('MOUNTED - Error al obtener ficha médica:', error);
+          console.error('MOUNTED - Detalles del error:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+          });
         }
       } else {
         console.warn('MOUNTED - No se encontró idPaciente para obtener ficha médica');
+        console.warn('MOUNTED - Estructura completa del usuario para debugging:', JSON.stringify(pacienteRaw, null, 2));
       }
     },
 }

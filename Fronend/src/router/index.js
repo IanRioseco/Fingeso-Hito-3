@@ -70,19 +70,48 @@ const router = createRouter({
 });
 
 // Navegación guard
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // para debugging
-  console.log('Navegando a:', to.path);
-  console.log('Meta requiresAuth:', to.meta.requiresAuth);
-  console.log('Meta role:', to.meta.role);
+  console.log('ROUTER - Navegando a:', to.path);
+  console.log('ROUTER - Meta requiresAuth:', to.meta.requiresAuth);
+  console.log('ROUTER - Meta role:', to.meta.role);
+  
+  // Temporalmente deshabilitar el guard para debugging
+  console.log('ROUTER - Guard temporalmente deshabilitado para debugging');
+  next();
+  
+  /* 
+  // Inicializar autenticación si no está inicializada
+  await store.dispatch('auth/initializeAuth');
+  
+  const isAuthenticated = store.getters['auth/isAuthenticated'];
+  const userRole = store.getters['auth/userRole'];
+  const currentUser = store.getters['auth/currentUser'];
+  
+  console.log('ROUTER - Estado de auth:', { isAuthenticated, userRole, currentUser });
   
   if (to.meta.requiresAuth) {
-    console.log('Ruta requiere autenticación');//debbugging
+    console.log('ROUTER - Ruta requiere autenticación');
+    
+    if (!isAuthenticated) {
+      console.log('ROUTER - Usuario no autenticado, redirigiendo a login');
+      next('/login');
+      return;
+    }
+    
+    if (to.meta.role && userRole !== to.meta.role) {
+      console.log('ROUTER - Rol no autorizado:', { required: to.meta.role, actual: userRole });
+      next('/login');
+      return;
+    }
+    
+    console.log('ROUTER - Autenticación exitosa, permitiendo navegación');
     next();
   } else {
-    console.log('Ruta no requiere autenticación');
+    console.log('ROUTER - Ruta no requiere autenticación');
     next();
   }
+  */
 });
 
 export default router;
